@@ -1,6 +1,6 @@
 package com.lorenzbi.portalalert;
 
-import com.lorenzbi.nr01golf07.R;
+import com.lorenzbi.portalalert.R;
 
 import android.app.Activity;
 import android.os.Bundle;

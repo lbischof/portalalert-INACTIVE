@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package com.lorenzbi.nr01golf07;
+package com.lorenzbi.portalalert;
 
 public final class R {
     public static final class attr {
@@ -221,14 +221,15 @@ containing a value of this type.
     public static final class id {
         public static final int hybrid=0x7f050004;
         public static final int lblMessage=0x7f050005;
-        public static final int menu_settings=0x7f050007;
+        public static final int menu_settings=0x7f050008;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
-        public static final int options_clear=0x7f050008;
-        public static final int options_exit=0x7f050009;
+        public static final int options_clear=0x7f050009;
+        public static final int options_exit=0x7f05000a;
         public static final int satellite=0x7f050002;
-        public static final int sign_in_button=0x7f050006;
+        public static final int sign_in_button=0x7f050007;
         public static final int terrain=0x7f050003;
+        public static final int username=0x7f050006;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f070000;
@@ -368,11 +369,11 @@ containing a value of this type.
            <colgroup align="left" />
            <colgroup align="left" />
            <tr><th>Attribute</th><th>Description</th></tr>
-           <tr><td><code>{@link #AdsAttrs_adSize com.lorenzbi.nr01golf07:adSize}</code></td><td>
+           <tr><td><code>{@link #AdsAttrs_adSize com.lorenzbi.portalalert:adSize}</code></td><td>
     The size of the ad.</td></tr>
-           <tr><td><code>{@link #AdsAttrs_adSizes com.lorenzbi.nr01golf07:adSizes}</code></td><td>
+           <tr><td><code>{@link #AdsAttrs_adSizes com.lorenzbi.portalalert:adSizes}</code></td><td>
     A comma-separated list of the supported ad sizes.</td></tr>
-           <tr><td><code>{@link #AdsAttrs_adUnitId com.lorenzbi.nr01golf07:adUnitId}</code></td><td> The ad unit ID.</td></tr>
+           <tr><td><code>{@link #AdsAttrs_adUnitId com.lorenzbi.portalalert:adUnitId}</code></td><td> The ad unit ID.</td></tr>
            </table>
            @see #AdsAttrs_adSize
            @see #AdsAttrs_adSizes
@@ -398,7 +399,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
           <p>This is a private symbol.
-          @attr name com.lorenzbi.nr01golf07:adSize
+          @attr name com.lorenzbi.portalalert:adSize
         */
         public static final int AdsAttrs_adSize = 0;
         /**
@@ -418,7 +419,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
           <p>This is a private symbol.
-          @attr name com.lorenzbi.nr01golf07:adSizes
+          @attr name com.lorenzbi.portalalert:adSizes
         */
         public static final int AdsAttrs_adSizes = 1;
         /**
@@ -434,7 +435,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
           <p>This is a private symbol.
-          @attr name com.lorenzbi.nr01golf07:adUnitId
+          @attr name com.lorenzbi.portalalert:adUnitId
         */
         public static final int AdsAttrs_adUnitId = 2;
         /** Attributes that can be used with a MapAttrs.
@@ -443,20 +444,20 @@ containing a value of this type.
            <colgroup align="left" />
            <colgroup align="left" />
            <tr><th>Attribute</th><th>Description</th></tr>
-           <tr><td><code>{@link #MapAttrs_cameraBearing com.lorenzbi.nr01golf07:cameraBearing}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_cameraTargetLat com.lorenzbi.nr01golf07:cameraTargetLat}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_cameraTargetLng com.lorenzbi.nr01golf07:cameraTargetLng}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_cameraTilt com.lorenzbi.nr01golf07:cameraTilt}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_cameraZoom com.lorenzbi.nr01golf07:cameraZoom}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_mapType com.lorenzbi.nr01golf07:mapType}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_uiCompass com.lorenzbi.nr01golf07:uiCompass}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_uiRotateGestures com.lorenzbi.nr01golf07:uiRotateGestures}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_uiScrollGestures com.lorenzbi.nr01golf07:uiScrollGestures}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_uiTiltGestures com.lorenzbi.nr01golf07:uiTiltGestures}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_uiZoomControls com.lorenzbi.nr01golf07:uiZoomControls}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_uiZoomGestures com.lorenzbi.nr01golf07:uiZoomGestures}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_useViewLifecycle com.lorenzbi.nr01golf07:useViewLifecycle}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_zOrderOnTop com.lorenzbi.nr01golf07:zOrderOnTop}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_cameraBearing com.lorenzbi.portalalert:cameraBearing}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_cameraTargetLat com.lorenzbi.portalalert:cameraTargetLat}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_cameraTargetLng com.lorenzbi.portalalert:cameraTargetLng}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_cameraTilt com.lorenzbi.portalalert:cameraTilt}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_cameraZoom com.lorenzbi.portalalert:cameraZoom}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_mapType com.lorenzbi.portalalert:mapType}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_uiCompass com.lorenzbi.portalalert:uiCompass}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_uiRotateGestures com.lorenzbi.portalalert:uiRotateGestures}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_uiScrollGestures com.lorenzbi.portalalert:uiScrollGestures}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_uiTiltGestures com.lorenzbi.portalalert:uiTiltGestures}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_uiZoomControls com.lorenzbi.portalalert:uiZoomControls}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_uiZoomGestures com.lorenzbi.portalalert:uiZoomGestures}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_useViewLifecycle com.lorenzbi.portalalert:useViewLifecycle}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_zOrderOnTop com.lorenzbi.portalalert:zOrderOnTop}</code></td><td></td></tr>
            </table>
            @see #MapAttrs_cameraBearing
            @see #MapAttrs_cameraTargetLat
@@ -480,7 +481,7 @@ containing a value of this type.
             0x7f01000f, 0x7f010010
         };
         /**
-          <p>This symbol is the offset where the {@link com.lorenzbi.nr01golf07.R.attr#cameraBearing}
+          <p>This symbol is the offset where the {@link com.lorenzbi.portalalert.R.attr#cameraBearing}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -490,11 +491,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.lorenzbi.nr01golf07:cameraBearing
+          @attr name com.lorenzbi.portalalert:cameraBearing
         */
         public static final int MapAttrs_cameraBearing = 1;
         /**
-          <p>This symbol is the offset where the {@link com.lorenzbi.nr01golf07.R.attr#cameraTargetLat}
+          <p>This symbol is the offset where the {@link com.lorenzbi.portalalert.R.attr#cameraTargetLat}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -504,11 +505,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.lorenzbi.nr01golf07:cameraTargetLat
+          @attr name com.lorenzbi.portalalert:cameraTargetLat
         */
         public static final int MapAttrs_cameraTargetLat = 2;
         /**
-          <p>This symbol is the offset where the {@link com.lorenzbi.nr01golf07.R.attr#cameraTargetLng}
+          <p>This symbol is the offset where the {@link com.lorenzbi.portalalert.R.attr#cameraTargetLng}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -518,11 +519,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.lorenzbi.nr01golf07:cameraTargetLng
+          @attr name com.lorenzbi.portalalert:cameraTargetLng
         */
         public static final int MapAttrs_cameraTargetLng = 3;
         /**
-          <p>This symbol is the offset where the {@link com.lorenzbi.nr01golf07.R.attr#cameraTilt}
+          <p>This symbol is the offset where the {@link com.lorenzbi.portalalert.R.attr#cameraTilt}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -532,11 +533,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.lorenzbi.nr01golf07:cameraTilt
+          @attr name com.lorenzbi.portalalert:cameraTilt
         */
         public static final int MapAttrs_cameraTilt = 4;
         /**
-          <p>This symbol is the offset where the {@link com.lorenzbi.nr01golf07.R.attr#cameraZoom}
+          <p>This symbol is the offset where the {@link com.lorenzbi.portalalert.R.attr#cameraZoom}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -546,11 +547,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.lorenzbi.nr01golf07:cameraZoom
+          @attr name com.lorenzbi.portalalert:cameraZoom
         */
         public static final int MapAttrs_cameraZoom = 5;
         /**
-          <p>This symbol is the offset where the {@link com.lorenzbi.nr01golf07.R.attr#mapType}
+          <p>This symbol is the offset where the {@link com.lorenzbi.portalalert.R.attr#mapType}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -566,11 +567,11 @@ containing a value of this type.
 <tr><td><code>terrain</code></td><td>3</td><td></td></tr>
 <tr><td><code>hybrid</code></td><td>4</td><td></td></tr>
 </table>
-          @attr name com.lorenzbi.nr01golf07:mapType
+          @attr name com.lorenzbi.portalalert:mapType
         */
         public static final int MapAttrs_mapType = 0;
         /**
-          <p>This symbol is the offset where the {@link com.lorenzbi.nr01golf07.R.attr#uiCompass}
+          <p>This symbol is the offset where the {@link com.lorenzbi.portalalert.R.attr#uiCompass}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -580,11 +581,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.lorenzbi.nr01golf07:uiCompass
+          @attr name com.lorenzbi.portalalert:uiCompass
         */
         public static final int MapAttrs_uiCompass = 6;
         /**
-          <p>This symbol is the offset where the {@link com.lorenzbi.nr01golf07.R.attr#uiRotateGestures}
+          <p>This symbol is the offset where the {@link com.lorenzbi.portalalert.R.attr#uiRotateGestures}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -594,11 +595,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.lorenzbi.nr01golf07:uiRotateGestures
+          @attr name com.lorenzbi.portalalert:uiRotateGestures
         */
         public static final int MapAttrs_uiRotateGestures = 7;
         /**
-          <p>This symbol is the offset where the {@link com.lorenzbi.nr01golf07.R.attr#uiScrollGestures}
+          <p>This symbol is the offset where the {@link com.lorenzbi.portalalert.R.attr#uiScrollGestures}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -608,11 +609,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.lorenzbi.nr01golf07:uiScrollGestures
+          @attr name com.lorenzbi.portalalert:uiScrollGestures
         */
         public static final int MapAttrs_uiScrollGestures = 8;
         /**
-          <p>This symbol is the offset where the {@link com.lorenzbi.nr01golf07.R.attr#uiTiltGestures}
+          <p>This symbol is the offset where the {@link com.lorenzbi.portalalert.R.attr#uiTiltGestures}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -622,11 +623,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.lorenzbi.nr01golf07:uiTiltGestures
+          @attr name com.lorenzbi.portalalert:uiTiltGestures
         */
         public static final int MapAttrs_uiTiltGestures = 9;
         /**
-          <p>This symbol is the offset where the {@link com.lorenzbi.nr01golf07.R.attr#uiZoomControls}
+          <p>This symbol is the offset where the {@link com.lorenzbi.portalalert.R.attr#uiZoomControls}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -636,11 +637,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.lorenzbi.nr01golf07:uiZoomControls
+          @attr name com.lorenzbi.portalalert:uiZoomControls
         */
         public static final int MapAttrs_uiZoomControls = 10;
         /**
-          <p>This symbol is the offset where the {@link com.lorenzbi.nr01golf07.R.attr#uiZoomGestures}
+          <p>This symbol is the offset where the {@link com.lorenzbi.portalalert.R.attr#uiZoomGestures}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -650,11 +651,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.lorenzbi.nr01golf07:uiZoomGestures
+          @attr name com.lorenzbi.portalalert:uiZoomGestures
         */
         public static final int MapAttrs_uiZoomGestures = 11;
         /**
-          <p>This symbol is the offset where the {@link com.lorenzbi.nr01golf07.R.attr#useViewLifecycle}
+          <p>This symbol is the offset where the {@link com.lorenzbi.portalalert.R.attr#useViewLifecycle}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -664,11 +665,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.lorenzbi.nr01golf07:useViewLifecycle
+          @attr name com.lorenzbi.portalalert:useViewLifecycle
         */
         public static final int MapAttrs_useViewLifecycle = 12;
         /**
-          <p>This symbol is the offset where the {@link com.lorenzbi.nr01golf07.R.attr#zOrderOnTop}
+          <p>This symbol is the offset where the {@link com.lorenzbi.portalalert.R.attr#zOrderOnTop}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -678,7 +679,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.lorenzbi.nr01golf07:zOrderOnTop
+          @attr name com.lorenzbi.portalalert:zOrderOnTop
         */
         public static final int MapAttrs_zOrderOnTop = 13;
     };

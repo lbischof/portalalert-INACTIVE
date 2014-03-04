@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.lorenzbi.nr01golf07"
+    package="com.lorenzbi.portalalert"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -18,10 +18,10 @@
     
     <!-- Creates a custom permission so only this app can receive its messages. -->
     <permission
-        android:name="com.lorenzbi.nr01golf07.permission.C2D_MESSAGE"
+        android:name="com.lorenzbi.portalalert.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="com.lorenzbi.nr01golf07.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.lorenzbi.portalalert.permission.C2D_MESSAGE" />
 
     <!-- This app has permission to register and receive data message. -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
@@ -55,7 +55,15 @@
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name" >
         </activity>
-
+		<receiver
+            android:name=".GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.example.gcm" />
+            </intent-filter>
+        </receiver>
+        <service android:name=".GcmIntentService" />
         
 
     </application>

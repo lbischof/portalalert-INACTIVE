@@ -5,12 +5,12 @@
  * should not be modified by hand.
  */
 
-package com.lorenzbi.nr01golf07;
+package com.lorenzbi.portalalert;
 
 public final class Manifest {
     public static final class permission {
         /**  Creates a custom permission so only this app can receive its messages. 
          */
-        public static final String C2D_MESSAGE="com.lorenzbi.nr01golf07.permission.C2D_MESSAGE";
+        public static final String C2D_MESSAGE="com.lorenzbi.portalalert.permission.C2D_MESSAGE";
     }
 }
