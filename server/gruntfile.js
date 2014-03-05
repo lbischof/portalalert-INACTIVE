@@ -29,7 +29,7 @@ shell: {                                // Task
             ].join('&&')
         }
     },
-    
+    // define our ssh commands
     sshexec: {
     	deploy: {
     		command: [
