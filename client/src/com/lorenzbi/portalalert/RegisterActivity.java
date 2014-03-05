@@ -231,11 +231,11 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 
                     // You should send the registration ID to your server over HTTP, so it
                     // can use GCM/HTTP or CCS to send messages to your app.
-                    sendRegistrationIdToBackend();
 
                     // For this demo: we don't need to send it because the device will send
                     // upstream messages to a server that echo back the message using the
                     // 'from' address in the message.
+                    sendRegistrationIdToBackend();
 
                     // Persist the regID - no need to register again.
                     storeRegistrationId(context, regid);
@@ -250,7 +250,6 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 
             @Override
             protected void onPostExecute(String msg) {
-                //mDisplay.append(msg + "\n");
             }
         }.execute(null, null, null);
     }
