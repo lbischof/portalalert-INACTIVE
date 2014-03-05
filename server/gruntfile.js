@@ -23,9 +23,8 @@ shell: {                                // Task
             	stdout: true
             },
             command: [
-            'cd ..',
             'git add -A', 
-            'git commit -m \" \"',
+            'git commit -m \"'+ grunt.option( "m" ) +' \"',
             'git push'
             ].join('&&')
         }
