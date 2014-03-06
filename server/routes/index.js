@@ -28,11 +28,46 @@ exports.register = function(db) {
             }
             else {
                 // If it worked, set the header so the address bar doesn't still say /adduser
-                res.location("userlist");
+                //res.location("userlist");
                 // And forward to success page
-                res.redirect("userlist");
+                //res.redirect("userlist");
             }
         });
+    }
+}
+exports.alert = function(db) {
+    return function(req, res) {
 
+        // Get our form values. These rely on the "name" attributes
+        var lat = req.body.lat;
+        var long = req.body.long;
+        var name = req.body.name;
+        var urgency = req.body.urgency;
+        var type = req.body.type;
+        var message = req.body.message;
+
+        // Set our collection
+        var collection = db.get('alerts');
+
+        // Submit to the DB
+        process.stdout.write(lat+":"+long);
+        collection.insert({
+            "lat" : lat,
+            "long" : long,
+            "name" : name,
+            "urgency" : urgency,
+            "message" : message
+        }, function (err, doc) {
+            if (err) {
+                // If it failed, return error
+                res.send("There was a problem adding the information to the database.");
+            }
+            else {
+                // If it worked, set the header so the address bar doesn't still say /adduser
+                //res.location("userlist");
+                // And forward to success page
+                //res.redirect("userlist");
+            }
+        });
     }
 }

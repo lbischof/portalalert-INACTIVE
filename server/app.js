@@ -11,6 +11,8 @@ var users = require('./routes/user');
 var mongo = require('mongodb');
 var monk = require('monk');
 var db = monk('localhost:27017/portalalert');
+var gcm = require('node-gcm');
+
 
 var app = express();
 
@@ -29,7 +31,7 @@ app.get('/', routes.index);
 app.get('/users', users.list);
 
 app.post('/register', routes.register(db));
-
+app.post('/alert', routes.alert(db));
 
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
