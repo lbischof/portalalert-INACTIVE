@@ -57,9 +57,10 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
     AtomicInteger msgId = new AtomicInteger();
     SharedPreferences prefs;
     Context context;
-    String username;
+    String ingressUsername;
     String regid;
-
+    String personName = "";
+	String personEmail = "";
 
 	/* GOOGLE LOGIN VARIABLES */
 	private GoogleApiClient mGoogleApiClient;
@@ -146,10 +147,9 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	@Override
 	public void onConnected(Bundle connectionHint) {
 		final EditText usernameInput = (EditText)findViewById(R.id.username);
-		username = usernameInput.getText().toString(); //TODO do something with this
+		ingressUsername = usernameInput.getText().toString(); //TODO do something with this
 		
-		String personName = "";
-		String email = "";
+		
 		mSignInClicked = false;
 		try { 
                 Person currentPerson = Plus.PeopleApi
@@ -157,17 +157,17 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
                 personName = currentPerson.getDisplayName();
                 String personPhotoUrl = currentPerson.getImage().getUrl();
                // String personGooglePlusProfile = currentPerson.getUrl();
-                email = Plus.AccountApi.getAccountName(mGoogleApiClient);
+                personEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
  
                 
         } catch (Exception e) {
             e.printStackTrace();
         }
 		
-		if (isFrog(email)) { //always returns true at the moment
+		if (isFrog(personEmail)) { //always returns true at the moment
 			registerGCM();
 			//Load the main map view
-			Toast.makeText(this, "Welcome "+personName+email, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "Welcome "+personName+personEmail, Toast.LENGTH_LONG).show();
 			Intent intent = new Intent(this, MainActivity.class);
 		    startActivity(intent);
 		} else {
@@ -262,15 +262,15 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
      */
     private void sendRegistrationIdToBackend() {
     	HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("http://www.lorenzz.ch/portalalert.php");
+        HttpPost httppost = new HttpPost("http://portalalert.lorenzz.ch:3000/register");
 
         try {
             // Add your data
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
-            nameValuePairs.add(new BasicNameValuePair("username", username));
+            nameValuePairs.add(new BasicNameValuePair("username", ingressUsername));
             nameValuePairs.add(new BasicNameValuePair("regid", regid));
-            nameValuePairs.add(new BasicNameValuePair("name", ""));
-            nameValuePairs.add(new BasicNameValuePair("email", ""));
+            nameValuePairs.add(new BasicNameValuePair("name", personName ));
+            nameValuePairs.add(new BasicNameValuePair("email", personEmail));
 
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
