@@ -15,6 +15,7 @@ exports.register = function(db) {
         var collection = db.get('users');
 
         // Submit to the DB
+        process.stdout.write("hello: ");
         collection.insert({
             "username" : username,
             "email" : email,
