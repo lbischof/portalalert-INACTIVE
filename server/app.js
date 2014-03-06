@@ -28,7 +28,7 @@ app.use(app.router);
 app.get('/', routes.index);
 app.get('/users', users.list);
 
-app.post('/register', routes.register);
+app.post('/register', routes.register(db));
 
 
 /// catch 404 and forwarding to error handler
