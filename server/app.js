@@ -8,6 +8,9 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes');
 var users = require('./routes/user');
+var mongo = require('mongodb');
+var monk = require('monk');
+var db = monk('localhost:27017/portalalert');
 
 var app = express();
 
@@ -17,9 +20,6 @@ app.set('view engine', 'jade');
 
 app.use(favicon());
 app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(express.json());   
-app.use(bodyParser.urlencoded());
 app.use(express.urlencoded());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -28,13 +28,7 @@ app.use(app.router);
 app.get('/', routes.index);
 app.get('/users', users.list);
 
-app.post('/register', function(req, res) {
-    var regid = req.body.regid,
-        name = req.body.name,
-        email = req.body.email,
-        username = req.body.username;
-    console.log(regid);
-});
+app.post('/register', routes.register);
 
 
 /// catch 404 and forwarding to error handler
