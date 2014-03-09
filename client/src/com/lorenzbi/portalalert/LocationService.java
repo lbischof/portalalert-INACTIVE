@@ -23,8 +23,9 @@ public class LocationService
     @Override
     protected void onHandleIntent (Intent intent)
     {
-        // TODO Auto-generated method stub
-        
+        // TODO: Use the coarse location information from the location service to inform the server what
+        // area we are in (and what portals to send us), and monitor the location service
+        // for being out of a large radius - and hence when to fetch a new set of portals
     }
 
 }
