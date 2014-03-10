@@ -44,7 +44,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
-    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    //private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     /**
      * Substitute you own sender ID here. This is the project number you got
@@ -156,6 +156,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
                         .getCurrentPerson(mGoogleApiClient);
                 personName = currentPerson.getDisplayName();
                 String personPhotoUrl = currentPerson.getImage().getUrl();
+                Log.i ("com.lorenzbi.portalalertResisterActivity", personPhotoUrl);
                // String personGooglePlusProfile = currentPerson.getUrl();
                 personEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
  
@@ -276,6 +277,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 
             // Execute HTTP Post Request
             HttpResponse response = httpclient.execute(httppost);
+            Log.i ("com.lorenzbi.portalalert.RegisterActivity", response.getStatusLine ().toString ());
 
         } catch (ClientProtocolException e) {
             // TODO Auto-generated catch block
