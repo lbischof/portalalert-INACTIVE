@@ -82,7 +82,7 @@ exports.alert = function(db) {
 			var registrationIds = [];
 
 			// At least one required
-			registrationIds.push('APA91bEF7G70SxsQZRZskX_tup8yd8W63ka1EJhFQvwrGXPnBEQb6bgL4F2WwSKQgsH5hjyPvIbEQSlzd2agxDsuen1H_1elouIOD4IM5IaiDKv1IaGiJDUbcUMLWfo1VyiZCSB4h5ICDOk24Bo-NGWr7GH4x_dnNKexRgBM8eTmdOfzUh27T08');
+			registrationIds.push('APA91bGOxvQ4qXv8UuzzDwK50PEJAFuagaUbyArWoNmQi-d4nAOw1-QKccuXNCP97gGjDEK60Szez2huSlhFTa1vAqHswbf_t9D1JL5KDGvJc-HgcqsDRLqXvqzGM6ugBA8Io53Y1PfZ1uZbfzUKw7b-M1fihOraHdaxBOCe7w9DxD-vgshhiMQ');
 			//registrationIds.push('regId2'); 
 
 			/**
