@@ -364,8 +364,8 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        mPrefs.setGeofence("1", mUIGeofence1);
-        mPrefs.setGeofence("2", mUIGeofence2);
+        //mPrefs.setGeofence("1", mUIGeofence1);
+        //mPrefs.setGeofence("2", mUIGeofence2);
     }
 
     /**
