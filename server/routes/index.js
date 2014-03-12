@@ -41,23 +41,23 @@ exports.alert = function(db) {
 
     // Get our form values. These rely on the "name" attributes
     var lat = portal.lat;
-    var long = req.body.long;
-    var name = req.body.name;
-    var urgency = req.body.urgency;
-    var type = req.body.type;
-    var message = req.body.message;
+    var lng = portal.lng;
+    var title = portal.title;
+    //var urgency = req.body.urgency;
+    //var type = req.body.type;
+    //var message = req.body.message;
 
     // Set our collection
     var collection = db.get('alerts');
 
     // Submit to the DB
-    process.stdout.write(lat+":"+long);
+    process.stdout.write(lat+":"+lng);
     collection.insert({
     	"lat" : lat,
-    	"long" : long,
-    	"name" : name,
-    	"urgency" : urgency,
-    	"message" : message
+    	"lng" : lng,
+    	"title" : title,
+    	//"urgency" : urgency,
+    	//"message" : message
     }, function (err, doc) {
     	if (err) {
             // If it failed, return error
