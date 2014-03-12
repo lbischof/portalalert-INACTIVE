@@ -39,7 +39,7 @@ exports.alert = function(db) {
 	return function(req, res) {
 
     // Get our form values. These rely on the "name" attributes
-    var lat = req.body;
+    var lat = req.body.portal;
     var long = req.body.long;
     var name = req.body.name;
     var urgency = req.body.urgency;
