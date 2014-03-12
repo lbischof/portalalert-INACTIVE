@@ -16,7 +16,7 @@ function wrapper() {
 	window.plugin.portalalert.setup_link = function(data){
 		var d = data.portalDetails;
 		//window.plugin.portalalert.portal = d;
-		window.plugin.portalalert.portal.push({title: d.descriptiveText.map.TITLE, address: d.descriptiveText.map.ADDRESS, lng: d.locationE6.lngE6, lat: d.locationE6.latE6});
+		window.plugin.portalalert.portal = {title: d.descriptiveText.map.TITLE, address: d.descriptiveText.map.ADDRESS, lng: d.locationE6.lngE6, lat: d.locationE6.latE6};
 		$('#portaldetails').append('<div class="portalalert"> <a onclick="window.plugin.portalalert.submit_portal()" title="submit portal">Portalalert Submit</a></div>');
 	}
 	window.plugin.portalalert.submit_portal = function(){
