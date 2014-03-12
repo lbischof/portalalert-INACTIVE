@@ -47,7 +47,14 @@ public class GcmIntentService extends IntentService {
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 // This loop represents the service doing some work.
-                
+            	
+            	
+                	Double lat = Double.parseDouble(extras.getString("lat"));
+                	Double lng = Double.parseDouble(extras.getString("lng"));
+					Float radius = Float.parseFloat("600") ;//extras.getInt("radius");
+					Log.i("lorenz",lat+":"+lng);
+				//GeofenceManager geofenceManager = new GeofenceManager();
+               //new GeofenceManager().createGeofences(lat, lng, radius );
             	
                 
                 Log.i("lorenz", "Completed work @ " + SystemClock.elapsedRealtime());
@@ -68,7 +75,7 @@ public class GcmIntentService extends IntentService {
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), 0);
+                new Intent(this, GeofenceManager.class), 0);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)

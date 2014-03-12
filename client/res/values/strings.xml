@@ -115,7 +115,4 @@
     <string name="unregister_geofence1">Remove geofence 1</string>
     <string name="unregister_geofence2">Remove geofence 2</string>
 
-    <!-- Number patterns -->
-    <string name="lat_lng_pattern">* ###.00000000;* -###.00000000</string>
-    <string name="radius_pattern">* #.0000</string>
 </resources>

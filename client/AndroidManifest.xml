@@ -62,7 +62,7 @@
 
         <!-- Main Activity -->
         <activity
-            android:name="com.lorenzbi.portalalert.MainActivity"
+            android:name="com.lorenzbi.portalalert.GeofenceManager"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name" >
         </activity>
@@ -73,7 +73,7 @@
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <category android:name="com.example.gcm" />
+                <category android:name="com.lorenzbi.portalalert" />
             </intent-filter>
         </receiver>
         <service android:name=".GcmIntentService" />

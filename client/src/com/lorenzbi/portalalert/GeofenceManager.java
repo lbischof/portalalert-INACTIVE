@@ -16,7 +16,6 @@
 
 package com.lorenzbi.portalalert;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,10 +33,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -53,7 +48,7 @@ import com.lorenzbi.portalalert.GeofenceUtils.REQUEST_TYPE;
  * Also allow removing either one of or both of the geofences.
  * The menu allows you to clear the screen or delete the geofences stored in persistent memory.
  */
-public class MainActivity extends FragmentActivity {
+public class GeofenceManager extends FragmentActivity {
     /*
      * Use to set an expiration time for a geofence. After this amount
      * of time Location Services will stop tracking the geofence.
@@ -83,15 +78,7 @@ public class MainActivity extends FragmentActivity {
     // Remove geofences handler
     private GeofenceRemover mGeofenceRemover;
     
-    /*
-     * Internal lightweight geofence objects for geofence 1 and 2
-     */
-    private SimpleGeofence mUIGeofence1;
-    private SimpleGeofence mUIGeofence2;
-
-    // decimal formats for latitude, longitude, and radius
-    private DecimalFormat mLatLngFormat;
-    private DecimalFormat mRadiusFormat;
+ 
 
     /*
      * An instance of an inner class that receives broadcasts from listeners and from the
@@ -110,23 +97,7 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Set the pattern for the latitude and longitude format
-        String latLngPattern = getString(R.string.lat_lng_pattern);
-
-        // Set the format for latitude and longitude
-        mLatLngFormat = new DecimalFormat(latLngPattern);
-
-        // Localize the format
-        mLatLngFormat.applyLocalizedPattern(mLatLngFormat.toLocalizedPattern());
-
-        // Set the pattern for the radius format
-        String radiusPattern = getString(R.string.radius_pattern);
-
-        // Set the format for the radius
-        mRadiusFormat = new DecimalFormat(radiusPattern);
-
-        // Localize the pattern
-        mRadiusFormat.applyLocalizedPattern(mRadiusFormat.toLocalizedPattern());
+       
 
         // Create a new broadcast receiver to receive updates from the listeners and service
         mBroadcastReceiver = new GeofenceSampleReceiver();
@@ -159,9 +130,11 @@ public class MainActivity extends FragmentActivity {
         mGeofenceRemover = new GeofenceRemover(this);
 
         // Attach to the main UI
-        setContentView(R.layout.activity_main);
-
-       
+        //setContentView(R.layout.activity_main);
+        Double lat = Double.parseDouble("46.960513");
+    	Double lng = Double.parseDouble("7.455522");
+		Float radius = Float.parseFloat("600") ;//extras.getInt("radius");
+       createGeofences(lat,lng,radius);
     }
 
     /*
@@ -244,51 +217,7 @@ public class MainActivity extends FragmentActivity {
         
     }
 
-    /*
-     * Inflate the app menu
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return true;
-
-    }
-    /*
-     * Respond to menu item selections
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-
-            // Request to clear the geofence1 settings in the UI
-            case R.id.menu_item_clear_geofence1:
-                
-                return true;
-
-            // Request to clear the geofence2 settings in the UI
-            case R.id.menu_item_clear_geofence2:
-                
-                return true;
-
-            // Request to clear both geofence settings in the UI
-            case R.id.menu_item_clear_geofences:
-                
-
-                return true;
-
-            // Remove all geofences from storage
-            case R.id.menu_item_clear_geofence_history:
-                mPrefs.clearGeofence("1");
-                mPrefs.clearGeofence("2");
-                return true;
-
-            // Pass through any other request
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
+   
 
     /*
      * Save the current geofence settings in SharedPreferences.
@@ -334,63 +263,12 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    /**
-     * Called when the user clicks the "Remove geofences" button
-     *
-     * @param view The view that triggered this callback
-     */
-    public void onUnregisterByPendingIntentClicked(View view) {
-        /*
-         * Remove all geofences set by this app. To do this, get the
-         * PendingIntent that was added when the geofences were added
-         * and use it as an argument to removeGeofences(). The removal
-         * happens asynchronously; Location Services calls
-         * onRemoveGeofencesByPendingIntentResult() (implemented in
-         * the current Activity) when the removal is done
-         */
-
-        /*
-         * Record the removal as remove by Intent. If a connection error occurs,
-         * the app can automatically restart the removal if Google Play services
-         * can fix the error
-         */
-        // Record the type of removal
-        mRemoveType = GeofenceUtils.REMOVE_TYPE.INTENT;
-
-        /*
-         * Check for Google Play services. Do this after
-         * setting the request type. If connecting to Google Play services
-         * fails, onActivityResult is eventually called, and it needs to
-         * know what type of request was in progress.
-         */
-        if (!servicesConnected()) {
-
-            return;
-        }
-
-        // Try to make a removal request
-        try {
-        /*
-         * Remove the geofences represented by the currently-active PendingIntent. If the
-         * PendingIntent was removed for some reason, re-create it; since it's always
-         * created with FLAG_UPDATE_CURRENT, an identical PendingIntent is always created.
-         */
-        mGeofenceRemover.removeGeofencesByIntent(mGeofenceRequester.getRequestPendingIntent());
-
-        } catch (UnsupportedOperationException e) {
-            // Notify user that previous request hasn't finished.
-            Toast.makeText(this, R.string.remove_geofences_already_requested_error,
-                        Toast.LENGTH_LONG).show();
-        }
-
-    }
-
    
     /**
      * Called when the user clicks the "Remove geofence 2" button
      * @param view The view that triggered this callback
      */
-    public void onUnregisterGeofence2Clicked(View view) {
+    public void removeGeofences() {
         /*
          * Remove the geofence by creating a List of geofences to
          * remove and sending it to Location Services. The List
@@ -434,7 +312,6 @@ public class MainActivity extends FragmentActivity {
                         Toast.LENGTH_LONG).show();
         }
     }
-
     /**
      * Called when the user clicks the "Register geofences" button.
      * Get the geofence parameters for each geofence and add them to
@@ -443,7 +320,7 @@ public class MainActivity extends FragmentActivity {
      * Location Services detects a geofence transition. Send the List
      * and the PendingIntent to Location Services.
      */
-    public void onRegisterClicked(View view) {
+    public void createGeofences(Double lat, Double lng, Float radius) {
 
         /*
          * Record the request as an ADD. If a connection error occurs,
@@ -470,31 +347,27 @@ public class MainActivity extends FragmentActivity {
          * Create a version of geofence 1 that is "flattened" into individual fields. This
          * allows it to be stored in SharedPreferences.
          */
-        /*mUIGeofence1 = new SimpleGeofence(
+        SimpleGeofence mGeofence = new SimpleGeofence(
             "1",
             // Get latitude, longitude, and radius from the UI
-            Double.valueOf(mLatitude1.getText().toString()),
-            Double.valueOf(mLongitude1.getText().toString()),
-            Float.valueOf(mRadius1.getText().toString()),
+            lat,
+            lng,
+            radius,
             // Set the expiration time
             GEOFENCE_EXPIRATION_IN_MILLISECONDS,
             // Only detect entry transitions
-            Geofence.GEOFENCE_TRANSITION_ENTER);*/
+            Geofence.GEOFENCE_TRANSITION_ENTER);
 
         // Store this flat version in SharedPreferences
-        mPrefs.setGeofence("1", mUIGeofence1);
+        mPrefs.setGeofence("1", mGeofence);
 
-        /*
-         * Create a version of geofence 2 that is "flattened" into individual fields. This
-         * allows it to be stored in SharedPreferences.
-         */
-        
+       
         /*
          * Add Geofence objects to a List. toGeofence()
          * creates a Location Services Geofence object from a
          * flat object
          */
-        mCurrentGeofences.add(mUIGeofence1.toGeofence());
+        mCurrentGeofences.add(mGeofence.toGeofence());
 
         // Start the request. Fail if there's already a request in progress
         try {
@@ -506,10 +379,7 @@ public class MainActivity extends FragmentActivity {
                         Toast.LENGTH_LONG).show();
         }
     }
-    /**
-     * Check all the input values and flag those that are incorrect
-     * @return true if all the widget values are correct; otherwise false
-     */
+    
     
     /**
      * Define a Broadcast receiver that receives updates from connection listeners and

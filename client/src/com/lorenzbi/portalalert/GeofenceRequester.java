@@ -39,7 +39,7 @@ public class GeofenceRequester
                     OnConnectionFailedListener {
 
     // Storage for a reference to the calling client
-    private final Activity mActivity;
+    private final GeofenceManager mActivity;
 
     // Stores the PendingIntent used to send geofence transitions back to the app
     private PendingIntent mGeofencePendingIntent;
@@ -56,9 +56,9 @@ public class GeofenceRequester
      */
     private boolean mInProgress;
 
-    public GeofenceRequester(Activity activityContext) {
+    public GeofenceRequester(GeofenceManager geofenceManager) {
         // Save the context
-        mActivity = activityContext;
+        mActivity = geofenceManager;
 
         // Initialize the globals to null
         mGeofencePendingIntent = null;
@@ -311,19 +311,16 @@ public class GeofenceRequester
          */
         if (connectionResult.hasResolution()) {
 
-            try {
+            /*try {
                 // Start an Activity that tries to resolve the error
                 connectionResult.startResolutionForResult(mActivity,
                     GeofenceUtils.CONNECTION_FAILURE_RESOLUTION_REQUEST);
 
-            /*
-             * Thrown if Google Play services canceled the original
-             * PendingIntent
-             */
+            
             } catch (SendIntentException e) {
                 // Log the error
                 e.printStackTrace();
-            }
+            }*/
 
         /*
          * If no resolution is available, put the error code in
