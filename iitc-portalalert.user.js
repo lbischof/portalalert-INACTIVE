@@ -15,15 +15,12 @@ function wrapper() {
 	window.plugin.portalalert.portal = [];
 	window.plugin.portalalert.setup_link = function(data){
 		var d = data.portalDetails;
-		//window.plugin.portalalert.portal = d;
 		window.plugin.portalalert.portal = {title: d.descriptiveText.map.TITLE, address: d.descriptiveText.map.ADDRESS, lng: d.locationE6.lngE6, lat: d.locationE6.latE6};
 		$('#portaldetails').append('<div class="portalalert"> <a onclick="window.plugin.portalalert.submit_portal()" title="submit portal">Portalalert Submit</a></div>');
 	}
 	window.plugin.portalalert.submit_portal = function(){
-		var p = [];
-		var d = window.plugin.portalalert.portal;
-		$.ajax({url: 'http://portalalert.lorenzz.ch:3000/alert',type: 'POST', data:{'d': JSON.stringify(d)},dataType: 'jsop',success: function(r){return;}});
-		alert(JSON.stringify(d.portalV2));
+		$.ajax({url: 'http://portalalert.lorenzz.ch:3000/alert',type: 'POST', data:{'portal': JSON.stringify(window.plugin.portalalert.portal)},dataType: 'jsop',success: function(r){return;}});
+		//alert(JSON.stringify(d.portalV2));
 	}
 
 	var setup = function(){
