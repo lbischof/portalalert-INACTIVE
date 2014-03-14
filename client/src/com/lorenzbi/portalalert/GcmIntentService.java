@@ -134,8 +134,8 @@ public class GcmIntentService extends IntentService {
             Geofence.GEOFENCE_TRANSITION_ENTER);
 
         // Store this flat version in SharedPreferences
-        //mPrefs.setGeofence("1", mGeofence);
-
+        mPrefs = new SimpleGeofenceStore(this);
+        mPrefs.setGeofence("1", mGeofence);
        
         /*
          * Add Geofence objects to a List. toGeofence()

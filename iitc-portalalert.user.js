@@ -1,4 +1,6 @@
 // ==UserScript==
+// @id             ingress-ph-portal-submission
+// ==UserScript==
 // @id             ingress-portalalert
 // @name           PortalAlert
 // @version        0.1
@@ -15,14 +17,30 @@ function wrapper() {
 	window.plugin.portalalert.portal = [];
 	window.plugin.portalalert.setup_link = function(data){
 		var d = data.portalDetails;
-		window.plugin.portalalert.portal = {title: d.descriptiveText.map.TITLE, address: d.descriptiveText.map.ADDRESS, lng: d.locationE6.lngE6, lat: d.locationE6.latE6};
-		$('#portaldetails').append('<div class="portalalert"> <a onclick="window.plugin.portalalert.submit_portal()" title="submit portal">Portalalert Submit</a></div>');
+		var lat = d.locationE6.latE6 / 1e6
+        var lng = d.locationE6.lngE6 / 1e6
+		window.plugin.portalalert.portal = {title: d.descriptiveText.map.TITLE, address: d.descriptiveText.map.ADDRESS, lng: lng, lat: lat};
+		$('#portaldetails').append('<div class="portalalert"> <a onclick="window.plugin.portalalert.open_dialog()" title="submit portal">Portalalert Submit</a></div>');
 	}
 	window.plugin.portalalert.submit_portal = function(){
-		$.ajax({url: 'http://portalalert.lorenzz.ch:3000/alert',type: 'POST', data:{'portal': JSON.stringify(window.plugin.portalalert.portal)},dataType: 'jsop',success: function(r){return;}});
-		//alert(JSON.stringify(d.portalV2));
+        		$.ajax({url: 'http://portalalert.lorenzz.ch:3000/alert',type: 'POST', data:{'portal': JSON.stringify(window.plugin.portalalert.portal)},dataType: 'jsop',success: function(r){return;}});
 	}
-
+	
+    
+    window.plugin.portalalert.open_dialog = function() {
+        var dialogtext = "<input type=text></input>";
+        dialog({
+    	text: dialogtext + JSON.stringify(window.plugin.portalalert.portal),
+   		title: 'Portal Alert',
+    	id: 'portalalert',
+    	width: 350,
+    	buttons: {
+      		'Submit Portal': function() {
+        		window.plugin.portalalert.submit_portal();
+      		}
+    }
+  });
+    }
 	var setup = function(){
 		window.addHook('portalDetailsUpdated', window.plugin.portalalert.setup_link);
 	}

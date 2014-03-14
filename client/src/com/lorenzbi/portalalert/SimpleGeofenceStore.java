@@ -32,14 +32,14 @@ public class SimpleGeofenceStore {
 
     // The name of the resulting SharedPreferences
     private static final String SHARED_PREFERENCE_NAME =
-                    MainActivity.class.getSimpleName();
+                    GcmIntentService.class.getSimpleName();
 
     // Create the SharedPreferences storage with private access only
     public SimpleGeofenceStore(Context context) {
         mPrefs =
                 context.getSharedPreferences(
                         SHARED_PREFERENCE_NAME,
-                        Context.MODE_PRIVATE);
+                        0);
     }
 
     /**
