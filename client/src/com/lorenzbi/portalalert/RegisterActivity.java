@@ -169,7 +169,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 			registerGCM();
 			//Load the main map view
 			Toast.makeText(this, "Welcome "+personName+personEmail, Toast.LENGTH_LONG).show();
-			Intent intent = new Intent(this, GeofenceManager.class);
+			Intent intent = new Intent(this, MainActivity.class);
 		    startActivity(intent);
 		} else {
 			//Not an authorized frog! (maybe alert a admin so they can authorize)

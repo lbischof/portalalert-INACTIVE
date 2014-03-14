@@ -60,9 +60,10 @@
             </intent-filter>
         </activity>
 
+       
         <!-- Main Activity -->
         <activity
-            android:name="com.lorenzbi.portalalert.GeofenceManager"
+            android:name="com.lorenzbi.portalalert.MainActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name" >
         </activity>

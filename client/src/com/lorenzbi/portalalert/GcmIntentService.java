@@ -1,5 +1,9 @@
 package com.lorenzbi.portalalert;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -8,15 +12,43 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
+import android.text.format.DateUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.location.Geofence;
+import com.lorenzbi.portalalert.GeofenceUtils.REMOVE_TYPE;
+import com.lorenzbi.portalalert.GeofenceUtils.REQUEST_TYPE;
 
 public class GcmIntentService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
     NotificationCompat.Builder builder;
 
+    
+    private static final long GEOFENCE_EXPIRATION_IN_HOURS = 12;
+    private static final long GEOFENCE_EXPIRATION_IN_MILLISECONDS =
+            GEOFENCE_EXPIRATION_IN_HOURS * DateUtils.HOUR_IN_MILLIS;
+
+    // Store the current request
+    private REQUEST_TYPE mRequestType;
+
+    // Store the current type of removal
+    private REMOVE_TYPE mRemoveType;
+
+    // Persistent storage for geofences
+    private SimpleGeofenceStore mPrefs;
+
+    // Store a list of geofences to add
+    List<Geofence> mCurrentGeofences = new ArrayList<Geofence>();
+ // Store the list of geofences to remove
+    private List<String> mGeofenceIdsToRemove = new ArrayList<String>();
+    // Add geofences handler
+    private GeofenceRequester mGeofenceRequester = new GeofenceRequester(this);
+    // Remove geofences handler
+    private GeofenceRemover mGeofenceRemover = new GeofenceRemover(this);
+    
     public GcmIntentService() {
         super("GcmIntentService");
     }
@@ -53,8 +85,7 @@ public class GcmIntentService extends IntentService {
                 	Double lng = Double.parseDouble(extras.getString("lng"));
 					Float radius = Float.parseFloat("600") ;//extras.getInt("radius");
 					Log.i("lorenz",lat+":"+lng);
-				//GeofenceManager geofenceManager = new GeofenceManager();
-               //new GeofenceManager().createGeofences(lat, lng, radius );
+				createGeofences(lat,lng,radius);
             	
                 
                 Log.i("lorenz", "Completed work @ " + SystemClock.elapsedRealtime());
@@ -67,6 +98,104 @@ public class GcmIntentService extends IntentService {
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
+    public void createGeofences(Double lat, Double lng, Float radius) {
+
+        /*
+         * Record the request as an ADD. If a connection error occurs,
+         * the app can automatically restart the add request if Google Play services
+         * can fix the error
+         */
+        mRequestType = GeofenceUtils.REQUEST_TYPE.ADD;
+
+        /*
+         * Check for Google Play services. Do this after
+         * setting the request type. If connecting to Google Play services
+         * fails, onActivityResult is eventually called, and it needs to
+         * know what type of request was in progress.
+         */
+        
+
+       
+       
+
+        /*
+         * Create a version of geofence 1 that is "flattened" into individual fields. This
+         * allows it to be stored in SharedPreferences.
+         */
+        SimpleGeofence mGeofence = new SimpleGeofence(
+            "1",
+            // Get latitude, longitude, and radius from the UI
+            lat,
+            lng,
+            radius,
+            // Set the expiration time
+            GEOFENCE_EXPIRATION_IN_MILLISECONDS,
+            // Only detect entry transitions
+            Geofence.GEOFENCE_TRANSITION_ENTER);
+
+        // Store this flat version in SharedPreferences
+        //mPrefs.setGeofence("1", mGeofence);
+
+       
+        /*
+         * Add Geofence objects to a List. toGeofence()
+         * creates a Location Services Geofence object from a
+         * flat object
+         */
+        mCurrentGeofences.add(mGeofence.toGeofence());
+
+        // Start the request. Fail if there's already a request in progress
+        try {
+            // Try to add geofences
+            mGeofenceRequester.addGeofences(mCurrentGeofences);
+        } catch (UnsupportedOperationException e) {
+            // Notify user that previous request hasn't finished.
+            Toast.makeText(this, R.string.add_geofences_already_requested_error,
+                        Toast.LENGTH_LONG).show();
+        }
+    }
+    public void removeGeofences() {
+        /*
+         * Remove the geofence by creating a List of geofences to
+         * remove and sending it to Location Services. The List
+         * contains the id of geofence 2, which is "2".
+         * The removal happens asynchronously; Location Services calls
+         * onRemoveGeofencesByPendingIntentResult() (implemented in
+         * the current Activity) when the removal is done.
+         */
+
+        /*
+         * Record the removal as remove by list. If a connection error occurs,
+         * the app can automatically restart the removal if Google Play services
+         * can fix the error
+         */
+        mRemoveType = GeofenceUtils.REMOVE_TYPE.LIST;
+
+        // Create a List of 1 Geofence with the ID "2" and store it in the global list
+        mGeofenceIdsToRemove = Collections.singletonList("2");
+
+        /*
+         * Check for Google Play services. Do this after
+         * setting the request type. If connecting to Google Play services
+         * fails, onActivityResult is eventually called, and it needs to
+         * know what type of request was in progress.
+         */
+       
+
+        // Try to remove the geofence
+        try {
+            mGeofenceRemover.removeGeofencesById(mGeofenceIdsToRemove);
+
+        // Catch errors with the provided geofence IDs
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (UnsupportedOperationException e) {
+            // Notify user that previous request hasn't finished.
+            Toast.makeText(this, R.string.remove_geofences_already_requested_error,
+                        Toast.LENGTH_LONG).show();
+        }
+    }
+    
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
@@ -75,7 +204,7 @@ public class GcmIntentService extends IntentService {
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, GeofenceManager.class), 0);
+                new Intent(this, MainActivity.class), 0);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)

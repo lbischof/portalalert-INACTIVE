@@ -32,7 +32,7 @@ public class SimpleGeofenceStore {
 
     // The name of the resulting SharedPreferences
     private static final String SHARED_PREFERENCE_NAME =
-                    GeofenceManager.class.getSimpleName();
+                    MainActivity.class.getSimpleName();
 
     // Create the SharedPreferences storage with private access only
     public SimpleGeofenceStore(Context context) {
