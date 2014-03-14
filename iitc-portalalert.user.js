@@ -24,25 +24,35 @@ function wrapper() {
 	}
 	window.plugin.portalalert.submit_portal = function(){
         		$.ajax({url: 'http://portalalert.lorenzz.ch:3000/alert',type: 'POST', data:{'portal': JSON.stringify(window.plugin.portalalert.portal)},dataType: 'jsop',success: function(r){return;}});
-	}
+    }
 	
     
     window.plugin.portalalert.open_dialog = function() {
-        var dialogtext = "<input type=text></input>";
+        var dialogtext = "<select id=alert-type><option value=upgrade>Upgrade</option><option value=destroy>Destroy</option></select><br><label>Message</label><textarea id=alert-message></textarea>";
         dialog({
-    	text: dialogtext + JSON.stringify(window.plugin.portalalert.portal),
-   		title: 'Portal Alert',
+    	text: dialogtext,
+        title: 'Portal Alert: '+ window.plugin.portalalert.portal.title,
     	id: 'portalalert',
     	width: 350,
     	buttons: {
-      		'Submit Portal': function() {
+      		'Submit Alert': function() {
+                window.plugin.portalalert.portal.type = $('#alert-type').val();
+                window.plugin.portalalert.portal.message = $('#alert-message').val();
         		window.plugin.portalalert.submit_portal();
+                $(".ui-dialog").hide("slow");
       		}
     }
   });
     }
 	var setup = function(){
 		window.addHook('portalDetailsUpdated', window.plugin.portalalert.setup_link);
+        $('head').append('<style>' +
+                         '#dialog-portalalert label { display: block; }' +
+                         '#dialog-portalalert textarea { background: rgba(0, 0, 0, 0.3); color: #ffce00; height: 120px; width: 100%; padding: 4px 4px 0px 4px; font-size: 12px; border: 0; box-sizing: border-box; }' +
+                         '#dialog-portalalert select { background: rgba(0, 0, 0, 0.3); color: #ffce00; border: 0; padding: 5px;}' +
+                         '#dialog-portalalert option { background: rgba(8, 48, 78, 0.9); }' +
+                         '.ui-dialog button {padding: 5px; }'+
+    					 '</style>');
 	}
 
 	if(window.iitcLoaded && typeof setup === 'function') {setup();} 
