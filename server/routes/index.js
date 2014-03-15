@@ -44,8 +44,8 @@ exports.alert = function(db) {
     var lng = portal.lng;
     var title = portal.title;
     //var urgency = req.body.urgency;
-    //var type = req.body.type;
-    //var message = req.body.message;
+    var type = portal.type;
+    var message = portal.message;
 
     // Set our collection
     var collection = db.get('alerts');
@@ -57,7 +57,8 @@ exports.alert = function(db) {
     	"lng" : lng,
     	"title" : title,
     	//"urgency" : urgency,
-    	//"message" : message
+    	"message" : message,
+    	"type" : type
     }, function (err, doc) {
     	if (err) {
             // If it failed, return error
@@ -72,11 +73,12 @@ exports.alert = function(db) {
 			var message = new gcm.Message({
 				//collapseKey: 'demo',
 				delayWhileIdle: true,
-				timeToLive: 3,
 				data: {
 					lat: lat,
 					lng: lng,
-					title: title
+					title: title,
+					message: message,
+					type: type
 				}
 			});
 
