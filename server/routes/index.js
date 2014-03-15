@@ -38,6 +38,8 @@ exports.register = function(db) {
 exports.alert = function(db) {
 	return function(req, res) {
 	var portal = JSON.parse(req.body.portal);
+	var registrationIds = [];
+
 
     // Get our form values. These rely on the "name" attributes
     var lat = portal.lat;
@@ -85,7 +87,6 @@ exports.alert = function(db) {
 			});
 
 			var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
-			var registrationIds = [];
 
 			// At least one required
 			registrationIds.push('APA91bHU1j3-6WL_MRgtxkNMAUewQEJHFZyLbQWmqxfKgGkOFfwPGY3kkCdRsnjKoylhlI3iFk4e6CHU_qxfK2CHsaYmt8RtXG4jVdJVwAZEO5Qi9BFlrVivZkLecTdYpcK0ijxhY98JiC01RU9Xjx8Rcxh92sX86bN-5dPTZMXGnIc48kAdzxo');

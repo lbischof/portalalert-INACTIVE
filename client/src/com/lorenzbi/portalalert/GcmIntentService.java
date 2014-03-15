@@ -83,7 +83,7 @@ public class GcmIntentService extends IntentService {
             	
                 	Double lat = Double.parseDouble(extras.getString("lat"));
                 	Double lng = Double.parseDouble(extras.getString("lng"));
-					Float radius = Float.parseFloat("600") ;//extras.getInt("radius");
+					Float radius = Float.parseFloat("100") ;//extras.getInt("radius");
 					Log.i("lorenz",lat+":"+lng);
 				createGeofences(lat,lng,radius);
             	
@@ -130,8 +130,8 @@ public class GcmIntentService extends IntentService {
             radius,
             // Set the expiration time
             GEOFENCE_EXPIRATION_IN_MILLISECONDS,
-            // Only detect entry transitions
-            Geofence.GEOFENCE_TRANSITION_ENTER);
+            Geofence.GEOFENCE_TRANSITION_ENTER |
+            Geofence.GEOFENCE_TRANSITION_EXIT);
 
         // Store this flat version in SharedPreferences
         mPrefs = new SimpleGeofenceStore(this);
