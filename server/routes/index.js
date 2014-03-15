@@ -49,9 +49,12 @@ exports.alert = function(db) {
 
     // Set our collection
     var alerts = db.get('alerts');
+    var users = db.get('users');
 
     // Submit to the DB
-    process.stdout.write(lat+":"+lng);
+    users.find(function(err, docs){
+    	console.log(docs);
+    });
     alerts.insert({
     	"lat" : lat,
     	"lng" : lng,
