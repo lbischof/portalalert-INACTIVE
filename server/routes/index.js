@@ -49,9 +49,9 @@ exports.alert = function(db) {
     // Set our collection
 
     // Submit to the DB
-    users.find({}, 'regid', function(err, doc){
+    /*users.find({}, 'regid', function(err, doc){
     	console.log(doc);
-    });
+    });*/
     alerts.insert({
     	"lat" : lat,
     	"lng" : lng,
