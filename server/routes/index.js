@@ -12,10 +12,11 @@ exports.register = function(db) {
     var name = req.body.name;
 
     // Set our collection
+    var collection = db.get('users');
 
     // Submit to the DB
     process.stdout.write(regid+"test");
-    users.insert({
+    collection.insert({
     	"username" : username,
     	"email" : email,
     	"name" : name,
@@ -47,12 +48,11 @@ exports.alert = function(db) {
     var message = portal.message;
 
     // Set our collection
+    var collection = db.get('alerts');
 
     // Submit to the DB
-    /*users.find({}, 'regid', function(err, doc){
-    	console.log(doc);
-    });*/
-    alerts.insert({
+    process.stdout.write(lat+":"+lng);
+    collection.insert({
     	"lat" : lat,
     	"lng" : lng,
     	"title" : title,
