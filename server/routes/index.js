@@ -72,7 +72,6 @@ exports.alert = function(db) {
 			// or with object values
 			var message = new gcm.Message({
 				//collapseKey: 'demo',
-				delayWhileIdle: true,
 				data: {
 					lat: lat,
 					lng: lng,
