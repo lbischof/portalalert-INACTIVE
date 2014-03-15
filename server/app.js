@@ -11,8 +11,6 @@ var users = require('./routes/user');
 var mongo = require('mongodb');
 var monk = require('monk');
 var db = monk('localhost:27017/portalalert');
-var users = db.get('users');
-var alerts = db.get('alerts');
 var gcm = require('node-gcm');
 
 
