@@ -10,7 +10,7 @@ var routes = require('./routes');
 var users = require('./routes/user');
 var mongo = require('mongodb');
 var monk = require('monk');
-var db = monk('localhost:27017/portalalert');
+var db = monk('localhost:27017/portalalert'), users = db.get('users'), alerts = db.get('alerts');
 var gcm = require('node-gcm');
 
 
