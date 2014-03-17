@@ -42,7 +42,6 @@ exports.alert = function(db) {
 
 
     // Get our form values. These rely on the "name" attributes
-    var _id = ObjectId();
     var lat = portal.lat;
     var lng = portal.lng;
     var title = portal.title;
@@ -57,10 +56,9 @@ exports.alert = function(db) {
 
     // Submit to the DB
     users.find({}, ['regid'], function(err, docs){
-    	console.log(docs);
+    	//console.log(docs);
     });
     alerts.insert({
-    	"_id" : _id,
     	"lat" : lat,
     	"lng" : lng,
     	"title" : title,
@@ -73,6 +71,7 @@ exports.alert = function(db) {
             res.send("There was a problem adding the information to the database.");
         }
         else {
+        	console.log(doc);
         	var gcm = require('node-gcm');
         	// create a message with default values
         	var message = new gcm.Message();
@@ -81,7 +80,6 @@ exports.alert = function(db) {
 			var message = new gcm.Message({
 				//collapseKey: 'demo',
 				data: {
-					_id: _id,
 					lat: lat,
 					lng: lng,
 					title: title,
