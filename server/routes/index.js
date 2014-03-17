@@ -49,6 +49,7 @@ exports.alert = function(db) {
     //var urgency = req.body.urgency;
     var type = portal.type;
     var message = portal.message;
+				console.log(_id);
 
     // Set our collection
     var alerts = db.get('alerts');
