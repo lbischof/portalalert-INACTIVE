@@ -1,65 +1,88 @@
 package com.lorenzbi.portalalert;
 
-import java.util.List;
-
-import android.content.IntentFilter;
+import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.gms.location.Geofence;
-import com.lorenzbi.portalalert.GeofenceUtils.REMOVE_TYPE;
-import com.lorenzbi.portalalert.GeofenceUtils.REQUEST_TYPE;
-
-public class MainActivity extends FragmentActivity {
-	
-	  // Store the current request
-    private REQUEST_TYPE mRequestType;
-
-    // Store the current type of removal
-    private REMOVE_TYPE mRemoveType;
-
-    // Store a list of geofences to add
-    List<Geofence> mCurrentGeofences;
-
-    // Add geofences handler
-    private GeofenceRequester mGeofenceRequester;
-    // Remove geofences handler
-    private GeofenceRemover mGeofenceRemover;
-    
-	
-	
-
-    // An intent filter for the broadcast receiver
-    private IntentFilter mIntentFilter;
-
-    // Store the list of geofences to remove
-    private List<String> mGeofenceIdsToRemove;
-
+public class MainActivity extends Activity {
+	private String[] drawerListViewItems;
+    private DrawerLayout drawerLayout;
+    private ListView drawerListView;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
+ 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        
-        // Create an intent filter for the broadcast receiver
-        mIntentFilter = new IntentFilter();
-
-        // Action for broadcast Intents that report successful addition of geofences
-        mIntentFilter.addAction(GeofenceUtils.ACTION_GEOFENCES_ADDED);
-
-        // Action for broadcast Intents that report successful removal of geofences
-        mIntentFilter.addAction(GeofenceUtils.ACTION_GEOFENCES_REMOVED);
-
-        // Action for broadcast Intents containing various types of geofencing errors
-        mIntentFilter.addAction(GeofenceUtils.ACTION_GEOFENCE_ERROR);
-
-        // All Location Services sample apps use this category
-        mIntentFilter.addCategory(GeofenceUtils.CATEGORY_LOCATION_SERVICES);
-
-
-
+        setContentView(R.layout.activity_main);
+ 
+        // get list items from strings.xml
+        drawerListViewItems = getResources().getStringArray(R.array.nav_drawer_items);
+        // get ListView defined in activity_main.xml
+        drawerListView = (ListView) findViewById(R.id.left_drawer);
+ 
+        // Set the adapter for the list view
+        drawerListView.setAdapter(new ArrayAdapter<String>(this,
+        		android.R.layout.simple_list_item_1, drawerListViewItems));
+ 
+        // App Icon 
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+ 
+        actionBarDrawerToggle = new ActionBarDrawerToggle(
+                this,                  /* host Activity */
+                drawerLayout,         /* DrawerLayout object */
+                R.drawable.ic_drawer,  /* nav drawer icon to replace 'Up' caret */
+                R.string.drawer_open,  /* "open drawer" description */
+                R.string.drawer_close  /* "close drawer" description */
+                );
+ 
+        // Set actionBarDrawerToggle as the DrawerListener
+        drawerLayout.setDrawerListener(actionBarDrawerToggle);
+ 
+        getActionBar().setDisplayHomeAsUpEnabled(true); 
+ 
+        // just styling option add shadow the right edge of the drawer
+    drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+    drawerListView.setOnItemClickListener(new DrawerItemClickListener());
     }
-    
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+         actionBarDrawerToggle.syncState();
     }
-
-
-
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        actionBarDrawerToggle.onConfigurationChanged(newConfig);
+    }
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
+            Toast.makeText(MainActivity.this, ((TextView)view).getText(), Toast.LENGTH_LONG).show();
+            drawerLayout.closeDrawer(drawerListView);
+ 
+        }
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+ 
+         // call ActionBarDrawerToggle.onOptionsItemSelected(), if it returns true
+        // then it has handled the app icon touch event
+        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+ 
+	 
+	}

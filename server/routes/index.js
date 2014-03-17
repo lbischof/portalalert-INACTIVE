@@ -42,6 +42,7 @@ exports.alert = function(db) {
 
 
     // Get our form values. These rely on the "name" attributes
+    var _id = new MongoId();
     var lat = portal.lat;
     var lng = portal.lng;
     var title = portal.title;
@@ -58,6 +59,7 @@ exports.alert = function(db) {
     	console.log(docs);
     });
     alerts.insert({
+    	"_id" : _id,
     	"lat" : lat,
     	"lng" : lng,
     	"title" : title,
@@ -78,6 +80,7 @@ exports.alert = function(db) {
 			var message = new gcm.Message({
 				//collapseKey: 'demo',
 				data: {
+					_id: _id,
 					lat: lat,
 					lng: lng,
 					title: title,
