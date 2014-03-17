@@ -80,12 +80,11 @@ public class GcmIntentService extends IntentService {
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 // This loop represents the service doing some work.
             	
-            	
+            		String id = extras.getString("_id");
                 	Double lat = Double.parseDouble(extras.getString("lat"));
                 	Double lng = Double.parseDouble(extras.getString("lng"));
 					Float radius = Float.parseFloat("100") ;//extras.getInt("radius");
-					Log.i("lorenz",lat+":"+lng);
-				createGeofences(lat,lng,radius);
+				createGeofences(id, lat,lng,radius);
             	
                 
                 Log.i("lorenz", "Completed work @ " + SystemClock.elapsedRealtime());
@@ -98,7 +97,7 @@ public class GcmIntentService extends IntentService {
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
-    public void createGeofences(Double lat, Double lng, Float radius) {
+    public void createGeofences(String id, Double lat, Double lng, Float radius) {
 
         /*
          * Record the request as an ADD. If a connection error occurs,
@@ -123,7 +122,7 @@ public class GcmIntentService extends IntentService {
          * allows it to be stored in SharedPreferences.
          */
         SimpleGeofence mGeofence = new SimpleGeofence(
-            "1",
+            id,
             // Get latitude, longitude, and radius from the UI
             lat,
             lng,
@@ -135,7 +134,7 @@ public class GcmIntentService extends IntentService {
 
         // Store this flat version in SharedPreferences
         mPrefs = new SimpleGeofenceStore(this);
-        mPrefs.setGeofence("1", mGeofence);
+        mPrefs.setGeofence(id, mGeofence);
        
         /*
          * Add Geofence objects to a List. toGeofence()
