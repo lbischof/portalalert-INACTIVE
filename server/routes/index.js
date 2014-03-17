@@ -69,7 +69,7 @@ exports.alert = function(db) {
             res.send("There was a problem adding the information to the database.");
         }
         else {
-        	console.log(doc);
+        	
         	var gcm = require('node-gcm');
         	// create a message with default values
         	var message = new gcm.Message();
@@ -77,13 +77,7 @@ exports.alert = function(db) {
 			// or with object values
 			var message = new gcm.Message({
 				//collapseKey: 'demo',
-				data: {
-					lat: lat,
-					lng: lng,
-					title: title,
-					message: message,
-					type: type
-				}
+				data: doc
 			});
 
 			var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
