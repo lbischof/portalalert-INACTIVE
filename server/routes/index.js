@@ -42,7 +42,7 @@ exports.alert = function(db) {
 
 
     // Get our form values. These rely on the "name" attributes
-    var _id = "ieaieaiea";
+    var _id = new ObjectId();
     var lat = portal.lat;
     var lng = portal.lng;
     var title = portal.title;
