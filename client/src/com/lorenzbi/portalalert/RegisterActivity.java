@@ -77,6 +77,8 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		ringProgressDialog = ProgressDialog.show(RegisterActivity.this, "Please wait...", "Signing into Google Plus...", true);
+		ringProgressDialog.setCancelable(true);
 		setContentView(R.layout.activity_register);
 		
 		//TODO: Check if google play services is installed
@@ -101,8 +103,6 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	}
 	protected void onStart() {
 		super.onStart();
-		ringProgressDialog = ProgressDialog.show(RegisterActivity.this, "Please wait ...", "Downloading Image ...", true);
-		ringProgressDialog.setCancelable(true);
 		mGoogleApiClient.connect();
 	}
 
