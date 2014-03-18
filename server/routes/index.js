@@ -53,7 +53,7 @@ exports.alert = function(db) {
     var users = db.get('users');
 
     // Submit to the DB
-    users.find({}, ['regid', '-_id'], function(err, docs){
+    users.find({}, 'regid -_id', function(err, docs){
     console.log(docs);
 });
     alerts.insert({
