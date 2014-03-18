@@ -2,6 +2,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
+    android:layout_width="fill_parent"
+ 	android:layout_height="wrap_content"
+ 	android:layout_gravity="top"
+ 	android:gravity="center_vertical"
         >
   	<android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"
@@ -24,9 +28,5 @@
             android:dividerHeight="0dp"
             android:background="#fff"/>
 </android.support.v4.widget.DrawerLayout>
-  <FrameLayout
-    android:id="@+id/act_content"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    </FrameLayout>
+  
 </LinearLayout>

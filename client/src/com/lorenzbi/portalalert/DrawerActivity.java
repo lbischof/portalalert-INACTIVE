@@ -28,7 +28,7 @@ public class DrawerActivity extends Activity {
     @Override
     public void setContentView(final int layoutResID) {
         fullLayout= (LinearLayout) getLayoutInflater().inflate(R.layout.layout_drawer, null); // Your base layout here
-        actContent= (FrameLayout) fullLayout.findViewById(R.id.act_content);
+        actContent= (FrameLayout) fullLayout.findViewById(R.id.content_frame);
         getLayoutInflater().inflate(layoutResID, actContent, true); // Setting the content of layout your provided to the act_content frame
         super.setContentView(fullLayout);
         
@@ -60,6 +60,10 @@ public class DrawerActivity extends Activity {
         // just styling option add shadow the right edge of the drawer
     drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
     drawerListView.setOnItemClickListener(new DrawerItemClickListener());
+    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+    	super.onCreate(savedInstanceState);
     }
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {

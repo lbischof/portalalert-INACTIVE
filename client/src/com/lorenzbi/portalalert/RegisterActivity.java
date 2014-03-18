@@ -73,7 +73,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	 * us from starting further intents.
 	 */
 	private boolean mIntentInProgress;
-	private ProgressDialog ringProgressDialog;
+	public static ProgressDialog ringProgressDialog;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -179,6 +179,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 			Intent intent = new Intent(this, MainActivity.class);
 		    startActivity(intent);
 		} else {
+			
 			//Not an authorized frog! (maybe alert a admin so they can authorize)
 		}
 	}
