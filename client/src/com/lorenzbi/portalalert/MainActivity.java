@@ -26,8 +26,7 @@ public class MainActivity extends DrawerActivity {
 
 		ListAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, values);
 		 mListView.setAdapter(adapter);
-		 Alert alert = sqliteadapter.addAlert("test");
-	     //adapter.add(alert);
+	   
 		 addAlert("test");
     }
     public void addAlert(String alertname) {

@@ -13,7 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class SQLiteAdapter {
 	// Database fields
 		private DataBaseWrapper dbHelper;
-		private String[] ALERT_TABLE_COLUMNS = { DataBaseWrapper.ALERT_ID, DataBaseWrapper.ALERT_NAME };
+		private String[] ALERT_TABLE_COLUMNS = { DataBaseWrapper.ALERT_ID, DataBaseWrapper.ALERT_TITLE, DataBaseWrapper.ALERT_MESSAGE };
 		private SQLiteDatabase database;
 
 		public SQLiteAdapter(Context context) {
@@ -28,12 +28,12 @@ public class SQLiteAdapter {
 			dbHelper.close();
 		}
 
-		public Alert addAlert(String name) {
+		public Alert addAlert(String title) {
 
 			ContentValues values = new ContentValues();
 
-			values.put(DataBaseWrapper.ALERT_NAME, name);
-
+			values.put(DataBaseWrapper.ALERT_TITLE, title);
+			values.put(DataBaseWrapper.ALERT_MESSAGE, "");
 			long studId = database.insert(DataBaseWrapper.ALERTS, null, values);
 
 			// now that the alert is created return it ...
@@ -74,8 +74,9 @@ public class SQLiteAdapter {
 
 		private Alert parseAlert(Cursor cursor) {
 			Alert alert = new Alert();
-			alert.setId((cursor.getInt(0)));
-			alert.setName(cursor.getString(1));
+			alert.setId(cursor.getInt(0));
+			alert.setTitle(cursor.getString(1));
+			alert.setMessage(cursor.getString(2));
 			return alert;
 		}
 	
@@ -84,15 +85,16 @@ public class SQLiteAdapter {
 
 		public static final String ALERTS = "Alerts";
 		public static final String ALERT_ID = "_id";
-		public static final String ALERT_NAME = "_name";
-
+		public static final String ALERT_TITLE = "_title";
+		public static final String ALERT_MESSAGE = "_message";
+		
 		private static final String DATABASE_NAME = "Alerts.db";
 		private static final int DATABASE_VERSION = 1;
 
 		// creation SQLite statement
 		private static final String DATABASE_CREATE = "create table " + ALERTS
 				+ "(" + ALERT_ID + " integer primary key autoincrement, "
-				+ ALERT_NAME + " text not null);";
+				+ ALERT_TITLE + " text not null, "+ ALERT_MESSAGE + " text);";
 
 		public DataBaseWrapper(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -117,7 +119,8 @@ public class SQLiteAdapter {
 	public class Alert {
 
 		private int id;
-		private String name;
+		private String title;
+		private String message;
 
 		public long getId() {
 			return id;
@@ -127,17 +130,23 @@ public class SQLiteAdapter {
 			this.id = id;
 		}
 
-		public String getName() {
-			return this.name;
+		public String getTitle() {
+			return this.title;
 		}
 
-		public void setName(String name) {
-			this.name = name;
+		public void setTitle(String title) {
+			this.title = title;
+		}
+		public String getMessage() {
+			return this.message;
 		}
 
+		public void setMessage(String message) {
+			this.message = message;
+		}
 		@Override
 		public String toString() {
-			return name;
+			return title;
 		}
 	}
 	}
