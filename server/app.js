@@ -55,7 +55,9 @@ if (app.get('env') === 'development') {
         });
     });
 }
-
+process.on('uncaughtException', function(err) {
+  console.error(err.stack);
+});
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
