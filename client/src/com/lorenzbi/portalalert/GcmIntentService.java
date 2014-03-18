@@ -114,13 +114,6 @@ public class GcmIntentService extends IntentService {
          */
         
 
-       
-       
-
-        /*
-         * Create a version of geofence 1 that is "flattened" into individual fields. This
-         * allows it to be stored in SharedPreferences.
-         */
         SimpleGeofence mGeofence = new SimpleGeofence(
             id,
             // Get latitude, longitude, and radius from the UI
@@ -153,7 +146,7 @@ public class GcmIntentService extends IntentService {
                         Toast.LENGTH_LONG).show();
         }
     }
-    public void removeGeofences() {
+    public void removeGeofences(String id) {
         /*
          * Remove the geofence by creating a List of geofences to
          * remove and sending it to Location Services. The List
@@ -171,7 +164,7 @@ public class GcmIntentService extends IntentService {
         mRemoveType = GeofenceUtils.REMOVE_TYPE.LIST;
 
         // Create a List of 1 Geofence with the ID "2" and store it in the global list
-        mGeofenceIdsToRemove = Collections.singletonList("2");
+        mGeofenceIdsToRemove = Collections.singletonList(id);
 
         /*
          * Check for Google Play services. Do this after
