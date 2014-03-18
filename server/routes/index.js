@@ -39,8 +39,6 @@ exports.alert = function(db) {
 	return function(req, res) {
 	var portal = JSON.parse(req.body.portal);
 	var registrationIds = [];
-
-
     // Get our form values. These rely on the "name" attributes
     var lat = portal.lat;
     var lng = portal.lng;
@@ -54,50 +52,35 @@ exports.alert = function(db) {
 
     // Submit to the DB
     users.find({}, 'regid -_id', function(err, docs){
-for (var i = 0; i < docs.length; i++) {
-    registrationIds.push(docs[i].regid);
-}
- alerts.insert({
-    	"lat" : lat,
-    	"lng" : lng,
-    	"title" : title,
-    	//"urgency" : urgency,
-    	"message" : message,
-    	"type" : type
-    }, function (err, doc) {
-    	if (err) {
-            // If it failed, return error
-            res.send("There was a problem adding the information to the database.");
-        }
-        else {
-        	
-        	var gcm = require('node-gcm');
-        	// create a message with default values
-        	var message = new gcm.Message();
-
-			// or with object values
-			var message = new gcm.Message({
-				//collapseKey: 'demo',
-				data: doc
-			});
-
-			var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
-
-			//registrationIds.push('regId2'); 
-
-			/**
-			* Params: message-literal, registrationIds-array, No. of retries, callback-function
-			**/
-			sender.send(message, registrationIds, 4, function (err, result) {
-				console.log(result);
-			});
-			            // If it worked, set the header so the address bar doesn't still say /adduser
-			            //res.location("userlist");
-			            // And forward to success page
-			            //res.redirect("userlist");
+		for (var i = 0; i < docs.length; i++) {
+    	registrationIds.push(docs[i].regid);
 		}
-	});
-});
-   
-}
+ 		alerts.insert({
+    		"lat" : lat,
+    		"lng" : lng,
+    		"title" : title,
+    		//"urgency" : urgency,
+    		"message" : message,
+    		"type" : type
+    	}, function (err, doc) {
+    		if (err) {
+            // If it failed, return error
+            	res.send("There was a problem adding the information to the database.");
+        	} else {
+        		var gcm = require('node-gcm');
+				var message = new gcm.Message({
+					//collapseKey: 'demo',
+					data: doc
+				});
+				var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
+				/**
+				* Params: message-literal, registrationIds-array, No. of retries, callback-function
+				**/
+				sender.send(message, registrationIds, 4, function (err, result) {
+					console.log(result);
+				});
+			}
+		});
+	});  
+	}
 }
