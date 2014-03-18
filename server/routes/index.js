@@ -54,7 +54,12 @@ exports.alert = function(db) {
 
     // Submit to the DB
     users.find({}, 'regid -_id', function(err, docs){
-    console.log(docs);
+for (var key in docs) {
+    if (docs.hasOwnProperty(key)) {
+      arr.push(registrationIds[key]);  
+    }
+}
+console.log(registrationIds);
 });
     alerts.insert({
     	"lat" : lat,
