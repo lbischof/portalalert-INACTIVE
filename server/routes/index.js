@@ -54,7 +54,7 @@ exports.alert = function(db) {
 
     // Submit to the DB
     users.find({}, {'regid' : 1}).toArray(function(err, docs){
-    console.log(docs);
+    console.log(err);
 });
     alerts.insert({
     	"lat" : lat,
