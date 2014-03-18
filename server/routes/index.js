@@ -57,9 +57,7 @@ exports.alert = function(db) {
 for (var i = 0; i < docs.length; i++) {
     registrationIds.push(docs[i].regid);
 }
-console.log(registrationIds);
-});
-    alerts.insert({
+ alerts.insert({
     	"lat" : lat,
     	"lng" : lng,
     	"title" : title,
@@ -99,5 +97,7 @@ console.log(registrationIds);
 			            //res.redirect("userlist");
 		}
 	});
+});
+   
 }
 }
