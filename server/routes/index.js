@@ -55,9 +55,7 @@ exports.alert = function(db) {
     // Submit to the DB
     users.find({}, 'regid -_id', function(err, docs){
 for (var key in docs) {
-    if (docs.hasOwnProperty(key)) {
       registrationIds.push(docs[key]);  
-    }
 }
 console.log(registrationIds);
 });
