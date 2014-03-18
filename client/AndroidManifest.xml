@@ -53,7 +53,8 @@
         <activity
             android:name="com.lorenzbi.portalalert.RegisterActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Enlightened" >
+            android:theme="@style/Theme.Enlightened" 
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

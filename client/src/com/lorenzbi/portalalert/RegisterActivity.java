@@ -15,6 +15,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
@@ -72,6 +73,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	 * us from starting further intents.
 	 */
 	private boolean mIntentInProgress;
+	private ProgressDialog ringProgressDialog;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -86,6 +88,8 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 		.addScope(Plus.SCOPE_PLUS_LOGIN)
 		.build();
 		findViewById(R.id.sign_in_button).setOnClickListener(this);
+		
+
 	}
 	@Override
 	public void onClick(View view) {
@@ -97,6 +101,8 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	}
 	protected void onStart() {
 		super.onStart();
+		ringProgressDialog = ProgressDialog.show(RegisterActivity.this, "Please wait ...", "Downloading Image ...", true);
+		ringProgressDialog.setCancelable(true);
 		mGoogleApiClient.connect();
 	}
 
@@ -131,6 +137,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	}
 
 	public void onConnectionFailed(ConnectionResult result) {
+        ringProgressDialog.dismiss();
 		if (!mIntentInProgress) {
 			// Store the ConnectionResult so that we can use it later when the user clicks
 			// 'sign-in'.
