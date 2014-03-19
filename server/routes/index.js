@@ -51,6 +51,7 @@ exports.alert = function(db) {
     var users = db.get('users');
 
     // Submit to the DB
+    users.ensureIndex( { regid: 1 }, { unique: true } );
     users.find({}, 'regid -_id', function(err, docs){
 		for (var i = 0; i < docs.length; i++) {
     	registrationIds.push(docs[i].regid);
