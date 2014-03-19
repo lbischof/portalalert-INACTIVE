@@ -7,29 +7,27 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.lorenzbi.portalalert.SQLiteAdapter.Alert;
-
 public class MainActivity extends DrawerActivity {
     private SQLiteAdapter sqliteadapter;
-    private ListView mListView;
- 
+    private static ListView mListView;
+    public static List listAlerts;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mListView = (ListView) findViewById(R.id.contentlist);
-        RegisterActivity.ringProgressDialog.dismiss();
+        if (RegisterActivity.ringProgressDialog.isShowing()){
+        	RegisterActivity.ringProgressDialog.dismiss();
+        }
         sqliteadapter = new SQLiteAdapter(this);
         sqliteadapter.open();
 
-		List values = sqliteadapter.getAllAlerts();
+		listAlerts = sqliteadapter.getAllAlerts();
 
-		ListAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, values);
-		 mListView.setAdapter(adapter);
-	   
-		 addAlert("test");
+		ListAdapter adapter = new ArrayAdapter<String>(this, R.layout.row, R.id.textrow, listAlerts);
+		mListView.setAdapter(adapter);
     }
-    public void addAlert(String alertname) {
+    /*public void addAlert(String alertname) {
 
 		ArrayAdapter adapter = (ArrayAdapter) mListView.getAdapter();
 
@@ -38,10 +36,14 @@ public class MainActivity extends DrawerActivity {
 
 		adapter.add(alert);
 
-	}
-    
+	}*/
+    public void refreshList(){
+    	ArrayAdapter adapter = (ArrayAdapter) mListView.getAdapter();
+    	adapter.notifyDataSetChanged();
+    }
     @Override
 	protected void onResume() {
+    	refreshList();
     	sqliteadapter.open();
 		super.onResume();
 	}

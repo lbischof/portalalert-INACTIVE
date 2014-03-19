@@ -20,11 +20,13 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.location.Geofence;
 import com.lorenzbi.portalalert.GeofenceUtils.REMOVE_TYPE;
 import com.lorenzbi.portalalert.GeofenceUtils.REQUEST_TYPE;
+import com.lorenzbi.portalalert.SQLiteAdapter.Alert;
 
 public class GcmIntentService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
     NotificationCompat.Builder builder;
+    private SQLiteAdapter sqliteadapter;
 
     
     private static final long GEOFENCE_EXPIRATION_IN_HOURS = 12;
@@ -134,6 +136,10 @@ public class GcmIntentService extends IntentService {
          * creates a Location Services Geofence object from a
          * flat object
          */
+        sqliteadapter = new SQLiteAdapter(this);
+        sqliteadapter.open();
+        Alert alert = sqliteadapter.addAlert(lat+lng+"");
+        MainActivity.listAlerts.add(alert);
         mCurrentGeofences.add(mGeofence.toGeofence());
 
         // Start the request. Fail if there's already a request in progress

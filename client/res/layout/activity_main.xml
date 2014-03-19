@@ -3,10 +3,20 @@
         android:orientation="horizontal"
   android:layout_width="fill_parent"
   android:layout_height="wrap_content"
+  android:background="#e5e5e5"
   >
 
 <ListView
 android:id="@+id/contentlist"
+android:layout_marginLeft="13dp"
+android:layout_marginRight="2dp"
 android:layout_width="fill_parent"
-android:layout_height="fill_parent"/>
+android:layout_height="fill_parent"
+android:divider="@null"
+android:dividerHeight="0dp"
+android:clipToPadding="false"
+  android:paddingTop="16dp"
+  android:paddingBottom="16dp"
+android:scrollbarStyle="outsideInset"
+/>
 </LinearLayout>
