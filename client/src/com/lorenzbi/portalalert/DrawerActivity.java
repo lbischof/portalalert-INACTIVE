@@ -16,6 +16,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+
 public class DrawerActivity extends Activity {
 
 	private String[] drawerListViewItems;
@@ -31,7 +33,6 @@ public class DrawerActivity extends Activity {
         actContent= (FrameLayout) fullLayout.findViewById(R.id.content_frame);
         getLayoutInflater().inflate(layoutResID, actContent, true); // Setting the content of layout your provided to the act_content frame
         super.setContentView(fullLayout);
-        
      // get list items from strings.xml
         drawerListViewItems = getResources().getStringArray(R.array.nav_drawer_items);
         // get ListView defined in activity_main.xml
@@ -60,11 +61,9 @@ public class DrawerActivity extends Activity {
         // just styling option add shadow the right edge of the drawer
     drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
     drawerListView.setOnItemClickListener(new DrawerItemClickListener());
+     
     }
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-    	super.onCreate(savedInstanceState);
-    }
+   
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);

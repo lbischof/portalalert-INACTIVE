@@ -1,58 +1,75 @@
 package com.lorenzbi.portalalert;
 
-import java.util.List;
-
+import android.app.LoaderManager;
+import android.content.Loader;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
+import android.os.StrictMode;
+import android.view.Menu;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
-public class MainActivity extends DrawerActivity {
-    private SQLiteAdapter sqliteadapter;
-    private static ListView mListView;
-    public static List listAlerts;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        mListView = (ListView) findViewById(R.id.contentlist);
-        if (RegisterActivity.ringProgressDialog.isShowing()){
-        	RegisterActivity.ringProgressDialog.dismiss();
-        }
-        sqliteadapter = new SQLiteAdapter(this);
-        sqliteadapter.open();
+import com.commonsware.cwac.loaderex.SQLiteCursorLoader;
 
-		listAlerts = sqliteadapter.getAllAlerts();
+public class MainActivity extends DrawerActivity implements
+LoaderManager.LoaderCallbacks<Cursor> {
+	private static final int ADD_ID=Menu.FIRST + 1;
+	private static final int DELETE_ID=Menu.FIRST + 3;
+	private DatabaseHelper db=null;
+	private SimpleCursorAdapter adapter=null;
+	private SQLiteCursorLoader loader=null;
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		super.onCreate(savedInstanceState);
+		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll()
+                .penaltyLog()
+                .build());
+		StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectLeakedSqlLiteObjects()
+		        .detectLeakedClosableObjects()
+		        .penaltyLog()
+		        .penaltyDeath()
+		        .build());
 
-		ListAdapter adapter = new ArrayAdapter<String>(this, R.layout.row, R.id.textrow, listAlerts);
-		mListView.setAdapter(adapter);
-    }
-    /*public void addAlert(String alertname) {
-
-		ArrayAdapter adapter = (ArrayAdapter) mListView.getAdapter();
-
+		setContentView(R.layout.activity_main);
 		
-		Alert alert = sqliteadapter.addAlert(alertname);
+		 db=new DatabaseHelper(this);
+		 adapter=
+			        new SimpleCursorAdapter(this, R.layout.row, null, new String[] {
+			            DatabaseHelper.TITLE, DatabaseHelper.MESSAGE }, new int[] {
+			            R.id.title, R.id.message }, 0);
+		 
+		 ListView lv=(ListView)findViewById(R.id.contentlist);
 
-		adapter.add(alert);
-
-	}*/
-    public void refreshList(){
-    	ArrayAdapter adapter = (ArrayAdapter) mListView.getAdapter();
-    	adapter.notifyDataSetChanged();
-    }
-    @Override
-	protected void onResume() {
-    	refreshList();
-    	sqliteadapter.open();
-		super.onResume();
+		    lv.setAdapter(adapter);
+		    registerForContextMenu(lv);
+		    getLoaderManager().initLoader(0, null, this);
+		 
+		if (RegisterActivity.ringProgressDialog.isShowing()){
+			RegisterActivity.ringProgressDialog.dismiss();
+		}
+		
 	}
 
 	@Override
-	protected void onPause() {
-		sqliteadapter.close();
-		super.onPause();
+	public Loader<Cursor> onCreateLoader(int loaderId, Bundle arg1) {
+		loader=
+		        new SQLiteCursorLoader(this, db, "SELECT _ID, title, message "
+		            + "FROM constants ORDER BY title", null);
+
+		    return(loader);
 	}
-    
-	 
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		this.loader=(SQLiteCursorLoader)loader;
+	    adapter.changeCursor(cursor);
 	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+	    adapter.changeCursor(null);
+		
+	}
+	
+}
