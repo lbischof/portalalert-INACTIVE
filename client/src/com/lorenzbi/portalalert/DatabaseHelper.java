@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.hardware.SensorManager;
+import android.text.TextUtils;
+import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "db";
@@ -73,7 +75,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		cv.put(MESSAGE, SensorManager.GRAVITY_VENUS);
 		db.insert("constants", TITLE, cv);
 	}
+	public boolean addAlert(String title, String message){
+		if(TextUtils.isEmpty(title)){
+            return false;
+        }
 
+        ContentValues row = new ContentValues();
+        row.put(TITLE, title);
+        row.put(MESSAGE, message);
+
+        SQLiteDatabase database = getWritableDatabase();
+        database.insert("constants", null, row);
+        database.close();
+
+        Log.i("portalalert Lorenz", String.format("(%s) %s inserted", title, message));
+        return true;
+    }
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		android.util.Log.w("Constants",

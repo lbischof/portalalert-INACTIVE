@@ -1,6 +1,7 @@
 package com.lorenzbi.portalalert;
 
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -17,7 +18,7 @@ LoaderManager.LoaderCallbacks<Cursor> {
 	private static final int DELETE_ID=Menu.FIRST + 3;
 	private DatabaseHelper db=null;
 	private SimpleCursorAdapter adapter=null;
-	private SQLiteCursorLoader loader=null;
+	public SQLiteCursorLoader loader=null;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -50,7 +51,7 @@ LoaderManager.LoaderCallbacks<Cursor> {
 		}
 		
 	}
-
+	
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderId, Bundle arg1) {
 		loader=

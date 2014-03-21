@@ -7,6 +7,7 @@ import java.util.List;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.commonsware.cwac.loaderex.SQLiteCursorLoader;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.location.Geofence;
 import com.lorenzbi.portalalert.GeofenceUtils.REMOVE_TYPE;
@@ -84,7 +86,13 @@ public class GcmIntentService extends IntentService {
                 	Double lat = Double.parseDouble(extras.getString("lat"));
                 	Double lng = Double.parseDouble(extras.getString("lng"));
 					Float radius = Float.parseFloat("100") ;//extras.getInt("radius");
-				createGeofences(id, lat,lng,radius);
+					String title = extras.getString("title");
+					String message = extras.getString("message");
+					createGeofences(id, lat,lng,radius);
+					
+					
+					DatabaseHelper dbHelper = new DatabaseHelper(this);
+					dbHelper.addAlert(title,message);
             	
                 
                 Log.i("lorenz", "Completed work @ " + SystemClock.elapsedRealtime());
@@ -96,7 +104,7 @@ public class GcmIntentService extends IntentService {
         // Release the wake lock provided by the WakefulBroadcastReceiver.
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
-
+   
     public void createGeofences(String id, Double lat, Double lng, Float radius) {
 
         /*
@@ -147,6 +155,7 @@ public class GcmIntentService extends IntentService {
                         Toast.LENGTH_LONG).show();
         }
     }
+    
     public void removeGeofences(String id) {
         /*
          * Remove the geofence by creating a List of geofences to
