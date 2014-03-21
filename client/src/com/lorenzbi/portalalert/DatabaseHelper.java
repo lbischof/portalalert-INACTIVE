@@ -1,7 +1,11 @@
 package com.lorenzbi.portalalert;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.hardware.SensorManager;
@@ -10,6 +14,7 @@ import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "db";
+	static final String ID = "id";
 	static final String TITLE = "title";
 	static final String MESSAGE = "message";
 	static final String USERID = "userid";
@@ -24,7 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL("CREATE TABLE alerts (_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, message TEXT, userid TEXT, type INTEGER, urgency INTEGER, lat REAL, lng REAL, time INTEGER)");
+		db.execSQL("CREATE TABLE alerts (_id INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT, title TEXT, message TEXT, userid TEXT, type INTEGER, urgency INTEGER, lat REAL, lng REAL, time INTEGER)");
 
 		ContentValues cv = new ContentValues();
 
@@ -80,12 +85,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		cv.put(MESSAGE, SensorManager.GRAVITY_VENUS);
 		db.insert("alerts", TITLE, cv);
 	}
-	public boolean addAlert(String title, String message){
+	public boolean addAlert(String id, String title, String message){
 		if(TextUtils.isEmpty(title)){
             return false;
         }
-
         ContentValues row = new ContentValues();
+        row.put(ID, id);
         row.put(TITLE, title);
         row.put(MESSAGE, message);
 
@@ -96,6 +101,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.i("portalalert Lorenz", String.format("(%s) %s inserted", title, message));
         return true;
     }
+	public List<String> getAlert(String id){
+		List<String> alert = new ArrayList<String>();
+        Cursor cursor = getReadableDatabase().rawQuery("select * from alerts where id = ?", new String[] { id });
+        if (cursor.moveToFirst()){
+        	   
+  	      		alert.add(cursor.getString(cursor.getColumnIndex("id")));
+  	      		alert.add(cursor.getString(cursor.getColumnIndex("title")));
+  	      		alert.add(cursor.getString(cursor.getColumnIndex("message")));
+
+        	      
+        	      // do what ever you want here
+        	   
+        	}
+		return alert;
+	}
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		android.util.Log.w("Constants",

@@ -40,7 +40,6 @@ public class GcmIntentService extends IntentService {
     private REMOVE_TYPE mRemoveType;
 
     // Persistent storage for geofences
-    private SimpleGeofenceStore mPrefs;
 
     // Store a list of geofences to add
     List<Geofence> mCurrentGeofences = new ArrayList<Geofence>();
@@ -92,7 +91,7 @@ public class GcmIntentService extends IntentService {
 					
 					
 					DatabaseHelper dbHelper = new DatabaseHelper(this);
-					dbHelper.addAlert(title,message);
+					dbHelper.addAlert(id, title,message);
             	
                 
                 Log.i("lorenz", "Completed work @ " + SystemClock.elapsedRealtime());
@@ -133,10 +132,7 @@ public class GcmIntentService extends IntentService {
             Geofence.GEOFENCE_TRANSITION_ENTER |
             Geofence.GEOFENCE_TRANSITION_EXIT);
 
-        // Store this flat version in SharedPreferences
-        mPrefs = new SimpleGeofenceStore(this);
-        mPrefs.setGeofence(id, mGeofence);
-       
+        
         /*
          * Add Geofence objects to a List. toGeofence()
          * creates a Location Services Geofence object from a
