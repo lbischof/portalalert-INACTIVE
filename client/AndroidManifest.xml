@@ -55,11 +55,7 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.Enlightened" 
             >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            
         </activity>
 
        
@@ -69,6 +65,11 @@
             android:configChanges="orientation|keyboardHidden"
             android:theme="@style/Theme.Enlightened" >
             android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <service android:name="com.lorenzbi.portalalert.ReceiveTransitionsIntentService" android:exported="false"></service>

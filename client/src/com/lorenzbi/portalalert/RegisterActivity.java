@@ -24,6 +24,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -78,7 +79,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		ringProgressDialog = ProgressDialog.show(RegisterActivity.this, "Please wait...", "Signing into Google Plus...", true);
-		ringProgressDialog.setCancelable(true);
+		ringProgressDialog.setCancelable(false);
 		setContentView(R.layout.activity_register);
 		
 		//TODO: Check if google play services is installed
@@ -155,18 +156,18 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	public void onConnected(Bundle connectionHint) {
 		final EditText usernameInput = (EditText)findViewById(R.id.username);
 		ingressUsername = usernameInput.getText().toString(); //TODO do something with this
-		
-		
+		String personPhotoUrl = "";
+		String personId = null;
 		mSignInClicked = false;
 		try { 
                 Person currentPerson = Plus.PeopleApi
                         .getCurrentPerson(mGoogleApiClient);
                 personName = currentPerson.getDisplayName();
-                String personPhotoUrl = currentPerson.getImage().getUrl();
+                personPhotoUrl = currentPerson.getImage().getUrl();
                 Log.i ("com.lorenzbi.portalalertResisterActivity", personPhotoUrl);
                // String personGooglePlusProfile = currentPerson.getUrl();
                 personEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
- 
+                personId = currentPerson.getId();
                 
         } catch (Exception e) {
             e.printStackTrace();
@@ -174,6 +175,15 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 		
 		if (isFrog(personEmail)) { //always returns true at the moment
 			registerGCM();
+			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putString("name", personName);
+			editor.putString("email", personEmail);
+			editor.putString("username", ingressUsername);
+			editor.putString("picture", personPhotoUrl);
+			editor.putString("id", personId);
+			editor.putBoolean("loggedIn", true);
+			editor.commit();
 			//Load the main map view
 			Toast.makeText(this, "Welcome "+personName+personEmail, Toast.LENGTH_LONG).show();
 			Intent intent = new Intent(this, MainActivity.class);
@@ -182,6 +192,8 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 			
 			//Not an authorized frog! (maybe alert a admin so they can authorize)
 		}
+	    ringProgressDialog.dismiss();
+	    finish();
 	}
 
 	public void registerGCM() {

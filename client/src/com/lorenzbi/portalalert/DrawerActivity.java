@@ -1,8 +1,11 @@
 package com.lorenzbi.portalalert;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -29,6 +32,14 @@ public class DrawerActivity extends Activity {
 
     @Override
     public void setContentView(final int layoutResID) {
+    	final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+    	boolean loggedIn = prefs.getBoolean("loggedIn", false);
+    	if (!loggedIn) {
+    		Intent intent = new Intent(this, RegisterActivity.class);
+    		startActivity(intent);
+    		finish();
+    	}
+    	
         fullLayout= (LinearLayout) getLayoutInflater().inflate(R.layout.layout_drawer, null); // Your base layout here
         actContent= (FrameLayout) fullLayout.findViewById(R.id.content_frame);
         getLayoutInflater().inflate(layoutResID, actContent, true); // Setting the content of layout your provided to the act_content frame
@@ -63,7 +74,7 @@ public class DrawerActivity extends Activity {
     drawerListView.setOnItemClickListener(new DrawerItemClickListener());
      
     }
-   
+    
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);

@@ -12,6 +12,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "db";
 	static final String TITLE = "title";
 	static final String MESSAGE = "message";
+	static final String USERID = "userid";
+	static final String TYPE = "type";
+	static final String URGENCY = "urgency";
+	static final String LATITUDE = "lat";
+	static final String LONGITUDE = "lng";
 
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, 1);
@@ -19,61 +24,61 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL("CREATE TABLE constants (_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, message TEXT);");
+		db.execSQL("CREATE TABLE alerts (_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, message TEXT, userid TEXT, type INTEGER, urgency INTEGER, lat REAL, lng REAL, time INTEGER)");
 
 		ContentValues cv = new ContentValues();
 
 		cv.put(TITLE, "Gravity, Death Star I");
 		cv.put(MESSAGE, SensorManager.GRAVITY_DEATH_STAR_I+"");
-		db.insert("constants", TITLE, cv);
+		db.insert("alerts", TITLE, cv);
 
 		cv.put(TITLE, "Gravity, Earth");
 		cv.put(MESSAGE, SensorManager.GRAVITY_EARTH);
-		db.insert("constants", TITLE, cv);
+		db.insert("alerts", TITLE, cv);
 
 		cv.put(TITLE, "Gravity, Jupiter");
 		cv.put(MESSAGE, SensorManager.GRAVITY_JUPITER);
-		db.insert("constants", TITLE, cv);
+		db.insert("alerts", TITLE, cv);
 
 		cv.put(TITLE, "Gravity, Mars");
 		cv.put(MESSAGE, SensorManager.GRAVITY_MARS);
-		db.insert("constants", TITLE, cv);
+		db.insert("alerts", TITLE, cv);
 
 		cv.put(TITLE, "Gravity, Mercury");
 		cv.put(MESSAGE, SensorManager.GRAVITY_MERCURY);
-		db.insert("constants", TITLE, cv);
+		db.insert("alerts", TITLE, cv);
 
 		cv.put(TITLE, "Gravity, Moon");
 		cv.put(MESSAGE, SensorManager.GRAVITY_MOON);
-		db.insert("constants", TITLE, cv);
+		db.insert("alerts", TITLE, cv);
 
 		cv.put(TITLE, "Gravity, Neptune");
 		cv.put(MESSAGE, SensorManager.GRAVITY_NEPTUNE);
-		db.insert("constants", TITLE, cv);
+		db.insert("alerts", TITLE, cv);
 
 		cv.put(TITLE, "Gravity, Pluto");
 		cv.put(MESSAGE, SensorManager.GRAVITY_PLUTO);
-		db.insert("constants", TITLE, cv);
+		db.insert("alerts", TITLE, cv);
 
 		cv.put(TITLE, "Gravity, Saturn");
 		cv.put(MESSAGE, SensorManager.GRAVITY_SATURN);
-		db.insert("constants", TITLE, cv);
+		db.insert("alerts", TITLE, cv);
 
 		cv.put(TITLE, "Gravity, Sun");
 		cv.put(MESSAGE, SensorManager.GRAVITY_SUN);
-		db.insert("constants", TITLE, cv);
+		db.insert("alerts", TITLE, cv);
 
 		cv.put(TITLE, "Gravity, The Island");
 		cv.put(MESSAGE, SensorManager.GRAVITY_THE_ISLAND);
-		db.insert("constants", TITLE, cv);
+		db.insert("alerts", TITLE, cv);
 
 		cv.put(TITLE, "Gravity, Uranus");
 		cv.put(MESSAGE, SensorManager.GRAVITY_URANUS);
-		db.insert("constants", TITLE, cv);
+		db.insert("alerts", TITLE, cv);
 
 		cv.put(TITLE, "Gravity, Venus");
 		cv.put(MESSAGE, SensorManager.GRAVITY_VENUS);
-		db.insert("constants", TITLE, cv);
+		db.insert("alerts", TITLE, cv);
 	}
 	public boolean addAlert(String title, String message){
 		if(TextUtils.isEmpty(title)){
@@ -85,7 +90,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         row.put(MESSAGE, message);
 
         SQLiteDatabase database = getWritableDatabase();
-        database.insert("constants", null, row);
+        database.insert("alerts", null, row);
         database.close();
 
         Log.i("portalalert Lorenz", String.format("(%s) %s inserted", title, message));
@@ -95,7 +100,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		android.util.Log.w("Constants",
 				"Upgrading database, which will destroy all old data");
-		db.execSQL("DROP TABLE IF EXISTS constants");
+		db.execSQL("DROP TABLE IF EXISTS alerts");
 		onCreate(db);
 	}
 }

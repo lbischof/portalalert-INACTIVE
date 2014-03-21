@@ -46,9 +46,9 @@ LoaderManager.LoaderCallbacks<Cursor> {
 		    registerForContextMenu(lv);
 		    getLoaderManager().initLoader(0, null, this);
 		 
-		if (RegisterActivity.ringProgressDialog.isShowing()){
+		/*if (RegisterActivity.ringProgressDialog.isShowing()){
 			RegisterActivity.ringProgressDialog.dismiss();
-		}
+		}*/
 		
 	}
 	
@@ -56,7 +56,7 @@ LoaderManager.LoaderCallbacks<Cursor> {
 	public Loader<Cursor> onCreateLoader(int loaderId, Bundle arg1) {
 		loader=
 		        new SQLiteCursorLoader(this, db, "SELECT _ID, title, message "
-		            + "FROM constants ORDER BY title", null);
+		            + "FROM alerts ORDER BY title", null);
 
 		    return(loader);
 	}
