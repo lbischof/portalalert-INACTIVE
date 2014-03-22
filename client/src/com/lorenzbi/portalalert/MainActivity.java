@@ -55,7 +55,7 @@ LoaderManager.LoaderCallbacks<Cursor> {
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderId, Bundle arg1) {
 		loader=
-		        new SQLiteCursorLoader(this, db, "SELECT _ID, title, message "
+		        new SQLiteCursorLoader(this, db, "SELECT _id, id, title, message "
 		            + "FROM alerts ORDER BY title", null);
 
 		    return(loader);

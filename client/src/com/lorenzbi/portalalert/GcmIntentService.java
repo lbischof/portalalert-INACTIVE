@@ -87,11 +87,11 @@ public class GcmIntentService extends IntentService {
 					Float radius = Float.parseFloat("100") ;//extras.getInt("radius");
 					String title = extras.getString("title");
 					String message = extras.getString("message");
-					createGeofences(id, lat,lng,radius);
-					
+					Alert alert = new Alert(id, title, message, 0, 0, lat, lng, radius);
+					createGeofences(alert);
 					
 					DatabaseHelper dbHelper = new DatabaseHelper(this);
-					dbHelper.addAlert(id, title,message);
+					dbHelper.addAlert(alert);
             	
                 
                 Log.i("lorenz", "Completed work @ " + SystemClock.elapsedRealtime());
@@ -104,7 +104,7 @@ public class GcmIntentService extends IntentService {
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
    
-    public void createGeofences(String id, Double lat, Double lng, Float radius) {
+    public void createGeofences(Alert alert) {
 
         /*
          * Record the request as an ADD. If a connection error occurs,
@@ -122,11 +122,10 @@ public class GcmIntentService extends IntentService {
         
 
         SimpleGeofence mGeofence = new SimpleGeofence(
-            id,
-            // Get latitude, longitude, and radius from the UI
-            lat,
-            lng,
-            radius,
+            alert.getId(),
+            alert.getLat(),
+            alert.getLng(),
+            alert.getRadius(),
             // Set the expiration time
             GEOFENCE_EXPIRATION_IN_MILLISECONDS,
             Geofence.GEOFENCE_TRANSITION_ENTER |

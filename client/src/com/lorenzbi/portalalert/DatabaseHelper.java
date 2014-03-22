@@ -85,34 +85,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		cv.put(MESSAGE, SensorManager.GRAVITY_VENUS);
 		db.insert("alerts", TITLE, cv);
 	}
-	public boolean addAlert(String id, String title, String message){
-		if(TextUtils.isEmpty(title)){
+	public boolean addAlert(Alert alert){
+		if(TextUtils.isEmpty(alert.getTitle())){
             return false;
         }
         ContentValues row = new ContentValues();
-        row.put(ID, id);
-        row.put(TITLE, title);
-        row.put(MESSAGE, message);
+        row.put(ID, alert.getId());
+        row.put(TITLE, alert.getTitle());
+        row.put(MESSAGE, alert.getMessage());
 
         SQLiteDatabase database = getWritableDatabase();
         database.insert("alerts", null, row);
         database.close();
 
-        Log.i("portalalert Lorenz", String.format("(%s) %s inserted", title, message));
+        //Log.i("portalalert Lorenz", String.format("(%s) %s inserted", title, message));
         return true;
     }
-	public List<String> getAlert(String id){
-		List<String> alert = new ArrayList<String>();
+	public Alert getAlert(String id){
+		Alert alert = null;
         Cursor cursor = getReadableDatabase().rawQuery("select * from alerts where id = ?", new String[] { id });
         if (cursor.moveToFirst()){
-        	   
-  	      		alert.add(cursor.getString(cursor.getColumnIndex("id")));
-  	      		alert.add(cursor.getString(cursor.getColumnIndex("title")));
-  	      		alert.add(cursor.getString(cursor.getColumnIndex("message")));
+        		String title = cursor.getString(cursor.getColumnIndex("title"));
+        		String message = cursor.getString(cursor.getColumnIndex("message"));
+        		Double lat = cursor.getDouble(cursor.getColumnIndex("lat"));
+        		Double lng = cursor.getDouble(cursor.getColumnIndex("lng"));
+        		Float radius = cursor.getFloat(cursor.getColumnIndex("message"));
 
-        	      
-        	      // do what ever you want here
-        	   
+
+        	   	alert = new Alert(id, title, message, 0, 0, lat, lng, radius);
         	}
 		return alert;
 	}

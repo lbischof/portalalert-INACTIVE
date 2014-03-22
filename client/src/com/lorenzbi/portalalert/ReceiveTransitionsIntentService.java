@@ -87,7 +87,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
                 String ids = TextUtils.join(GeofenceUtils.GEOFENCE_ID_DELIMITER,geofenceIds);
                 String transitionType = getTransitionString(transition);
                 DatabaseHelper dbHelper = new DatabaseHelper(this);
-                List<String> alert = dbHelper.getAlert(ids);
+                Alert alert = dbHelper.getAlert(ids);
                 sendNotification(alert);
 
                 // Log the transition type and a message
@@ -114,7 +114,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
      * @param transitionType The type of transition that occurred.
      *
      */
-    private void sendNotification(List<String> alert) {
+    private void sendNotification(Alert alert) {
 
         // Create an explicit content Intent that starts the main Activity
         Intent notificationIntent =
@@ -138,8 +138,8 @@ public class ReceiveTransitionsIntentService extends IntentService {
 
         // Set the notification contents
         builder.setSmallIcon(R.drawable.ic_drawer)
-               .setContentTitle(alert.get(1))
-               .setContentText(alert.get(2))
+               .setContentTitle(alert.getTitle())
+               .setContentText(alert.getMessage())
                .setContentIntent(notificationPendingIntent);
 
         // Get an instance of the Notification manager
