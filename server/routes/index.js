@@ -11,8 +11,7 @@ exports.register = function(db) {
     var email = req.body.email;
     var regid = req.body.regid;
     var name = req.body.name;
-    var lat = req.body.lat;
-    var lng = req.body.lng;
+    
 
     // Set our collection
     var users = db.get('users');
@@ -24,8 +23,7 @@ exports.register = function(db) {
     	"username" : username,
     	"email" : email,
     	"name" : name,
-    	"regid" : regid,
-    	"location" : [lng,lat]
+    	"regid" : regid
     }, function (err, doc) {
     	if (err) {
             // If it failed, return error
@@ -88,4 +86,34 @@ exports.alert = function(db) {
 		});
 	});  
 	}
+}
+exports.userlocation = function(db) {
+	return function(req, res) {
+
+    // Get our form values. These rely on the "name" attributes
+    var userid = req.body.userid;
+    var lat = req.body.lat;
+    var lng = req.body.lng;
+
+    // Set our collection
+    var users = db.get('users');
+
+    // Submit to the DB
+    process.stdout.write(regid+"test");
+    users.insert({
+    	"userid" : userid,
+    	"location" : [lng,lat]
+    }, function (err, doc) {
+    	if (err) {
+            // If it failed, return error
+            res.send("There was a problem adding the information to the database.");
+        }
+        else {
+            // If it worked, set the header so the address bar doesn't still say /adduser
+            //res.location("userlist");
+            // And forward to success page
+            //res.redirect("userlist");
+        }
+    });
+}
 }

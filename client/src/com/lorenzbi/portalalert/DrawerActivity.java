@@ -39,7 +39,7 @@ public class DrawerActivity extends Activity {
     		startActivity(intent);
     		finish();
     	}
-    	
+
         fullLayout= (LinearLayout) getLayoutInflater().inflate(R.layout.layout_drawer, null); // Your base layout here
         actContent= (FrameLayout) fullLayout.findViewById(R.id.content_frame);
         getLayoutInflater().inflate(layoutResID, actContent, true); // Setting the content of layout your provided to the act_content frame

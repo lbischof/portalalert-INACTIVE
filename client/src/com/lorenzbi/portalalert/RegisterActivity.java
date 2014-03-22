@@ -22,6 +22,8 @@ import android.content.IntentSender.SendIntentException;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -38,13 +40,15 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 public class RegisterActivity extends Activity implements
 ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	
 	/* GCM VARIABLES */
 	public static final String EXTRA_MESSAGE = "message";
-    public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     //private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
@@ -63,13 +67,15 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
     String regid;
     String personName = "";
 	String personEmail = "";
+	String personId = "";
 
+	Double lat = null;
+	Double lng = null;
 	/* GOOGLE LOGIN VARIABLES */
 	private GoogleApiClient mGoogleApiClient;
 	/* Request code used to invoke sign in user interactions. */
 	private static final int RC_SIGN_IN = 0;
-
-
+	public boolean waitForLocation = false;
 	/* A flag indicating that a PendingIntent is in progress and prevents
 	 * us from starting further intents.
 	 */
@@ -78,8 +84,9 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		ringProgressDialog = ProgressDialog.show(RegisterActivity.this, "Please wait...", "Signing into Google Plus...", true);
-		ringProgressDialog.setCancelable(false);
+		ringProgressDialog.setCancelable(true);
 		setContentView(R.layout.activity_register);
 		
 		//TODO: Check if google play services is installed
@@ -92,7 +99,15 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 		.build();
 		findViewById(R.id.sign_in_button).setOnClickListener(this);
 		
+		try {
+            // this.locatorService= new
+            // Intent(FastMainActivity.this,LocatorService.class);
+            // startService(this.locatorService);
 
+            FetchCordinates fetchCordinates = new FetchCordinates();
+            fetchCordinates.execute();
+        } catch (Exception error) {
+        }
 	}
 	@Override
 	public void onClick(View view) {
@@ -100,8 +115,19 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 				&& !mGoogleApiClient.isConnecting()) {
 			mSignInClicked = true;
 			resolveSignInError();
+			ringProgressDialog = ProgressDialog.show(RegisterActivity.this, "Please wait...", "Signing into Google Plus...", true);
+			ringProgressDialog.setCancelable(true);
 		}
 	}
+	@Override
+	protected void onResume() {
+		super.onResume();
+	}
+	   @Override
+	   protected void onPause() {
+	    // TODO Auto-generated method stub
+	    super.onPause();
+	   }
 	protected void onStart() {
 		super.onStart();
 		mGoogleApiClient.connect();
@@ -157,7 +183,6 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 		final EditText usernameInput = (EditText)findViewById(R.id.username);
 		ingressUsername = usernameInput.getText().toString(); //TODO do something with this
 		String personPhotoUrl = "";
-		String personId = null;
 		mSignInClicked = false;
 		try { 
                 Person currentPerson = Plus.PeopleApi
@@ -173,7 +198,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
             e.printStackTrace();
         }
 		
-		if (isFrog(personEmail)) { //always returns true at the moment
+		if (isFrog(personId)) { //always returns true at the moment
 			registerGCM();
 			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 			SharedPreferences.Editor editor = prefs.edit();
@@ -186,16 +211,24 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 			editor.commit();
 			//Load the main map view
 			Toast.makeText(this, "Welcome "+personName+personEmail, Toast.LENGTH_LONG).show();
-			Intent intent = new Intent(this, MainActivity.class);
-		    startActivity(intent);
+			if (lat != null) {
+				registered();
+			} else {
+				waitForLocation = true;
+			}
 		} else {
-			
+			ringProgressDialog.dismiss();
+		    finish();
 			//Not an authorized frog! (maybe alert a admin so they can authorize)
 		}
-	    ringProgressDialog.dismiss();
-	    finish();
+	    
 	}
-
+	public void registered() {
+		ringProgressDialog.dismiss();
+		Intent intent = new Intent(this, MainActivity.class);
+		startActivity(intent);
+		finish();
+	}
 	public void registerGCM() {
 		context = getApplicationContext();
 
@@ -215,8 +248,8 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	 *         registration ID.
 	 */
 	private String getRegistrationId(Context context) {
-	    final SharedPreferences prefs = getGCMPreferences(context);
-	    String registrationId = prefs.getString(PROPERTY_REG_ID, "");
+	    final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+	    String registrationId = prefs.getString("regid", "");
 	    if (registrationId.isEmpty()) {
 	        Log.i(TAG, "Registration not found.");
 	        return "";
@@ -250,16 +283,9 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
                     regid = gcm.register(SENDER_ID);
                     msg = "Device registered, registration ID=" + regid;
 
-                    // You should send the registration ID to your server over HTTP, so it
-                    // can use GCM/HTTP or CCS to send messages to your app.
-
-                    // For this demo: we don't need to send it because the device will send
-                    // upstream messages to a server that echo back the message using the
-                    // 'from' address in the message.
-                    sendRegistrationIdToBackend();
-
-                    // Persist the regID - no need to register again.
+                    
                     storeRegistrationId(context, regid);
+
                 } catch (IOException ex) {
                     msg = "Error :" + ex.getMessage();
                     // If there is an error, don't just keep trying to register.
@@ -270,7 +296,8 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
             }
 
             @Override
-            protected void onPostExecute(String msg) {
+            protected void onPostExecute(String msg) {                    
+            	sendRegistrationIdToBackend();
             }
         }.execute(null, null, null);
     }
@@ -282,58 +309,44 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
      * using the 'from' address in the message.
      */
     private void sendRegistrationIdToBackend() {
-    	HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("http://portalalert.lorenzz.ch:3000/register");
-
-        try {
-            // Add your data
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
-            nameValuePairs.add(new BasicNameValuePair("username", ingressUsername));
-            nameValuePairs.add(new BasicNameValuePair("regid", regid));
-            nameValuePairs.add(new BasicNameValuePair("name", personName ));
-            nameValuePairs.add(new BasicNameValuePair("email", personEmail));
-
-            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-            // Execute HTTP Post Request
-            HttpResponse response = httpclient.execute(httppost);
-            Log.i ("com.lorenzbi.portalalert.RegisterActivity", response.getStatusLine ().toString ());
-
-        } catch (ClientProtocolException e) {
-            // TODO Auto-generated catch block
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-        }
+    	AsyncHttpClient client = new AsyncHttpClient();
+    	RequestParams params = new RequestParams();
+    	params.put("username", ingressUsername);
+    	params.put("regid", regid);
+    	params.put("name", personName );
+    	params.put("email", personEmail);
+    	params.put("userid", personId);
+    	client.post("http://portalalert.lorenzz.ch:3000/register", params, new AsyncHttpResponseHandler() {
+    	    @Override
+    	    public void onSuccess(String response) {
+    	        System.out.println(response);
+    	    }
+    	});
     }
-    
-    /**
-     * Stores the registration ID and app versionCode in the application's
-     * {@code SharedPreferences}.
-     *
-     * @param context application's context.
-     * @param regId registration ID
-     */
+    private void sendCurrentLocationToBackend() {
+    	AsyncHttpClient client = new AsyncHttpClient();
+    	RequestParams params = new RequestParams();
+    	params.put("userid", personId);
+    	params.put("lat", lat);
+    	params.put("lng", lng);
+    	client.post("http://portalalert.lorenzz.ch:3000/userlocation", params, new AsyncHttpResponseHandler() {
+    	    @Override
+    	    public void onSuccess(String response) {
+    	        System.out.println(response);
+    	    }
+    	});
+    }
     private void storeRegistrationId(Context context, String regId) {
-        final SharedPreferences prefs = getGCMPreferences(context);
+        final SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         int appVersion = getAppVersion(context);
         Log.i(TAG, "Saving regId on app version " + appVersion);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(PROPERTY_REG_ID, regId);
+        editor.putString("regid", regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.commit();
+
     }
     
-    
-    
-	/**
-	 * @return Application's {@code SharedPreferences}.
-	 */
-	private SharedPreferences getGCMPreferences(Context context) {
-	    // This sample app persists the registration ID in shared preferences, but
-	    // how you store the regID in your app is up to you.
-	    return getSharedPreferences(RegisterActivity.class.getSimpleName(),
-	            Context.MODE_PRIVATE);
-	}
 	/**
 	 * @return Application's version code from the {@code PackageManager}.
 	 */
@@ -347,8 +360,21 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	        throw new RuntimeException("Could not get package name: " + e);
 	    }
 	}
+	public void updateLoc(Location loc) {
+		lat = loc.getLatitude();
+		lng = loc.getLongitude();
+		sendCurrentLocationToBackend();
+		if(waitForLocation){
+			registered();
+		}
+	}
 	
-	
+    
+
+    // Required functions    
+    public void onProviderDisabled(String arg0) {}
+    public void onProviderEnabled(String arg0) {}
+    public void onStatusChanged(String arg0, int arg1, Bundle arg2) {}
 	
 	public boolean isFrog(String email) {
 		//TODO: Check if person is a valid Frog (maybe a serverside list of email adresses, don't know...) 
@@ -375,5 +401,98 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 			}
 		}
 	}
+	public class FetchCordinates extends AsyncTask<String, Integer, String> {
 
+        public double lati = 0.0;
+        public double longi = 0.0;
+
+        public LocationManager mLocationManager;
+        public VeggsterLocationListener mVeggsterLocationListener;
+
+        @Override
+        protected void onPreExecute() {
+            mVeggsterLocationListener = new VeggsterLocationListener();
+            mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+            mLocationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER, 0, 0,
+                    mVeggsterLocationListener);
+
+            
+            
+
+        }
+
+        @Override
+        protected void onCancelled(){
+            System.out.println("Cancelled by user!");
+            mLocationManager.removeUpdates(mVeggsterLocationListener);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i("taian", "LATITUDE :" + lati + " LONGITUDE :" + longi);
+            mLocationManager.removeUpdates(mVeggsterLocationListener);
+            Toast.makeText(RegisterActivity.this,
+                    "LATITUDE :" + lati + " LONGITUDE :" + longi,
+                    Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            // TODO Auto-generated method stub
+
+            while (this.lati == 0.0) {
+
+            }
+            return null;
+        }
+
+        public class VeggsterLocationListener implements android.location.LocationListener {
+
+            @Override
+            public void onLocationChanged(Location location) {
+            	if (location.getAccuracy() < 150) {
+                  updateLoc(location);
+
+                try {
+
+                    // LocatorService.myLatitude=location.getLatitude();
+
+                    // LocatorService.myLongitude=location.getLongitude();
+
+                    lati = location.getLatitude();
+                    longi = location.getLongitude();
+
+                } catch (Exception e) {
+                    // progDailog.dismiss();
+                    // Toast.makeText(getApplicationContext(),"Unable to get Location"
+                    // , Toast.LENGTH_LONG).show();
+                }
+            	}
+            }
+
+			@Override
+			public void onProviderDisabled(String provider) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onProviderEnabled(String provider) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onStatusChanged(String provider, int status,
+					Bundle extras) {
+				// TODO Auto-generated method stub
+				
+			}
+
+
+        }
+
+    }
 }

@@ -1,12 +1,10 @@
 package com.lorenzbi.portalalert;
 
 import android.app.LoaderManager;
-import android.content.ContentValues;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.view.Menu;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
@@ -14,8 +12,6 @@ import com.commonsware.cwac.loaderex.SQLiteCursorLoader;
 
 public class MainActivity extends DrawerActivity implements
 LoaderManager.LoaderCallbacks<Cursor> {
-	private static final int ADD_ID=Menu.FIRST + 1;
-	private static final int DELETE_ID=Menu.FIRST + 3;
 	private DatabaseHelper db=null;
 	private SimpleCursorAdapter adapter=null;
 	public SQLiteCursorLoader loader=null;

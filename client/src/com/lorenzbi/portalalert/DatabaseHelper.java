@@ -1,16 +1,11 @@
 package com.lorenzbi.portalalert;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.hardware.SensorManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "db";
@@ -29,61 +24,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL("CREATE TABLE alerts (_id INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT, title TEXT, message TEXT, userid TEXT, type INTEGER, urgency INTEGER, lat REAL, lng REAL, time INTEGER)");
+		db.execSQL("CREATE TABLE alerts (_id INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE ON CONFLICT REPLACE, title TEXT, message TEXT, userid TEXT, type INTEGER, urgency INTEGER, lat REAL, lng REAL, time INTEGER)");
 
-		ContentValues cv = new ContentValues();
-
-		cv.put(TITLE, "Gravity, Death Star I");
-		cv.put(MESSAGE, SensorManager.GRAVITY_DEATH_STAR_I+"");
-		db.insert("alerts", TITLE, cv);
-
-		cv.put(TITLE, "Gravity, Earth");
-		cv.put(MESSAGE, SensorManager.GRAVITY_EARTH);
-		db.insert("alerts", TITLE, cv);
-
-		cv.put(TITLE, "Gravity, Jupiter");
-		cv.put(MESSAGE, SensorManager.GRAVITY_JUPITER);
-		db.insert("alerts", TITLE, cv);
-
-		cv.put(TITLE, "Gravity, Mars");
-		cv.put(MESSAGE, SensorManager.GRAVITY_MARS);
-		db.insert("alerts", TITLE, cv);
-
-		cv.put(TITLE, "Gravity, Mercury");
-		cv.put(MESSAGE, SensorManager.GRAVITY_MERCURY);
-		db.insert("alerts", TITLE, cv);
-
-		cv.put(TITLE, "Gravity, Moon");
-		cv.put(MESSAGE, SensorManager.GRAVITY_MOON);
-		db.insert("alerts", TITLE, cv);
-
-		cv.put(TITLE, "Gravity, Neptune");
-		cv.put(MESSAGE, SensorManager.GRAVITY_NEPTUNE);
-		db.insert("alerts", TITLE, cv);
-
-		cv.put(TITLE, "Gravity, Pluto");
-		cv.put(MESSAGE, SensorManager.GRAVITY_PLUTO);
-		db.insert("alerts", TITLE, cv);
-
-		cv.put(TITLE, "Gravity, Saturn");
-		cv.put(MESSAGE, SensorManager.GRAVITY_SATURN);
-		db.insert("alerts", TITLE, cv);
-
-		cv.put(TITLE, "Gravity, Sun");
-		cv.put(MESSAGE, SensorManager.GRAVITY_SUN);
-		db.insert("alerts", TITLE, cv);
-
-		cv.put(TITLE, "Gravity, The Island");
-		cv.put(MESSAGE, SensorManager.GRAVITY_THE_ISLAND);
-		db.insert("alerts", TITLE, cv);
-
-		cv.put(TITLE, "Gravity, Uranus");
-		cv.put(MESSAGE, SensorManager.GRAVITY_URANUS);
-		db.insert("alerts", TITLE, cv);
-
+		/*ContentValues cv = new ContentValues();
 		cv.put(TITLE, "Gravity, Venus");
 		cv.put(MESSAGE, SensorManager.GRAVITY_VENUS);
-		db.insert("alerts", TITLE, cv);
+		db.insert("alerts", TITLE, cv);*/
 	}
 	public boolean addAlert(Alert alert){
 		if(TextUtils.isEmpty(alert.getTitle())){
