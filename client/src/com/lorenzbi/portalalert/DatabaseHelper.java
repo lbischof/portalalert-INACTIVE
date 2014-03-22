@@ -112,7 +112,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         		Float radius = cursor.getFloat(cursor.getColumnIndex("message"));
 
 
-        	   	alert = new Alert(id, title, message, 0, 0, lat, lng, radius);
+        	   	alert = new Alert(id, title, message, 0, 0, lat, lng, radius, "", 0);
         	}
 		return alert;
 	}
