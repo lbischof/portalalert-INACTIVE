@@ -6,6 +6,7 @@ exports.register = function(db) {
 	return function(req, res) {
 
     // Get our form values. These rely on the "name" attributes
+    var userid = req.body.userid;
     var username = req.body.username;
     var email = req.body.email;
     var regid = req.body.regid;
@@ -19,6 +20,7 @@ exports.register = function(db) {
     // Submit to the DB
     process.stdout.write(regid+"test");
     users.insert({
+    	"userid" : userid,
     	"username" : username,
     	"email" : email,
     	"name" : name,
