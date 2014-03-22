@@ -57,8 +57,7 @@ exports.alert = function(db) {
     	registrationIds.push(docs[i].regid);
 		}
  		alerts.insert({
-    		"lat" : lat,
-    		"lng" : lng,
+    		"location" : [lng,lat],
     		"title" : title,
     		//"urgency" : urgency,
     		"message" : message,
