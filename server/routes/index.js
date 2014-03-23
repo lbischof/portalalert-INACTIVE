@@ -35,6 +35,8 @@ exports.register = function(db) {
             res.send("There was a problem adding the information to the database.");
         }
         else {
+        	process.stdout.write("docs");
+
             alerts.find({"location" : {$near : { $geometry : { type: "Point", coordinates : [lng, lat]}, $maxDistance : 1000}}}, function(err, docs) {
             	process.stdout.write(docs);
             });
