@@ -28,7 +28,7 @@ exports.register = function(db) {
     	"email" : email,
     	"name" : name,
     	"regid" : regid,
-    	"location" : { type: "Point", coordinates : [ lng,lat ] }
+    	"location" : { "type": "Point", "coordinates" : [ lng,lat ] }
     }, function (err, doc) {
     	if (err) {
             // If it failed, return error
@@ -68,7 +68,7 @@ exports.alert = function(db) {
 		registrationIds = docs;
  		alerts.insert({
  			"regids" : registrationIds,
-    		"location" : { type: "Point", coordinates : [ lng,lat ] },
+    		"location" : { "type": "Point", "coordinates" : [ lng,lat ] },
     		"title" : title,
     		//"urgency" : urgency,
     		"message" : message,
