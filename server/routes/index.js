@@ -19,6 +19,7 @@ exports.register = function(db) {
 
     // Submit to the DB
     process.stdout.write(regid+"test");
+    users.ensureIndex( { regid: 1 }, { unique: true } );
     users.insert({
     	"userid" : userid,
     	"username" : username,
@@ -56,12 +57,13 @@ exports.alert = function(db) {
     var users = db.get('users');
 
     // Submit to the DB
-    users.ensureIndex( { regid: 1 }, { unique: true } );
+    console.log(users.distinct('regid'));
     users.find({}, 'regid -_id', function(err, docs){
 		for (var i = 0; i < docs.length; i++) {
     	registrationIds.push(docs[i].regid);
 		}
  		alerts.insert({
+ 			"regids" : registrationIds,
     		"location" : [ lng,lat ],
     		"title" : title,
     		//"urgency" : urgency,
