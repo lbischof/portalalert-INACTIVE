@@ -28,7 +28,7 @@ exports.register = function(db) {
     	"email" : email,
     	"name" : name,
     	"regid" : regid,
-    	"loc" : { type: "point", coordinates : [ lng,lat ] }
+    	"location" : { type: "point", coordinates : [ lng,lat ] }
     }, function (err, doc) {
     	if (err) {
             // If it failed, return error
