@@ -74,7 +74,7 @@ exports.alert = function(db) {
         	} else {
         		console.log(message);
         		var gcm = require('node-gcm');
-				var message = new gcm.Message({
+				var gcmMessage = new gcm.Message({
 					//collapseKey: 'demo',
 					data: {
 						"_id" : doc._id,
@@ -90,7 +90,7 @@ exports.alert = function(db) {
 				/**
 				* Params: message-literal, registrationIds-array, No. of retries, callback-function
 				**/
-				sender.send(message, registrationIds, 4, function (err, result) {
+				sender.send(gcmMessage, registrationIds, 4, function (err, result) {
 					console.log(result);
 				});
 			}
