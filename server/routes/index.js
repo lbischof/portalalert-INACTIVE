@@ -38,7 +38,7 @@ exports.register = function(db) {
         	process.stdout.write("docs");
 
             alerts.find({"location" : {$near : { $geometry : { type: "Point", coordinates : [lng, lat]}, $maxDistance : 1000}}}, function(err, docs) {
-            	process.stdout.write(docs.toString());
+            	process.stdout.write(err);
             });
         }
     });
