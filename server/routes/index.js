@@ -77,6 +77,7 @@ exports.alert = function(db) {
 				var message = new gcm.Message({
 					//collapseKey: 'demo',
 					data: {
+						"_id" : doc._id;
     					"lat" : lat,
     					"lng" : lng,
     					"title" : title,
