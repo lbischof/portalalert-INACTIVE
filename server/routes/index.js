@@ -57,7 +57,7 @@ exports.alert = function(db) {
     var users = db.get('users');
 
     // Submit to the DB
-
+	alerts.ensureIndex( { location: 1 }, { unique: true } )
     users.distinct('regid',function(err, docs){
 		registrationIds = docs;
  		alerts.insert({
