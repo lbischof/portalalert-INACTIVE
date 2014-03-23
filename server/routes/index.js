@@ -11,8 +11,8 @@ exports.register = function(db) {
     var email = req.body.email;
     var regid = req.body.regid;
     var name = req.body.name;
-    var lat = req.body.lat;
-    var lng = req.body.lng;
+    var lat = parseFloat(req.body.lat);
+    var lng = parseFloat(req.body.lng);
 
     // Set our collection
     var users = db.get('users');
@@ -28,17 +28,15 @@ exports.register = function(db) {
     	"email" : email,
     	"name" : name,
     	"regid" : regid,
-    	"location" : { "type": "Point", "coordinates" : [ parseFloat(lng),parseFloat(lat) ] }
+    	"location" : { "type": "Point", "coordinates" : [ lng, lat ] }
     }, function (err, doc) {
     	if (err) {
             // If it failed, return error
-            res.send("There was a problem adding the information to the database.");
+            res.send({'error':err});
         }
         else {
-        	process.stdout.write("docs");
-
-            alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [parseFloat(lng), parseFloat(lat)]}, $maxDistance : 3000}}}, function(err, docs) {
-            	console.log(JSON.stringify(docs));
+            alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}}, function(err, docs) {
+            	res.send(JSON.stringify(docs));
             });
         }
     });
@@ -49,8 +47,8 @@ exports.alert = function(db) {
 	var portal = JSON.parse(req.body.portal);
 	var registrationIds = [];
     // Get our form values. These rely on the "name" attributes
-    var lat = portal.lat;
-    var lng = portal.lng;
+    var lat = parseFloat(portal.lat);
+    var lng = parseFloat(portal.lng);
     var title = portal.title;
     //var urgency = req.body.urgency;
     var type = portal.type;
