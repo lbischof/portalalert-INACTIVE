@@ -57,7 +57,9 @@ exports.alert = function(db) {
     var users = db.get('users');
 
     // Submit to the DB
-    console.log(users.distinct('regid'));
+    users.distinct('regid',function(err, docs){
+    	console.log(docs);
+    });
     users.find({}, 'regid -_id', function(err, docs){
 		for (var i = 0; i < docs.length; i++) {
     	registrationIds.push(docs[i].regid);
