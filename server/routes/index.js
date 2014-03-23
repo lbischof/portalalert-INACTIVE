@@ -26,7 +26,7 @@ exports.register = function(db) {
     	"email" : email,
     	"name" : name,
     	"regid" : regid,
-    	"loc" : [ lng, lat ]
+    	"loc" : { type: "point", coordinates : [ lng,lat ] }
     }, function (err, doc) {
     	if (err) {
             // If it failed, return error
@@ -57,12 +57,15 @@ exports.alert = function(db) {
     var users = db.get('users');
 
     // Submit to the DB
-	alerts.ensureIndex( { location: 1 }, { unique: true } )
+    alerts.ensureIndex( { location : "2dsphere" } );
+    users.ensureIndex( { location : "2dsphere" } );
+
+	alerts.ensureIndex( { location: 1 }, { unique: true } );
     users.distinct('regid',function(err, docs){
 		registrationIds = docs;
  		alerts.insert({
  			"regids" : registrationIds,
-    		"location" : [ lng,lat ],
+    		"location" : { type: "point", coordinates : [ lng,lat ] },
     		"title" : title,
     		//"urgency" : urgency,
     		"message" : message,
