@@ -16,6 +16,7 @@ exports.register = function(db) {
 
     // Set our collection
     var users = db.get('users');
+    var alerts = db.get('alerts');
 
     // Submit to the DB
     process.stdout.write(regid+"test");
@@ -33,7 +34,7 @@ exports.register = function(db) {
             res.send("There was a problem adding the information to the database.");
         }
         else {
-            users.find({"location" : {$near : { $geometry : { type: "point", coordinates : [lng, lat]}, $maxDistance : 1000}}}, function(err, docs) {
+            alerts.find({"location" : {$near : { $geometry : { type: "point", coordinates : [lng, lat]}, $maxDistance : 1000}}}, function(err, docs) {
             	console.log(docs);
             });
         }
