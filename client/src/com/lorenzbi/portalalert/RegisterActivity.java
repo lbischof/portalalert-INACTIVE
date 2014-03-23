@@ -210,12 +210,9 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 			editor.putBoolean("loggedIn", true);
 			editor.commit();
 			//Load the main map view
-			Toast.makeText(this, "Welcome "+personName+personEmail, Toast.LENGTH_LONG).show();
-			if (lat != null) {
+			
 				registered();
-			} else {
-				waitForLocation = true;
-			}
+			
 		} else {
 			ringProgressDialog.dismiss();
 		    finish();
@@ -224,11 +221,13 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	    
 	}
 	public void registered() {
+		if (regid != null && !regid.isEmpty() && lat != null && personId != null && !personId.isEmpty()){
     	sendRegistrationIdToBackend();
 		ringProgressDialog.dismiss();
 		Intent intent = new Intent(this, MainActivity.class);
 		startActivity(intent);
 		finish();
+		}
 	}
 	public void registerGCM() {
 		context = getApplicationContext();
@@ -297,7 +296,8 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
             }
 
             @Override
-            protected void onPostExecute(String msg) {                    
+            protected void onPostExecute(String msg) {  
+            	registered();
             }
         }.execute(null, null, null);
     }
@@ -353,10 +353,9 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	public void updateLoc(Location loc) {
 		lat = loc.getLatitude();
 		lng = loc.getLongitude();
-		if(waitForLocation){
-			Log.i("waitforlocation","true");
+		
 			registered();
-		}
+		
 	}
 	
     
@@ -423,9 +422,6 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
         protected void onPostExecute(String result) {
             Log.i("taian", "LATITUDE :" + lati + " LONGITUDE :" + longi);
             mLocationManager.removeUpdates(mVeggsterLocationListener);
-            Toast.makeText(RegisterActivity.this,
-                    "LATITUDE :" + lati + " LONGITUDE :" + longi,
-                    Toast.LENGTH_LONG).show();
         }
 
         @Override
