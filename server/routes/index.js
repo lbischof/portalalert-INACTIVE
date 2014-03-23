@@ -62,7 +62,7 @@ exports.alert = function(db) {
     	registrationIds.push(docs[i].regid);
 		}
  		alerts.insert({
-    		"location" : [lng,lat],
+    		"location" : [ lng,lat ],
     		"title" : title,
     		//"urgency" : urgency,
     		"message" : message,
@@ -75,7 +75,14 @@ exports.alert = function(db) {
         		var gcm = require('node-gcm');
 				var message = new gcm.Message({
 					//collapseKey: 'demo',
-					data: doc
+					data: {
+    					"lat" : lat,
+    					"lng" : lng,
+    					"title" : title,
+    					//"urgency" : urgency,
+    					"message" : message,
+    					"type" : type
+    				}
 				});
 				var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
 				/**
