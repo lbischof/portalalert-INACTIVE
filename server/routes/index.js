@@ -72,7 +72,7 @@ exports.alert = function(db) {
             // If it failed, return error
             	res.send("There was a problem adding the information to the database.");
         	} else {
-        		console.log(lat);
+        		console.log(message);
         		var gcm = require('node-gcm');
 				var message = new gcm.Message({
 					//collapseKey: 'demo',
