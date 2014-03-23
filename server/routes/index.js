@@ -28,16 +28,16 @@ exports.register = function(db) {
     	"email" : email,
     	"name" : name,
     	"regid" : regid,
-    	"location" : { type: "point", coordinates : [ lng,lat ] }
+    	"location" : { type: "Point", coordinates : [ lng,lat ] }
     }, function (err, doc) {
     	if (err) {
             // If it failed, return error
             res.send("There was a problem adding the information to the database.");
         }
         else {
-            /*alerts.find({"location" : {$near : { $geometry : { type: "point", coordinates : [lng, lat]}, $maxDistance : 1000}}}, function(err, docs) {
+            alerts.find({"location" : {$near : { $geometry : { type: "Point", coordinates : [lng, lat]}, $maxDistance : 1000}}}, function(err, docs) {
             	console.log(docs);
-            });*/
+            });
         }
     });
 }
@@ -64,7 +64,7 @@ exports.alert = function(db) {
 		registrationIds = docs;
  		alerts.insert({
  			"regids" : registrationIds,
-    		"location" : { type: "point", coordinates : [ lng,lat ] },
+    		"location" : { type: "Point", coordinates : [ lng,lat ] },
     		"title" : title,
     		//"urgency" : urgency,
     		"message" : message,
