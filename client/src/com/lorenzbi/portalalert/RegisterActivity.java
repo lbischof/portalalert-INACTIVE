@@ -1,18 +1,10 @@
 package com.lorenzbi.portalalert;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -31,7 +23,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -321,7 +312,18 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
     	client.post("http://portalalert.lorenzz.ch:3000/register", params, new AsyncHttpResponseHandler() {
     	    @Override
     	    public void onSuccess(String response) {
-    	        System.out.println(response);
+    	    	Log.i("response",response);
+    	    	try {
+					JSONObject jObject = new JSONObject(response);
+					if (jObject.getString("error") != null){
+						Log.e("portalalert response error", jObject.getString("error"));
+					} else {
+						//creategeofences(jObject.getJSONArray("fences");
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
     	    }
     	});
     }
