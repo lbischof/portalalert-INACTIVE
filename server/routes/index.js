@@ -61,7 +61,9 @@ exports.alert = function(db) {
 
     
 	alerts.ensureIndex( { "location" : "2dsphere" } );
-    users.ensureIndex( { "location" : "2dsphere" } );
+    users.ensureIndex( { "location" : "2dsphere" }, function(err, sam){
+    	console.log(err);
+    } );
     users.distinct('regid',function(err, docs){
 		registrationIds = docs;
  		alerts.insert({
