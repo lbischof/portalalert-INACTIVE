@@ -17,8 +17,8 @@ exports.register = function(db) {
     // Set our collection
     var users = db.get('users');
     var alerts = db.get('alerts');
-	alerts.ensureIndex( { "location" : "2dsphere" } );
-    users.ensureIndex( { "location" : "2dsphere" } );
+	/*alerts.ensureIndex( { "location" : "2dsphere" } );
+    users.ensureIndex( { "location" : "2dsphere" } );*/
     // Submit to the DB
     process.stdout.write(regid+"test");
     users.ensureIndex( { regid: 1 }, { unique: true } );
@@ -35,9 +35,9 @@ exports.register = function(db) {
             res.send("There was a problem adding the information to the database.");
         }
         else {
-            alerts.find({"location" : {$near : { $geometry : { type: "point", coordinates : [lng, lat]}, $maxDistance : 1000}}}, function(err, docs) {
+            /*alerts.find({"location" : {$near : { $geometry : { type: "point", coordinates : [lng, lat]}, $maxDistance : 1000}}}, function(err, docs) {
             	console.log(docs);
-            });
+            });*/
         }
     });
 }
@@ -57,9 +57,7 @@ exports.alert = function(db) {
     var alerts = db.get('alerts');
     var users = db.get('users');
 
-    // Submit to the DB
-    alerts.ensureIndex( { "location" : "2dsphere" } );
-    users.ensureIndex( { "location" : "2dsphere" } );
+    
 
     users.distinct('regid',function(err, docs){
 		registrationIds = docs;
