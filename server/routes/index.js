@@ -17,8 +17,8 @@ exports.register = function(db) {
     // Set our collection
     var users = db.get('users');
     var alerts = db.get('alerts');
-	alerts.ensureIndex( { "location" : "2dsphere" } );
-    users.ensureIndex( { "location" : "2dsphere" } );
+	alerts.ensureIndex( { location : "2dsphere" } );
+    users.ensureIndex( { location : "2dsphere" } );
     // Submit to the DB
     process.stdout.write(regid+"test");
     users.ensureIndex( { regid: 1 }, { unique: true } );
@@ -58,8 +58,8 @@ exports.alert = function(db) {
     var users = db.get('users');
 
     
-	alerts.ensureIndex( { "location" : "2dsphere" } );
-    users.ensureIndex( { "location" : "2dsphere" } );
+	alerts.ensureIndex( { location : "2dsphere" } );
+    users.ensureIndex( { location : "2dsphere" } );
     users.distinct('regid',function(err, docs){
 		registrationIds = docs;
  		alerts.insert({
