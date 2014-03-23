@@ -224,6 +224,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	    
 	}
 	public void registered() {
+    	sendRegistrationIdToBackend();
 		ringProgressDialog.dismiss();
 		Intent intent = new Intent(this, MainActivity.class);
 		startActivity(intent);
@@ -297,7 +298,6 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 
             @Override
             protected void onPostExecute(String msg) {                    
-            	sendRegistrationIdToBackend();
             }
         }.execute(null, null, null);
     }
@@ -316,6 +316,8 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
     	params.put("name", personName );
     	params.put("email", personEmail);
     	params.put("userid", personId);
+    	params.put("lat", lat.toString());
+    	params.put("lng", lng.toString());
     	client.post("http://portalalert.lorenzz.ch:3000/register", params, new AsyncHttpResponseHandler() {
     	    @Override
     	    public void onSuccess(String response) {
@@ -323,19 +325,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
     	    }
     	});
     }
-    private void sendCurrentLocationToBackend() {
-    	AsyncHttpClient client = new AsyncHttpClient();
-    	RequestParams params = new RequestParams();
-    	params.put("userid", personId);
-    	params.put("lat", lat);
-    	params.put("lng", lng);
-    	client.post("http://portalalert.lorenzz.ch:3000/userlocation", params, new AsyncHttpResponseHandler() {
-    	    @Override
-    	    public void onSuccess(String response) {
-    	        System.out.println(response);
-    	    }
-    	});
-    }
+   
     private void storeRegistrationId(Context context, String regId) {
         final SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         int appVersion = getAppVersion(context);
@@ -363,8 +353,8 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	public void updateLoc(Location loc) {
 		lat = loc.getLatitude();
 		lng = loc.getLongitude();
-		sendCurrentLocationToBackend();
 		if(waitForLocation){
+			Log.i("waitforlocation","true");
 			registered();
 		}
 	}

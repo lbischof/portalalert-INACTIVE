@@ -11,7 +11,8 @@ exports.register = function(db) {
     var email = req.body.email;
     var regid = req.body.regid;
     var name = req.body.name;
-    
+    var lat = req.body.lat;
+    var lng = req.body.lng;
 
     // Set our collection
     var users = db.get('users');
@@ -23,7 +24,8 @@ exports.register = function(db) {
     	"username" : username,
     	"email" : email,
     	"name" : name,
-    	"regid" : regid
+    	"regid" : regid,
+    	"loc" : [ lng, lat ]
     }, function (err, doc) {
     	if (err) {
             // If it failed, return error
