@@ -43,7 +43,7 @@ exports.register = function(db) {
 }
 }
 function nearQuery(maxDistance) {
-	return {location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : maxDistance}}};
+	return '{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : maxDistance}}}';
 }
 exports.alert = function(db) {
 	return function(req, res) {
