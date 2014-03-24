@@ -35,12 +35,15 @@ exports.register = function(db) {
             res.send({'error':err});
         }
         else {
-            alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}}, function(err, docs) {
+            alerts.find(nearQuery(3000), function(err, docs) {
             	res.send(JSON.stringify(docs));
             });
         }
     });
 }
+}
+function nearQuery(maxDistance) {
+	return {location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : maxDistance}}};
 }
 exports.alert = function(db) {
 	return function(req, res) {
@@ -59,10 +62,8 @@ exports.alert = function(db) {
 
     
 	alerts.ensureIndex( { "location" : "2dsphere" } );
-    users.ensureIndex( { "location" : "2dsphere" }, function(err, sam){
-    	console.log(err);
-    } );
-    users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}},function(err, docs){
+    users.ensureIndex( { "location" : "2dsphere" } );
+    users.distinct('regid',nearQuery(3000),function(err, docs){
 		registrationIds = docs;
  		alerts.insert({
  			"regids" : registrationIds,
