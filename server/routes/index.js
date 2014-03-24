@@ -42,9 +42,7 @@ exports.register = function(db) {
     });
 }
 }
-function nearQuery(maxDistance) {
-	return '{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : maxDistance}}}';
-}
+
 exports.alert = function(db) {
 	return function(req, res) {
 	var portal = JSON.parse(req.body.portal);
@@ -81,15 +79,7 @@ exports.alert = function(db) {
         		var gcm = require('node-gcm');
 				var gcmMessage = new gcm.Message({
 					//collapseKey: 'demo',
-					data: {
-						"_id" : doc._id,
-    					"lat" : lat,
-    					"lng" : lng,
-    					"title" : title,
-    					//"urgency" : urgency,
-    					"message" : message,
-    					"type" : type
-    				}
+					data: doc
 				});
 				var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
 				/**
@@ -132,4 +122,7 @@ exports.userlocation = function(db) {
         }
     });
 }
+}
+function nearQuery(maxDistance) {
+	return '{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : maxDistance}}}';
 }
