@@ -62,7 +62,7 @@ exports.alert = function(db) {
     users.ensureIndex( { "location" : "2dsphere" }, function(err, sam){
     	console.log(err);
     } );
-    users.distinct('regid',function(err, docs){
+    users.distinct({location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}}, 'regid',function(err, docs){
 		registrationIds = docs;
  		alerts.insert({
  			"regids" : registrationIds,
