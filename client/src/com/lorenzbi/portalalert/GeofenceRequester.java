@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.IntentSender.SendIntentException;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -38,7 +38,7 @@ public class GeofenceRequester
                     OnConnectionFailedListener {
 
     // Storage for a reference to the calling client
-    private final GcmIntentService mActivity;
+    private final IntentService mActivity;
 
     // Stores the PendingIntent used to send geofence transitions back to the app
     private PendingIntent mGeofencePendingIntent;
@@ -55,7 +55,7 @@ public class GeofenceRequester
      */
     private boolean mInProgress;
 
-    public GeofenceRequester(GcmIntentService gcmIntentService) {
+    public GeofenceRequester(IntentService gcmIntentService) {
         // Save the context
         mActivity = gcmIntentService;
 

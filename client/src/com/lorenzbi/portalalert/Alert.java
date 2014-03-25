@@ -1,5 +1,7 @@
 package com.lorenzbi.portalalert;
 
+import java.util.List;
+
 public class Alert {
 	private String id, title, message, userid;
 	private Integer type, urgency, time;
@@ -27,4 +29,6 @@ public class Alert {
 	public Float getRadius() { return this.radius; }
 	public String getUserid() { return this.userid; }
 	public Integer getTime() { return this.time; }
+	
+	
 }

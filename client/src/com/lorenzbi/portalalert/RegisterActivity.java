@@ -1,21 +1,23 @@
 package com.lorenzbi.portalalert;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -25,23 +27,29 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 public class RegisterActivity extends Activity implements
-ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
+ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 	
 	/* GCM VARIABLES */
 	public static final String EXTRA_MESSAGE = "message";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     //private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private Intent mIntentService;
+    private PendingIntent mPendingIntent;
+    private LocationClient mLocationclient;
 
     /**
      * Substitute you own sender ID here. This is the project number you got
@@ -59,6 +67,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
     String personName = "";
 	String personEmail = "";
 	String personId = "";
+	String personPhotoUrl = "";
 
 	Double lat = null;
 	Double lng = null;
@@ -95,8 +104,9 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
             // Intent(FastMainActivity.this,LocatorService.class);
             // startService(this.locatorService);
 
-            FetchCordinates fetchCordinates = new FetchCordinates();
-            fetchCordinates.execute();
+			mIntentService = new Intent(this, LocationService.class);
+	        mPendingIntent = PendingIntent.getService(this, 1, mIntentService, 0);
+	        
         } catch (Exception error) {
         }
 	}
@@ -113,23 +123,35 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		mGoogleApiClient.connect();
+		int resp = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resp == ConnectionResult.SUCCESS) {
+            mLocationclient = new LocationClient(this, this, this);
+            mLocationclient.connect();
+            Log.i("onresume success", "success");
+        } else {
+            GooglePlayServicesUtil.getErrorDialog(resp, this, 2);
+            Log.i("onresume fail", "fail");
+        }
+        
 	}
 	   @Override
 	   protected void onPause() {
 	    // TODO Auto-generated method stub
 	    super.onPause();
+	    if (mGoogleApiClient.isConnected()) {
+			mGoogleApiClient.disconnect();
+		}
 	   }
+	@Override
 	protected void onStart() {
 		super.onStart();
-		mGoogleApiClient.connect();
 	}
-
+	@Override
 	protected void onStop() {
 		super.onStop();
 
-		if (mGoogleApiClient.isConnected()) {
-			mGoogleApiClient.disconnect();
-		}
+		
 	}
 	/* Track whether the sign-in button has been clicked so that we know to resolve
 	 * all issues preventing sign-in without waiting.
@@ -171,11 +193,16 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 
 	@Override
 	public void onConnected(Bundle connectionHint) {
-		final EditText usernameInput = (EditText)findViewById(R.id.username);
+		if (mLocationclient != null && mLocationclient.isConnected() && mGoogleApiClient.isConnected()) {
+			Location loc = mLocationclient.getLastLocation();
+			final EditText usernameInput = (EditText)findViewById(R.id.username);
 		ingressUsername = usernameInput.getText().toString(); //TODO do something with this
-		String personPhotoUrl = "";
 		mSignInClicked = false;
 		try { 
+				if ( loc.getTime() < (System.currentTimeMillis() - 60*60*60*5))
+					Log.i(TAG, "smaller");
+				lat = loc.getLatitude();
+				lng = loc.getLongitude();
                 Person currentPerson = Plus.PeopleApi
                         .getCurrentPerson(mGoogleApiClient);
                 personName = currentPerson.getDisplayName();
@@ -191,35 +218,47 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 		
 		if (isFrog(personId)) { //always returns true at the moment
 			registerGCM();
-			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-			SharedPreferences.Editor editor = prefs.edit();
-			editor.putString("name", personName);
-			editor.putString("email", personEmail);
-			editor.putString("username", ingressUsername);
-			editor.putString("picture", personPhotoUrl);
-			editor.putString("id", personId);
-			editor.putBoolean("loggedIn", true);
-			editor.commit();
-			//Load the main map view
-			
-				registered();
-			
+			registered();
 		} else {
 			ringProgressDialog.dismiss();
 		    finish();
 			//Not an authorized frog! (maybe alert a admin so they can authorize)
 		}
-	    
+		}
 	}
 	public void registered() {
 		if (regid != null && !regid.isEmpty() && lat != null && personId != null && !personId.isEmpty()){
     	sendRegistrationIdToBackend();
+    	saveInfoToPrefs();
 		ringProgressDialog.dismiss();
 		Intent intent = new Intent(this, MainActivity.class);
 		startActivity(intent);
 		finish();
+		} else if (lat == null){
+			ringProgressDialog.setMessage("Waiting for Location...");
 		}
 	}
+	public void saveInfoToPrefs(){
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString("regid", regid);
+		editor.putString("name", personName);
+		editor.putString("email", personEmail);
+		editor.putString("username", ingressUsername);
+		editor.putString("picture", personPhotoUrl);
+		putDouble(editor, "lng", lng);
+		putDouble(editor, "lat", lat);
+		editor.putString("id", personId);
+		editor.putBoolean("loggedIn", true);
+		editor.commit();
+	}
+	Editor putDouble(final Editor edit, final String key, final double value) {
+		   return edit.putLong(key, Double.doubleToRawLongBits(value));
+		}
+
+		double getDouble(final SharedPreferences prefs, final String key, final double defaultValue) {
+		return Double.longBitsToDouble(prefs.getLong(key, Double.doubleToLongBits(defaultValue)));
+		}
 	public void registerGCM() {
 		context = getApplicationContext();
 
@@ -274,9 +313,6 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
                     regid = gcm.register(SENDER_ID);
                     msg = "Device registered, registration ID=" + regid;
 
-                    
-                    storeRegistrationId(context, regid);
-
                 } catch (IOException ex) {
                     msg = "Error :" + ex.getMessage();
                     // If there is an error, don't just keep trying to register.
@@ -300,7 +336,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
      * using the 'from' address in the message.
      */
     private void sendRegistrationIdToBackend() {
-    	AsyncHttpClient client = new AsyncHttpClient();
+    	//AsyncHttpClient client = new AsyncHttpClient();
     	RequestParams params = new RequestParams();
     	params.put("username", ingressUsername);
     	params.put("regid", regid);
@@ -309,7 +345,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
     	params.put("userid", personId);
     	params.put("lat", lat.toString());
     	params.put("lng", lng.toString());
-    	client.post("http://portalalert.lorenzz.ch:3000/register", params, new AsyncHttpResponseHandler() {
+    	HttpManager.post("register", params, new AsyncHttpResponseHandler() {
     	    @Override
     	    public void onSuccess(String response) {
     	    	Log.i("response",response);
@@ -318,7 +354,9 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 					if (jObject.getString("error") != null){
 						Log.e("portalalert response error", jObject.getString("error"));
 					} else {
-						//creategeofences(jObject.getJSONArray("fences");
+						Intent syncIntent = new Intent(RegisterActivity.this, SyncIntentService.class);
+						syncIntent.putExtra("JSON", response);
+						startService(syncIntent);
 					}
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
@@ -328,16 +366,6 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
     	});
     }
    
-    private void storeRegistrationId(Context context, String regId) {
-        final SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        int appVersion = getAppVersion(context);
-        Log.i(TAG, "Saving regId on app version " + appVersion);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("regid", regId);
-        editor.putInt(PROPERTY_APP_VERSION, appVersion);
-        editor.commit();
-
-    }
     
 	/**
 	 * @return Application's version code from the {@code PackageManager}.
@@ -392,95 +420,10 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
 			}
 		}
 	}
-	public class FetchCordinates extends AsyncTask<String, Integer, String> {
-
-        public double lati = 0.0;
-        public double longi = 0.0;
-
-        public LocationManager mLocationManager;
-        public VeggsterLocationListener mVeggsterLocationListener;
-
-        @Override
-        protected void onPreExecute() {
-            mVeggsterLocationListener = new VeggsterLocationListener();
-            mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-            mLocationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, 0, 0,
-                    mVeggsterLocationListener);
-
-            
-            
-
-        }
-
-        @Override
-        protected void onCancelled(){
-            System.out.println("Cancelled by user!");
-            mLocationManager.removeUpdates(mVeggsterLocationListener);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Log.i("taian", "LATITUDE :" + lati + " LONGITUDE :" + longi);
-            mLocationManager.removeUpdates(mVeggsterLocationListener);
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            // TODO Auto-generated method stub
-
-            while (this.lati == 0.0) {
-
-            }
-            return null;
-        }
-
-        public class VeggsterLocationListener implements android.location.LocationListener {
-
-            @Override
-            public void onLocationChanged(Location location) {
-            	if (location.getAccuracy() < 150) {
-                  updateLoc(location);
-
-                try {
-
-                    // LocatorService.myLatitude=location.getLatitude();
-
-                    // LocatorService.myLongitude=location.getLongitude();
-
-                    lati = location.getLatitude();
-                    longi = location.getLongitude();
-
-                } catch (Exception e) {
-                    // progDailog.dismiss();
-                    // Toast.makeText(getApplicationContext(),"Unable to get Location"
-                    // , Toast.LENGTH_LONG).show();
-                }
-            	}
-            }
-
-			@Override
-			public void onProviderDisabled(String provider) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onProviderEnabled(String provider) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void onStatusChanged(String provider, int status,
-					Bundle extras) {
-				// TODO Auto-generated method stub
-				
-			}
-
-
-        }
-
-    }
+	@Override
+	public void onLocationChanged(Location location) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

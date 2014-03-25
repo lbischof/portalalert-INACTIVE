@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,7 +20,6 @@ import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.commonsware.cwac.loaderex.SQLiteCursorLoader;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.location.Geofence;
 import com.lorenzbi.portalalert.GeofenceUtils.REMOVE_TYPE;
@@ -82,13 +84,23 @@ public class GcmIntentService extends IntentService {
                 // This loop represents the service doing some work.
             	
             		String id = extras.getString("_id");
-                	Double lat = Double.parseDouble(extras.getString("lat"));
-                	Double lng = Double.parseDouble(extras.getString("lng"));
+            		String location = extras.getString("location");
+            		Double lng = null;
+            		Double lat = null;
+            		try {
+						JSONObject jsonObject = new JSONObject(location);
+						JSONArray jsonArray = jsonObject.getJSONArray("coordinates");
+						lng = jsonArray.getDouble(0);
+						lat = jsonArray.getDouble(1);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}       
 					Float radius = Float.parseFloat("100") ;//extras.getInt("radius");
 					String title = extras.getString("title");
 					String message = extras.getString("message");
 					Alert alert = new Alert(id, title, message, 0, 0, lat, lng, radius, "", 0);
-					createGeofences(alert);
+					createGeofence(alert);
 					
 					DatabaseHelper dbHelper = new DatabaseHelper(this);
 					dbHelper.addAlert(alert);
@@ -104,7 +116,7 @@ public class GcmIntentService extends IntentService {
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
    
-    public void createGeofences(Alert alert) {
+    public void createGeofence(Alert alert) {
 
         /*
          * Record the request as an ADD. If a connection error occurs,
@@ -112,15 +124,6 @@ public class GcmIntentService extends IntentService {
          * can fix the error
          */
         mRequestType = GeofenceUtils.REQUEST_TYPE.ADD;
-
-        /*
-         * Check for Google Play services. Do this after
-         * setting the request type. If connecting to Google Play services
-         * fails, onActivityResult is eventually called, and it needs to
-         * know what type of request was in progress.
-         */
-        
-
         SimpleGeofence mGeofence = new SimpleGeofence(
             alert.getId(),
             alert.getLat(),
@@ -130,13 +133,6 @@ public class GcmIntentService extends IntentService {
             GEOFENCE_EXPIRATION_IN_MILLISECONDS,
             Geofence.GEOFENCE_TRANSITION_ENTER |
             Geofence.GEOFENCE_TRANSITION_EXIT);
-
-        
-        /*
-         * Add Geofence objects to a List. toGeofence()
-         * creates a Location Services Geofence object from a
-         * flat object
-         */
         
         mCurrentGeofences.add(mGeofence.toGeofence());
 
