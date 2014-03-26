@@ -124,5 +124,5 @@ exports.userlocation = function(db) {
 }
 }
 function nearQuery(lng, lat, maxDistance) {
-	return '{location: {$near : { $geometry : { type: "Point", coordinates : [ '+ lng, lat + ']}, $maxDistance : maxDistance}}}';
+	return '{location: {$near : { $geometry : { type: "Point", coordinates : [ '+ lng +','+ lat + ']}, $maxDistance : maxDistance}}}';
 }
