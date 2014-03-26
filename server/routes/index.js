@@ -30,17 +30,17 @@ exports.register = function(db) {
     	"regid" : regid,
     	"location" : { "type": "Point", "coordinates" : [ lng, lat ] }
     }, function (err, doc) {
-    	if (err) {
-            // If it failed, return error
-            res.send({'error':err});
-        }
-        else {
+    	var obj = new Object();
+    	obj.error = err;
+    	
             alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}}}, function(err, docs) {
             	console.log(err);
             	console.log(docs);
-            	res.send(JSON.stringify(docs));
+            	obj.alerts = docs;
+            	res.send(JSON.stringify(obj));
             });
-        }
+
+        
     });
 }
 }
