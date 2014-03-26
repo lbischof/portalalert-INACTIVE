@@ -28,7 +28,7 @@ function wrapper() {
 	
     
     window.plugin.portalalert.open_dialog = function() {
-        var dialogtext = "<select id=alert-type><option value=upgrade>Upgrade</option><option value=destroy>Destroy</option></select><br><label>Message</label><textarea id=alert-message></textarea>";
+        var dialogtext = "<select id=alert-type><option value=1>Upgrade</option><option value=2>Destroy</option></select><br><label>Message</label><textarea id=alert-message></textarea>";
         dialog({
     	text: dialogtext,
         title: 'Portal Alert: '+ window.plugin.portalalert.portal.title,
@@ -36,7 +36,7 @@ function wrapper() {
     	width: 350,
     	buttons: {
       		'Submit Alert': function() {
-                window.plugin.portalalert.portal.type = $('#alert-type').val();
+                window.plugin.portalalert.portal.type = parseInt($('#alert-type').val());
                 window.plugin.portalalert.portal.message = $('#alert-message').val();
         		window.plugin.portalalert.submit_portal();
                 $(".ui-dialog").hide("slow");

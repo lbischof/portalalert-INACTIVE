@@ -349,19 +349,11 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
     	    @Override
     	    public void onSuccess(String response) {
     	    	Log.i("response",response);
-    	    	try {
-					JSONObject jObject = new JSONObject(response);
-					if (jObject.getString("error") != null){
-						Log.e("portalalert response error", jObject.getString("error"));
-					} else {
+    	    	
 						Intent syncIntent = new Intent(RegisterActivity.this, SyncIntentService.class);
 						syncIntent.putExtra("JSON", response);
 						startService(syncIntent);
-					}
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				
     	    }
     	});
     }

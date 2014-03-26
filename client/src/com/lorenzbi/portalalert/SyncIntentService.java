@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.location.Geofence;
 import com.google.gson.Gson;
@@ -39,15 +38,20 @@ public class SyncIntentService extends IntentService {
         createGeofences(json);
     }
     public void createGeofences(String json) {
+    	
     	Gson gson = new Gson();
-    	Object object = gson.fromJson(json, Alerts.class);
-    	Log.i("portalalert object", object.toString());
+    	Alerts alerts = gson.fromJson(json, Alerts.class);
+    	for(Alert a: alerts.alerts){
+    		Log.i("one alert", gson.toJson(a));
+    	}
+    	Log.e("alertlist", gson.toJson(alerts));
+    	//Log.i("portalalert object", object.toString());
         /*
          * Record the request as an ADD. If a connection error occurs,
          * the app can automatically restart the add request if Google Play services
          * can fix the error
          */
-        SimpleGeofence mGeofence = new SimpleGeofence(
+        /*SimpleGeofence mGeofence = new SimpleGeofence(
             "id",
             Double.parseDouble("lat"),
             Double.parseDouble("lng"),
@@ -67,6 +71,6 @@ public class SyncIntentService extends IntentService {
             // Notify user that previous request hasn't finished.
             Toast.makeText(this, R.string.add_geofences_already_requested_error,
                         Toast.LENGTH_LONG).show();
-        }
+        }*/
     }
 }
