@@ -35,7 +35,7 @@ exports.register = function(db) {
             res.send({'error':err});
         }
         else {
-            alerts.find(nearQuery(3000), function(err, docs) {
+            alerts.find(nearQuery(lng, lat, 3000), function(err, docs) {
             	res.send(JSON.stringify(docs));
             });
         }
@@ -61,7 +61,7 @@ exports.alert = function(db) {
     
 	alerts.ensureIndex( { "location" : "2dsphere" } );
     users.ensureIndex( { "location" : "2dsphere" } );
-    users.distinct('regid',nearQuery(3000),function(err, docs){
+    users.distinct('regid',nearQuery(lng, lat, 3000),function(err, docs){
 		registrationIds = docs;
  		alerts.insert({
  			"regids" : registrationIds,
@@ -123,6 +123,6 @@ exports.userlocation = function(db) {
     });
 }
 }
-function nearQuery(maxDistance) {
-	return '{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : maxDistance}}}';
+function nearQuery(lng, lat, maxDistance) {
+	return '{location: {$near : { $geometry : { type: "Point", coordinates : [ '+ lng, lat + ']}, $maxDistance : maxDistance}}}';
 }
