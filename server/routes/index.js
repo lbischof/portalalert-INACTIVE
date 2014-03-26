@@ -36,6 +36,8 @@ exports.register = function(db) {
         }
         else {
             alerts.find(nearQuery(lng, lat, 3000), function(err, docs) {
+            	console.log(err);
+            	console.log(docs);
             	res.send(JSON.stringify(docs));
             });
         }
