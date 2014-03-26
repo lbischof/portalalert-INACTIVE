@@ -35,7 +35,7 @@ exports.register = function(db) {
             res.send({'error':err});
         }
         else {
-            alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : maxDistance}}}, function(err, docs) {
+            alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}}}, function(err, docs) {
             	console.log(err);
             	console.log(docs);
             	res.send(JSON.stringify(docs));
@@ -63,7 +63,7 @@ exports.alert = function(db) {
     
 	alerts.ensureIndex( { "location" : "2dsphere" } );
     users.ensureIndex( { "location" : "2dsphere" } );
-    users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : maxDistance}}},function(err, docs){
+    users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}},function(err, docs){
 		registrationIds = docs;
  		alerts.insert({
  			"regids" : registrationIds,
