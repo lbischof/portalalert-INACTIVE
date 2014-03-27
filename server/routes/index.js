@@ -29,7 +29,7 @@ exports.register = function(db) {
     	"name" : name,
     	"regid" : regid,
     	"location" : { "type": "Point", "coordinates" : [ lng, lat ] }
-    }, function (err, doc) {
+    },{w:1}, function (err, doc) {
     	if (err != null) {
     		var obj = new Object();
     		obj.error = err;
