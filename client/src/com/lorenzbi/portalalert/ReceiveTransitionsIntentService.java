@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
+import com.lorenzbi.portalalert.Alerts.Alert;
 
 /**
  * This class receives geofence transition events from Location Services, in the

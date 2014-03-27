@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.location.Geofence;
+import com.lorenzbi.portalalert.Alerts.Alert;
+import com.lorenzbi.portalalert.Alerts.AlertLocation;
 import com.lorenzbi.portalalert.GeofenceUtils.REMOVE_TYPE;
 import com.lorenzbi.portalalert.GeofenceUtils.REQUEST_TYPE;
 
@@ -85,13 +87,12 @@ public class GcmIntentService extends IntentService {
             	
             		String id = extras.getString("_id");
             		String location = extras.getString("location");
-            		Double lng = null;
-            		Double lat = null;
+					AlertLocation alertLocation = new AlertLocation();
             		try {
 						JSONObject jsonObject = new JSONObject(location);
 						JSONArray jsonArray = jsonObject.getJSONArray("coordinates");
-						lng = jsonArray.getDouble(0);
-						lat = jsonArray.getDouble(1);
+						alertLocation.setLng(jsonArray.getDouble(0));
+						alertLocation.setLat(jsonArray.getDouble(1));
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -99,7 +100,7 @@ public class GcmIntentService extends IntentService {
 					Float radius = Float.parseFloat("100") ;//extras.getInt("radius");
 					String title = extras.getString("title");
 					String message = extras.getString("message");
-					Alert alert = new Alert(id, title, message, 0, 0, lat, lng, radius, "", 0);
+					Alert alert = new Alert(id, title, message, 0, 0, alertLocation, radius, "", 0);
 					createGeofence(alert);
 					
 					DatabaseHelper dbHelper = new DatabaseHelper(this);
@@ -126,8 +127,8 @@ public class GcmIntentService extends IntentService {
         mRequestType = GeofenceUtils.REQUEST_TYPE.ADD;
         SimpleGeofence mGeofence = new SimpleGeofence(
             alert.getId(),
-            alert.getLat(),
-            alert.getLng(),
+            alert.getLocation().getLat(),
+            alert.getLocation().getLng(),
             alert.getRadius(),
             // Set the expiration time
             GEOFENCE_EXPIRATION_IN_MILLISECONDS,

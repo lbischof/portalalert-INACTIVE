@@ -6,6 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.text.TextUtils;
+import android.util.Log;
+
+import com.lorenzbi.portalalert.Alerts.Alert;
+import com.lorenzbi.portalalert.Alerts.AlertLocation;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "db";
@@ -53,12 +57,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()){
         		String title = cursor.getString(cursor.getColumnIndex("title"));
         		String message = cursor.getString(cursor.getColumnIndex("message"));
-        		Double lat = cursor.getDouble(cursor.getColumnIndex("lat"));
-        		Double lng = cursor.getDouble(cursor.getColumnIndex("lng"));
+        		AlertLocation alertLocation = new AlertLocation();
+        		Log.i("getlng portalalert" , cursor.getDouble(cursor.getColumnIndex("lng")) + "");
+
+        		alertLocation.setLng(cursor.getDouble(cursor.getColumnIndex("lng")));
+        		alertLocation.setLat(cursor.getDouble(cursor.getColumnIndex("lat")));
         		Float radius = cursor.getFloat(cursor.getColumnIndex("message"));
 
 
-        	   	alert = new Alert(id, title, message, 0, 0, lat, lng, radius, "", 0);
+        	   	alert = new Alert(id, title, message, 0, 0, alertLocation, radius, "", 0);
         	}
 		return alert;
 	}
