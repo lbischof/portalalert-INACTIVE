@@ -28,7 +28,7 @@ exports.register = function(db) {
     	"email" : email,
     	"name" : name,
     	"regid" : regid,
-    	"location" : { "type": "Point", "coordinates" : [ lng, lat ] }
+    	"location" : { "type": "Point", "coordinates" : { "lng":lng, "lat":lat ] }
     }, function (err, doc) {
     	var obj = new Object();
     	obj.error = err;
@@ -67,7 +67,7 @@ exports.alert = function(db) {
 		registrationIds = docs;
  		alerts.insert({
  			"regids" : registrationIds,
-    		"location" : { "type": "Point", "coordinates" : [ lng,lat ] },
+    		"location" : { "type": "Point", "coordinates" : { "lng":lng,"lat":lat ] },
     		"title" : title,
     		//"urgency" : urgency,
     		"message" : message,
@@ -110,7 +110,7 @@ exports.userlocation = function(db) {
     process.stdout.write(regid+"test");
     users.insert({
     	"userid" : userid,
-    	"location" : [lng,lat]
+    	"location" : {"lng":lng,"lat":lat}
     }, function (err, doc) {
     	if (err) {
             // If it failed, return error
@@ -124,7 +124,4 @@ exports.userlocation = function(db) {
         }
     });
 }
-}
-function nearQuery(lng, lat, maxDistance) {
-	return '{location: {$near : { $geometry : { type: "Point", coordinates : [ '+ lng +','+ lat + ']}, $maxDistance : maxDistance}}}';
 }
