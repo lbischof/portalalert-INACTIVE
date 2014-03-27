@@ -35,7 +35,7 @@ exports.register = function(db) {
     		obj.error = err;
     		res.send(JSON.stringify(obj));
     	} else {
-    	res.send(getNearFences(lng,lat,3000));
+    	res.send(getNearFences(lng,lat,3000,db));
     }
     });
 }
@@ -121,7 +121,7 @@ exports.userlocation = function(db) {
     });
 }
 }
-function getNearFences(lng, lat, maxDistance) {
+function getNearFences(lng, lat, maxDistance, db) {
 	var obj = new Object();
 	var alerts = db.get('alerts');
 	alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : maxDistance}}}, function(err, docs) {
