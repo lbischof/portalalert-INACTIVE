@@ -76,6 +76,7 @@ exports.alert = function(db) {
     		if (err) {
             // If it failed, return error
             	res.send("There was a problem adding the information to the database.");
+            	console.log(err);
         	} else {
         		console.log(message);
         		var gcm = require('node-gcm');
