@@ -25,6 +25,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -68,7 +69,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
 	String personEmail = "";
 	String personId = "";
 	String personPhotoUrl = "";
-
+	Boolean isFrog = false;
 	Double lat = null;
 	Double lng = null;
 	/* GOOGLE LOGIN VARIABLES */
@@ -211,32 +212,20 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
                // String personGooglePlusProfile = currentPerson.getUrl();
                 personEmail = Plus.AccountApi.getAccountName(mGoogleApiClient);
                 personId = currentPerson.getId();
+                registerGCM();
+    			tryRegistering();
                 
         } catch (Exception e) {
             e.printStackTrace();
         }
 		
-		if (isFrog(personId)) { //always returns true at the moment
-			registerGCM();
-			registered();
-		} else {
-			ringProgressDialog.dismiss();
-		    finish();
-			//Not an authorized frog! (maybe alert a admin so they can authorize)
-		}
+		
 		}
 	}
-	public void registered() {
+	public void tryRegistering() {
 		if (regid != null && !regid.isEmpty() && lat != null && personId != null && !personId.isEmpty()){
-    	sendRegistrationIdToBackend();
-    	saveInfoToPrefs();
-		ringProgressDialog.dismiss();
-		Intent intent = new Intent(this, MainActivity.class);
-		startActivity(intent);
-		finish();
-		} else if (lat == null){
-			ringProgressDialog.setMessage("Waiting for Location...");
-		}
+			sendRegistrationIdToBackend();
+		} 
 	}
 	public void saveInfoToPrefs(){
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -324,7 +313,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
 
             @Override
             protected void onPostExecute(String msg) {  
-            	registered();
+            	tryRegistering();
             }
         }.execute(null, null, null);
     }
@@ -343,30 +332,47 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
     	params.put("name", personName );
     	params.put("email", personEmail);
     	params.put("userid", personId);
-    	params.put("lat", lat.toString());
     	params.put("lng", lng.toString());
+    	params.put("lat", lat.toString());
+
     	HttpManager.post("register", params, new AsyncHttpResponseHandler() {
     	    @Override
     	    public void onSuccess(String response) {
     	    	Log.i("response",response);
     	    			try {
 							JSONObject jsonObject = new JSONObject(response);
-							String error = jsonObject.getString("error");
-							if (error != null) {
-								Log.i("register response error", error);
+							
+							if (jsonObject.has("error") && jsonObject.getString("error").equals("NOT_FROG")) {
+								notFrog();
+							} else if(jsonObject.has("error")) {
+								Log.e("unknown error", jsonObject.getString("error"));
 							} else {
-								Intent syncIntent = new Intent(RegisterActivity.this, SyncIntentService.class);
-								syncIntent.putExtra("JSON", response);
-								startService(syncIntent);
+								verifiedFrog(response);
 							}
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
     	    }
+
+			
     	});
     }
-   
+   protected void notFrog() {
+		// TODO Auto-generated method stub
+		ringProgressDialog.dismiss();
+		Toast.makeText(this, "Not a verified Frog!", Toast.LENGTH_LONG).show();
+	}
+private void verifiedFrog(String currentFences) {
+	Intent syncIntent = new Intent(RegisterActivity.this, SyncIntentService.class);
+	syncIntent.putExtra("JSON", currentFences);
+	startService(syncIntent);
+	saveInfoToPrefs();
+	ringProgressDialog.dismiss();
+	Intent intent = new Intent(this, MainActivity.class);
+	startActivity(intent);
+	finish();
+	}
     
 	/**
 	 * @return Application's version code from the {@code PackageManager}.
@@ -385,7 +391,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
 		lat = loc.getLatitude();
 		lng = loc.getLongitude();
 		
-			registered();
+		tryRegistering();
 		
 	}
 	
