@@ -21,8 +21,8 @@ exports.register = function(db) {
     users.ensureIndex( { "location" : "2dsphere" } );
     // Submit to the DB
     process.stdout.write(regid+"test");
-    users.ensureIndex( { regid: 1 }, { unique: true } );
-    users.insert({
+    users.ensureIndex( { userid: 1 }, { unique: true } );
+    users.update({ "userid" : userid },{
     	"userid" : userid,
     	"username" : username,
     	"email" : email,
@@ -30,17 +30,13 @@ exports.register = function(db) {
     	"regid" : regid,
     	"location" : { "type": "Point", "coordinates" : [ lng, lat ] }
     }, function (err, doc) {
-    	var obj = new Object();
-    	obj.error = err;
-    	
-            alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}}}, function(err, docs) {
-            	console.log(err);
-            	console.log(docs);
-            	obj.alerts = docs;
-            	res.send(JSON.stringify(obj));
-            });
-
-        
+    	if (err != null) {
+    		var obj = new Object();
+    		obj.error = err;
+    		res.send(JSON.stringify(obj));
+    	} else {
+    	res.send(getNearFences(lng,lat,3000));
+    }
     });
 }
 }
@@ -125,6 +121,12 @@ exports.userlocation = function(db) {
     });
 }
 }
-function nearQuery(lng, lat, maxDistance) {
-	return '{location: {$near : { $geometry : { type: "Point", coordinates : [ '+ lng +','+ lat + ']}, $maxDistance : maxDistance}}}';
+function getNearFences(lng, lat, maxDistance) {
+	var obj = new Object();
+	var alerts = db.get('alerts');
+	alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : maxDistance}}}, function(err, docs) {
+    			obj.error = err;
+            	obj.alerts = docs;	
+            });
+	return JSON.stringify(obj);
 }

@@ -349,11 +349,20 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
     	    @Override
     	    public void onSuccess(String response) {
     	    	Log.i("response",response);
-    	    	
-						Intent syncIntent = new Intent(RegisterActivity.this, SyncIntentService.class);
-						syncIntent.putExtra("JSON", response);
-						startService(syncIntent);
-				
+    	    			try {
+							JSONObject jsonObject = new JSONObject(response);
+							String error = jsonObject.getString("error");
+							if (error != null) {
+								Log.i("register response error", error);
+							} else {
+								Intent syncIntent = new Intent(RegisterActivity.this, SyncIntentService.class);
+								syncIntent.putExtra("JSON", response);
+								startService(syncIntent);
+							}
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
     	    }
     	});
     }
