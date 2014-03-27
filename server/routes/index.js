@@ -29,8 +29,8 @@ exports.register = function(db) {
     	"name" : name,
     	"regid" : regid,
     	"location" : { "type": "Point", "coordinates" : [ lng, lat ] }
-    },{w:1}, function (err, doc) {
-    	assert.equal(null, err);
+    }, function (err, doc) {
+    	console.log(doc);
     	if (err != null) {
     		var obj = new Object();
     		obj.error = err;
