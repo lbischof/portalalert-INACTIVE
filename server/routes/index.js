@@ -29,11 +29,10 @@ exports.register = function(db) {
     	"name" : name,
     	"regid" : regid,
     	"location" : { "type": "Point", "coordinates" : [ lng, lat ] }
-    }, function (err, doc) {
-    	console.log(doc);
-    	if (err != null) {
+    }, function (err, numAffected) {
+    	if (numAffected == 0) {
     		var obj = new Object();
-    		obj.error = err;
+    		obj.error = "NOT_FROG";
     		res.send(JSON.stringify(obj));
     	} else {
     	res.send(getNearFences(lng,lat,3000,db));
