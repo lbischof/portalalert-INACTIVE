@@ -67,7 +67,7 @@ exports.alert = function(db) {
 		registrationIds = docs;
  		alerts.insert({
  			"regids" : registrationIds,
-    		"location" : { "type": "Point", "coordinates" : { "lng":lng,"lat":lat ] },
+    		"location" : { "type": "Point", "coordinates" : { "lng":lng,"lat":lat  }},
     		"title" : title,
     		//"urgency" : urgency,
     		"message" : message,
