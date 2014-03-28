@@ -41,7 +41,8 @@ public class SyncIntentService extends IntentService {
     	
     	Gson gson = new Gson();
     	Alerts root = gson.fromJson(json, Alerts.class);
-    	for(Alert a: root.getAlerts()){
+    	List<Alert> alerts = root.getAlerts();
+    	for(Alert a: alerts){
     		SimpleGeofence mGeofence = new SimpleGeofence(
     	            a.getId(),
     	            a.getLocation().getLat(),

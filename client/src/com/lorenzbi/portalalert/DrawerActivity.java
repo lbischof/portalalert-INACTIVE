@@ -1,6 +1,8 @@
 package com.lorenzbi.portalalert;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -9,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -104,5 +107,6 @@ public class DrawerActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
+    
  
 }

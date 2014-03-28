@@ -1,9 +1,9 @@
 package com.lorenzbi.portalalert;
 
 import java.io.IOException;
-import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -338,13 +338,13 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
     	HttpManager.post("register", params, new AsyncHttpResponseHandler() {
     	    @Override
     	    public void onSuccess(String response) {
-    	    	Log.i("response",response);
+    	    	
     	    			try {
 							JSONObject jsonObject = new JSONObject(response);
 							
 							if (jsonObject.has("error") && jsonObject.getString("error").equals("NOT_FROG")) {
 								notFrog();
-							} else if(jsonObject.has("error")) {
+							} else if(jsonObject.has("error") && !jsonObject.isNull("error")) {
 								Log.e("unknown error", jsonObject.getString("error"));
 							} else {
 								verifiedFrog(response);
@@ -354,6 +354,13 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
 							e.printStackTrace();
 						}
     	    }
+    	    @Override
+    	     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error)
+    	 {
+    	    	ringProgressDialog.dismiss();
+    	        Log.e("register failed", statusCode+ "");
+    	        Toast.makeText(RegisterActivity.this, "Server not available.", Toast.LENGTH_LONG).show();
+    	     }
 
 			
     	});

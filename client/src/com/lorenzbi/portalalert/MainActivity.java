@@ -1,10 +1,16 @@
 package com.lorenzbi.portalalert;
 
 import android.app.LoaderManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
@@ -66,7 +72,24 @@ LoaderManager.LoaderCallbacks<Cursor> {
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
 	    adapter.changeCursor(null);
-		
 	}
-	
+	private BroadcastReceiver notifyDataSetChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // intent can contain anydata
+            Log.d("sohail","onReceive called");
+            adapter.notifyDataSetChanged();
+
+        }
+    };
+    @Override
+    protected void onResume() {
+    	super.onResume();
+    	LocalBroadcastManager.getInstance(this).registerReceiver(notifyDataSetChanged, new IntentFilter("notifyDatasetChanged"));
+    }
+    @Override 
+    protected void onPause(){
+    	super.onPause();
+    	LocalBroadcastManager.getInstance(this).unregisterReceiver(notifyDataSetChanged);
+    }
 }
