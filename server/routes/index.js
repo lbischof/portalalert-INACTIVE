@@ -35,7 +35,11 @@ exports.register = function(db) {
     		obj.error = "NOT_FROG";
     		res.send(JSON.stringify(obj));
     	} else {
-    	res.send(getNearFences(lng,lat,3000,db));
+    		alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}}}, function(err, docs) {
+    			obj.error = err;
+            	obj.alerts = docs;	
+            });
+    		res.send(JSON.stringify(obj));
     }
     });
 }
@@ -120,13 +124,4 @@ exports.userlocation = function(db) {
         }
     });
 }
-}
-function getNearFences(lng, lat, maxDistance, db) {
-	var obj = new Object();
-	var alerts = db.get('alerts');
-	alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : maxDistance}}}, function(err, docs) {
-    			obj.error = err;
-            	obj.alerts = docs;	
-            });
-	return JSON.stringify(obj);
 }
