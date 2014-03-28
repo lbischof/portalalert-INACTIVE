@@ -12,14 +12,13 @@ import android.os.StrictMode;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
 import com.commonsware.cwac.loaderex.SQLiteCursorLoader;
 
 public class MainActivity extends DrawerActivity implements
 LoaderManager.LoaderCallbacks<Cursor> {
 	private DatabaseHelper db=null;
-	private SimpleCursorAdapter adapter=null;
+	private ListAdapter adapter=null;
 	public SQLiteCursorLoader loader=null;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -37,27 +36,13 @@ LoaderManager.LoaderCallbacks<Cursor> {
 		setContentView(R.layout.activity_main);
 		
 		 db=new DatabaseHelper(this);
-		 adapter=
-			        new SimpleCursorAdapter(this, R.layout.row, null, new String[] {
-			            DatabaseHelper.TITLE, DatabaseHelper.MESSAGE }, new int[] {
-			            R.id.title, R.id.message }, 0);
-		 
-		 ListView lv=(ListView)findViewById(R.id.contentlist);
-
-		    lv.setAdapter(adapter);
-		    registerForContextMenu(lv);
-		    getLoaderManager().initLoader(0, null, this);
-		 
-		/*if (RegisterActivity.ringProgressDialog.isShowing()){
-			RegisterActivity.ringProgressDialog.dismiss();
-		}*/
-		
+		 getLoaderManager().initLoader(0, null, this);
 	}
 	
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderId, Bundle arg1) {
 		loader=
-		        new SQLiteCursorLoader(this, db, "SELECT _id, id, title, message "
+		        new SQLiteCursorLoader(this, db, "SELECT _id, id, imagesrc, title, message "
 		            + "FROM alerts ORDER BY title", null);
 
 		    return(loader);
@@ -66,7 +51,11 @@ LoaderManager.LoaderCallbacks<Cursor> {
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		this.loader=(SQLiteCursorLoader)loader;
-	    adapter.changeCursor(cursor);
+	    ListAdapter listadapter = new ListAdapter (getApplicationContext(), cursor, 0);
+		ListView lv=(ListView)findViewById(R.id.contentlist);
+	    lv.setAdapter(listadapter);
+	    registerForContextMenu(lv);
+
 	}
 
 	@Override

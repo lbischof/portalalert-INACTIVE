@@ -52,6 +52,7 @@ exports.alert = function(db) {
     // Get our form values. These rely on the "name" attributes
     var lat = parseFloat(portal.lat);
     var lng = parseFloat(portal.lng);
+    var imagesrc = portal.imagesrc;
     var title = portal.title;
     //var urgency = req.body.urgency;
     var type = portal.type;
@@ -68,6 +69,7 @@ exports.alert = function(db) {
  		alerts.insert({
  			"regids" : registrationIds,
     		"location" : { "type": "Point", "coordinates" : [ lng,lat ] },
+    		"imagesrc" : imagesrc,
     		"title" : title,
     		//"urgency" : urgency,
     		"message" : message,

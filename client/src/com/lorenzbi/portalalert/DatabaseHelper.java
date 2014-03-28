@@ -1,5 +1,8 @@
 package com.lorenzbi.portalalert;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -14,6 +17,7 @@ import com.lorenzbi.portalalert.Alerts.AlertLocation;
 public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "db";
 	static final String ID = "id";
+	static final String IMAGESRC = "imagesrc";
 	static final String TITLE = "title";
 	static final String MESSAGE = "message";
 	static final String USERID = "userid";
@@ -28,7 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL("CREATE TABLE alerts (_id INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE ON CONFLICT REPLACE, title TEXT, message TEXT, userid TEXT, type INTEGER, urgency INTEGER, lat REAL, lng REAL, time INTEGER)");
+		db.execSQL("CREATE TABLE alerts (_id INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE ON CONFLICT REPLACE, imagesrc TEXT, title TEXT, message TEXT, userid TEXT, type INTEGER, urgency INTEGER, lat REAL, lng REAL, time INTEGER)");
 
 		/*ContentValues cv = new ContentValues();
 		cv.put(TITLE, "Gravity, Venus");
@@ -41,6 +45,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         ContentValues row = new ContentValues();
         row.put(ID, alert.getId());
+        row.put(IMAGESRC, alert.getImageSource());
         row.put(TITLE, alert.getTitle());
         row.put(MESSAGE, alert.getMessage());
 
@@ -55,6 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		Alert alert = null;
         Cursor cursor = getReadableDatabase().rawQuery("select * from alerts where id = ?", new String[] { id });
         if (cursor.moveToFirst()){
+        		String imagesrc = cursor.getString(cursor.getColumnIndex("imagesrc"));
         		String title = cursor.getString(cursor.getColumnIndex("title"));
         		String message = cursor.getString(cursor.getColumnIndex("message"));
         		AlertLocation alertLocation = new AlertLocation();
@@ -65,9 +71,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         		Float radius = cursor.getFloat(cursor.getColumnIndex("message"));
 
 
-        	   	alert = new Alert(id, title, message, 0, 0, alertLocation, radius, "", 0);
+        	   	alert = new Alert(id, imagesrc, title, message, 0, 0, alertLocation, radius, "", 0);
         	}
 		return alert;
+	}
+	public List<Alert> getAll(){
+		List<Alert> alerts = new ArrayList<Alert>();
+		Cursor  cursor = getReadableDatabase().rawQuery("select * from alerts",null);
+		if (cursor .moveToFirst()) {
+
+            while (cursor.isAfterLast() == false) {
+            	String id = cursor.getString(cursor.getColumnIndex("id"));
+            	String imagesrc = cursor.getString(cursor.getColumnIndex("imagesrc"));
+        		String title = cursor.getString(cursor.getColumnIndex("title"));
+        		String message = cursor.getString(cursor.getColumnIndex("message"));
+        		AlertLocation alertLocation = new AlertLocation();
+        		Log.i("getlng portalalert" , cursor.getDouble(cursor.getColumnIndex("lng")) + "");
+
+        		alertLocation.setLng(cursor.getDouble(cursor.getColumnIndex("lng")));
+        		alertLocation.setLat(cursor.getDouble(cursor.getColumnIndex("lat")));
+        		Float radius = cursor.getFloat(cursor.getColumnIndex("message"));
+        	   	Alert alert = new Alert(id, imagesrc, title, message, 0, 0, alertLocation, radius, "", 0);
+
+                alerts.add(alert);
+                cursor.moveToNext();
+            }
+        }
+
+		return alerts;
 	}
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

@@ -20,15 +20,16 @@ public class Alerts {
 	public static class Alert {
 		@SerializedName("_id") 
 		private String id;
-		private String title, message, userid;
+		private String title, message, userid, imagesrc;
 		private Integer type, urgency, time;
 		private Float radius;
 		private AlertLocation location;
 
-		public Alert(String id, String title, String message, Integer type,
+		public Alert(String id, String imagesrc, String title, String message, Integer type,
 				Integer urgency, AlertLocation location, Float radius,
 				String userid, Integer time) {
 			this.id = id;
+			this.imagesrc = imagesrc;
 			this.title = title;
 			this.message = message;
 			this.type = type;
@@ -43,6 +44,9 @@ public class Alerts {
 			return this.id;
 		}
 
+		public String getImageSource(){
+			return this.imagesrc;
+		}
 		public String getTitle() {
 			return this.title;
 		}

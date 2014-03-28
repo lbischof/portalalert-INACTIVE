@@ -98,9 +98,10 @@ public class GcmIntentService extends IntentService {
 						e.printStackTrace();
 					}       
 					Float radius = Float.parseFloat("100") ;//extras.getInt("radius");
+					String imagesrc = extras.getString("imagesrc");
 					String title = extras.getString("title");
 					String message = extras.getString("message");
-					Alert alert = new Alert(id, title, message, 0, 0, alertLocation, radius, "", 0);
+					Alert alert = new Alert(id, imagesrc, title, message, 0, 0, alertLocation, radius, "", 0);
 					createGeofence(alert);
 					
 					DatabaseHelper dbHelper = new DatabaseHelper(this);

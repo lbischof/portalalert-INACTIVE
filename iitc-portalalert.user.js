@@ -19,7 +19,7 @@ function wrapper() {
 		var d = data.portalDetails;
 		var lat = d.locationE6.latE6 / 1e6
         var lng = d.locationE6.lngE6 / 1e6
-		window.plugin.portalalert.portal = {title: d.descriptiveText.map.TITLE, address: d.descriptiveText.map.ADDRESS, lng: lng, lat: lat};
+		window.plugin.portalalert.portal = {imagesrc: d.imageByUrl.imageUrl, title: d.descriptiveText.map.TITLE, address: d.descriptiveText.map.ADDRESS, lng: lng, lat: lat};
 		$('#portaldetails').append('<div class="portalalert"> <a onclick="window.plugin.portalalert.open_dialog()" title="submit portal">Portalalert Submit</a></div>');
 	}
 	window.plugin.portalalert.submit_portal = function(){
