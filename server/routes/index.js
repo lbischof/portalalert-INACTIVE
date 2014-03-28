@@ -37,9 +37,9 @@ exports.register = function(db) {
     	} else {
     		alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}}}, function(err, docs) {
     			obj.error = err;
-            	obj.alerts = docs;	
+            	obj.alerts = docs;
+            	res.send(JSON.stringify(obj));
             });
-    		res.send(JSON.stringify(obj));
     }
     });
 }
