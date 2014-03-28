@@ -30,8 +30,8 @@ exports.register = function(db) {
     	"regid" : regid,
     	"location" : { "type": "Point", "coordinates" : [ lng, lat ] }
     }, function (err, numAffected) {
+    	var obj = new Object();
     	if (numAffected == 0) {
-    		var obj = new Object();
     		obj.error = "NOT_FROG";
     		res.send(JSON.stringify(obj));
     	} else {
