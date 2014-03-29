@@ -42,7 +42,7 @@ LoaderManager.LoaderCallbacks<Cursor> {
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderId, Bundle arg1) {
 		loader=
-		        new SQLiteCursorLoader(this, db, "SELECT _id, id, imagesrc, title, message "
+		        new SQLiteCursorLoader(this, db, "SELECT _id, id, imagesrc, title, message, lng, lat "
 		            + "FROM alerts ORDER BY title", null);
 
 		    return(loader);
@@ -51,16 +51,16 @@ LoaderManager.LoaderCallbacks<Cursor> {
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		this.loader=(SQLiteCursorLoader)loader;
-	    ListAdapter listadapter = new ListAdapter (getApplicationContext(), cursor, 0);
+	   	adapter = new ListAdapter (getApplicationContext(), cursor, 0);
 		ListView lv=(ListView)findViewById(R.id.contentlist);
-	    lv.setAdapter(listadapter);
+	    lv.setAdapter(adapter);
 	    registerForContextMenu(lv);
 
 	}
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-	    adapter.changeCursor(null);
+	    adapter.swapCursor(null);
 	}
 	private BroadcastReceiver notifyDataSetChanged = new BroadcastReceiver() {
         @Override

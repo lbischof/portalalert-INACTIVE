@@ -48,6 +48,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         row.put(IMAGESRC, alert.getImageSource());
         row.put(TITLE, alert.getTitle());
         row.put(MESSAGE, alert.getMessage());
+        row.put(LONGITUDE, alert.getLocation().getLng());
+        row.put(LATITUDE, alert.getLocation().getLat());
 
         SQLiteDatabase database = getWritableDatabase();
         database.insert("alerts", null, row);

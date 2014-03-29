@@ -1,9 +1,8 @@
 package com.lorenzbi.portalalert;
 
-import java.util.List;
-
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,9 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.lorenzbi.portalalert.Alerts.Alert;
-import com.lorenzbi.portalalert.Alerts.AlertLocation;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 public class ListAdapter extends CursorAdapter {
 	private LayoutInflater mInflator;
@@ -26,7 +24,7 @@ public class ListAdapter extends CursorAdapter {
 		super(context, cursor, flags);
 		mInflator = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		imageLoader = ImageLoader.getInstance();
+		ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(context));
 	}
 
 	static class ViewHolder {
@@ -37,6 +35,7 @@ public class ListAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		if (null != cursor) {
+			Log.d("TAG", DatabaseUtils.dumpCursorToString(cursor));
 			// Cursor cursor =
 			// getReadableDatabase().rawQuery("select * from alerts",null);
 			ImageView imageView = (ImageView) view.findViewById(R.id.image);
@@ -50,17 +49,12 @@ public class ListAdapter extends CursorAdapter {
 					.getColumnIndex("imagesrc"));
 			String title = cursor.getString(cursor.getColumnIndex("title"));
 			String message = cursor.getString(cursor.getColumnIndex("message"));
-			AlertLocation alertLocation = new AlertLocation();
-			Log.i("getlng portalalert",
-					cursor.getDouble(cursor.getColumnIndex("lng")) + "");
-
-			alertLocation
-					.setLng(cursor.getDouble(cursor.getColumnIndex("lng")));
-			alertLocation
-					.setLat(cursor.getDouble(cursor.getColumnIndex("lat")));
+			
+			Double lng = cursor.getDouble(cursor.getColumnIndex("lng"));
+			Double lat = cursor.getDouble(cursor.getColumnIndex("lat"));
 			Float radius = cursor.getFloat(cursor.getColumnIndex("message"));
 
-			imageLoader.displayImage(imagesrc, imageView);
+			ImageLoader.getInstance().displayImage(imagesrc, imageView);
 			txtTitle.setText(title);
 			txtMessage.setText(message);
 		}
