@@ -30,13 +30,14 @@ LoaderManager.LoaderCallbacks<Cursor> {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
+		
+		super.onCreate(savedInstanceState);
 		SystemBarTintManager tintManager = new SystemBarTintManager(this);
 	    // enable status bar tint
 	    tintManager.setStatusBarTintEnabled(true);
 	    // enable navigation bar tint
 	    tintManager.setNavigationBarTintEnabled(true);
 		tintManager.setTintColor(Color.parseColor("#03dc03"));
-		super.onCreate(savedInstanceState);
 		StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll()
                 .penaltyLog()
                 .build());
@@ -71,7 +72,6 @@ LoaderManager.LoaderCallbacks<Cursor> {
 		ListView lv=(ListView)findViewById(R.id.contentlist);
 	    lv.setAdapter(adapter);
 	    registerForContextMenu(lv);
-
 	}
 
 	@Override
@@ -83,15 +83,12 @@ LoaderManager.LoaderCallbacks<Cursor> {
         @Override
         public void onReceive(Context context, Intent intent) {
             // intent can contain anydata
-        	DatabaseHelper dbhelper = new DatabaseHelper(MainActivity.this);
-        	Cursor cursor = dbhelper.getAll();
+        	Cursor cursor = db.getAll();
         	Cursor oldcursor = adapter.swapCursor(cursor);
         	oldcursor.close();
             Log.d("sohail","onReceive called");
             //adapter.notifyDataSetChanged();
             //getLoaderManager().restartLoader(0, null, MainActivity.this);
-
-
         }
     };
     @Override
@@ -107,7 +104,7 @@ LoaderManager.LoaderCallbacks<Cursor> {
     @Override
     public void onDestroy() {
       super.onDestroy();
-
+      loader.reset();
       db.close();
     }
 }

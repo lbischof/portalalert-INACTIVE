@@ -17,6 +17,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 public class RegisterActivity extends Activity implements
 ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServicesClient.ConnectionCallbacks, GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
@@ -85,7 +87,12 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+		SystemBarTintManager tintManager = new SystemBarTintManager(this);
+	    // enable status bar tint
+	    tintManager.setStatusBarTintEnabled(true);
+	    // enable navigation bar tint
+	    tintManager.setNavigationBarTintEnabled(true);
+		tintManager.setTintColor(Color.parseColor("#03dc03"));
 		ringProgressDialog = ProgressDialog.show(RegisterActivity.this, "Please wait...", "Signing into Google Plus...", true);
 		ringProgressDialog.setCancelable(true);
 		setContentView(R.layout.activity_register);

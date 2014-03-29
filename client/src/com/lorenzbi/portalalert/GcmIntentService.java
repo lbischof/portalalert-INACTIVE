@@ -106,7 +106,7 @@ public class GcmIntentService extends IntentService {
 					
 					DatabaseHelper dbHelper = new DatabaseHelper(this);
 					dbHelper.addAlert(alert);
-            	
+					
                 
                 Log.i("lorenz", "Completed work @ " + SystemClock.elapsedRealtime());
                 // Post notification of received message.
