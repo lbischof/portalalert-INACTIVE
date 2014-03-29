@@ -200,8 +200,8 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
 		ingressUsername = usernameInput.getText().toString(); //TODO do something with this
 		mSignInClicked = false;
 		try { 
-				if ( loc.getTime() < (System.currentTimeMillis() - 60*60*60*5))
-					Log.i(TAG, "smaller");
+				/*if ( loc.getTime() < (System.currentTimeMillis() - 60*60*60*5))
+					Log.i(TAG, "smaller");*/
 				lat = loc.getLatitude();
 				lng = loc.getLongitude();
                 Person currentPerson = Plus.PeopleApi

@@ -55,6 +55,7 @@ public class SyncIntentService extends IntentService {
     			DatabaseHelper dbHelper = new DatabaseHelper(this);
 				dbHelper.addAlert(a);
     	        mCurrentGeofences.add(mGeofence.toGeofence());
+    	        
     	}
     	
     	

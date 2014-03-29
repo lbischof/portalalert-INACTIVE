@@ -179,11 +179,11 @@ public class GeofenceRequester
 
             // In debug mode, log the result
             Log.d(GeofenceUtils.APPTAG, msg);
+            
 
             // Create an Intent to broadcast to the app
-            broadcastIntent.setAction(GeofenceUtils.ACTION_GEOFENCES_ADDED)
-                           .addCategory(GeofenceUtils.CATEGORY_LOCATION_SERVICES)
-                           .putExtra(GeofenceUtils.EXTRA_GEOFENCE_STATUS, msg);
+            broadcastIntent.setAction("notifyDatasetChanged");
+
         // If adding the geofences failed
         } else {
 
@@ -207,7 +207,8 @@ public class GeofenceRequester
         }
 
         // Broadcast whichever result occurred
-        LocalBroadcastManager.getInstance(mActivity).sendBroadcast(broadcastIntent);
+        MainActivity mainactivity = new MainActivity();
+        LocalBroadcastManager.getInstance(mainactivity).sendBroadcast(broadcastIntent);
 
         // Disconnect the location client
         requestDisconnection();

@@ -55,7 +55,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         database.insert("alerts", null, row);
         database.close();
 
-        //Log.i("portalalert Lorenz", String.format("(%s) %s inserted", title, message));
+        Log.i("portalalert Lorenz", "db inserted");
         return true;
     }
 	public Alert getAlert(String id){
@@ -77,30 +77,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         	}
 		return alert;
 	}
-	public List<Alert> getAll(){
-		List<Alert> alerts = new ArrayList<Alert>();
+	public Cursor getAll(){
 		Cursor  cursor = getReadableDatabase().rawQuery("select * from alerts",null);
-		if (cursor .moveToFirst()) {
-
-            while (cursor.isAfterLast() == false) {
-            	String id = cursor.getString(cursor.getColumnIndex("id"));
-            	String imagesrc = cursor.getString(cursor.getColumnIndex("imagesrc"));
-        		String title = cursor.getString(cursor.getColumnIndex("title"));
-        		String message = cursor.getString(cursor.getColumnIndex("message"));
-        		AlertLocation alertLocation = new AlertLocation();
-        		Log.i("getlng portalalert" , cursor.getDouble(cursor.getColumnIndex("lng")) + "");
-
-        		alertLocation.setLng(cursor.getDouble(cursor.getColumnIndex("lng")));
-        		alertLocation.setLat(cursor.getDouble(cursor.getColumnIndex("lat")));
-        		Float radius = cursor.getFloat(cursor.getColumnIndex("message"));
-        	   	Alert alert = new Alert(id, imagesrc, title, message, 0, 0, alertLocation, radius, "", 0);
-
-                alerts.add(alert);
-                cursor.moveToNext();
-            }
-        }
-
-		return alerts;
+		return cursor;
 	}
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

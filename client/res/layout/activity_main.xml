@@ -8,12 +8,12 @@
 
 <ListView
 android:id="@+id/contentlist"
-android:layout_marginLeft="13dp"
-android:layout_marginRight="3dp"
+android:layout_marginLeft="15dp"
+android:layout_marginRight="5dp"
 android:layout_width="fill_parent"
 android:layout_height="fill_parent"
 android:divider="@null"
-android:dividerHeight="0dp"
+android:dividerHeight="10dp"
 android:clipToPadding="false"
   android:paddingTop="16dp"
   android:paddingBottom="16dp"
