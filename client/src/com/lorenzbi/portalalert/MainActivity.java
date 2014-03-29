@@ -81,4 +81,10 @@ LoaderManager.LoaderCallbacks<Cursor> {
     	super.onPause();
     	LocalBroadcastManager.getInstance(this).unregisterReceiver(notifyDataSetChanged);
     }
+    @Override
+    public void onDestroy() {
+      super.onDestroy();
+
+      db.close();
+    }
 }

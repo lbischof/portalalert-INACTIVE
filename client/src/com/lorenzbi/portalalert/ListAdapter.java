@@ -11,20 +11,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.squareup.picasso.Picasso;
+
 
 public class ListAdapter extends CursorAdapter {
 	private LayoutInflater mInflator;
-	protected ImageLoader imageLoader;
 
 	Context context;
 
 	ListAdapter(Context context, Cursor cursor, int flags) {
 		super(context, cursor, flags);
+		Log.d("listadapter","construct");
 		mInflator = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(context));
+		
 	}
 
 	static class ViewHolder {
@@ -35,7 +35,6 @@ public class ListAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		if (null != cursor) {
-			Log.d("TAG", DatabaseUtils.dumpCursorToString(cursor));
 			// Cursor cursor =
 			// getReadableDatabase().rawQuery("select * from alerts",null);
 			ImageView imageView = (ImageView) view.findViewById(R.id.image);
@@ -53,8 +52,7 @@ public class ListAdapter extends CursorAdapter {
 			Double lng = cursor.getDouble(cursor.getColumnIndex("lng"));
 			Double lat = cursor.getDouble(cursor.getColumnIndex("lat"));
 			Float radius = cursor.getFloat(cursor.getColumnIndex("message"));
-
-			ImageLoader.getInstance().displayImage(imagesrc, imageView);
+			Picasso.with(context).load(imagesrc).into(imageView);
 			txtTitle.setText(title);
 			txtMessage.setText(message);
 		}
