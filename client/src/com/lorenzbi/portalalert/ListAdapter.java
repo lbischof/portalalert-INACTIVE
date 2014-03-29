@@ -2,7 +2,7 @@ package com.lorenzbi.portalalert;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
+import android.graphics.Typeface;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +30,7 @@ public class ListAdapter extends CursorAdapter {
 	static class ViewHolder {
 		ImageView imageView;
 		TextView txtTitle, txtMessage;
+		Typeface roboto;
 	}
 
 	@Override
@@ -37,9 +38,10 @@ public class ListAdapter extends CursorAdapter {
 		if (null != cursor) {
 			// Cursor cursor =
 			// getReadableDatabase().rawQuery("select * from alerts",null);
-			ImageView imageView = (ImageView) view.findViewById(R.id.image);
-			TextView txtTitle = (TextView) view.findViewById(R.id.title);
-			TextView txtMessage = (TextView) view.findViewById(R.id.message);
+			ViewHolder holder = new ViewHolder();
+			holder.imageView = (ImageView) view.findViewById(R.id.image);
+			holder.txtTitle = (TextView) view.findViewById(R.id.title);
+			holder.txtMessage = (TextView) view.findViewById(R.id.message);
 
 			
 			
@@ -52,9 +54,14 @@ public class ListAdapter extends CursorAdapter {
 			Double lng = cursor.getDouble(cursor.getColumnIndex("lng"));
 			Double lat = cursor.getDouble(cursor.getColumnIndex("lat"));
 			Float radius = cursor.getFloat(cursor.getColumnIndex("message"));
-			Picasso.with(context).load(imagesrc).into(imageView);
-			txtTitle.setText(title);
-			txtMessage.setText(message);
+			Picasso.with(context).load(imagesrc).fit().centerCrop().into(holder.imageView);
+			holder.roboto = FontCache.get("Roboto-Light.ttf", context);
+			holder.txtTitle.setTypeface(holder.roboto);
+			holder.txtMessage.setTypeface(holder.roboto);
+			holder.txtTitle.setText(title);
+			holder.txtMessage.setText(message);
+			
+			
 		}
 		// Set the Menu Image
 		/*
@@ -75,4 +82,5 @@ public class ListAdapter extends CursorAdapter {
 		final View customListView = mInflator.inflate(R.layout.row, null);
 		return customListView;
 	}
+	
 }
