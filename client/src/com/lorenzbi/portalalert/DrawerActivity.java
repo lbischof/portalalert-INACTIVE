@@ -1,17 +1,15 @@
 package com.lorenzbi.portalalert;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,8 +17,9 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 
 
@@ -42,7 +41,12 @@ public class DrawerActivity extends Activity {
     		startActivity(intent);
     		finish();
     	}
-
+    	SystemBarTintManager tintManager = new SystemBarTintManager(this);
+	    // enable status bar tint
+	    tintManager.setStatusBarTintEnabled(true);
+	    // enable navigation bar tint
+	    tintManager.setNavigationBarTintEnabled(true);
+		tintManager.setTintColor(Color.parseColor("#03dc03"));
         fullLayout= (LinearLayout) getLayoutInflater().inflate(R.layout.layout_drawer, null); // Your base layout here
         actContent= (FrameLayout) fullLayout.findViewById(R.id.content_frame);
         getLayoutInflater().inflate(layoutResID, actContent, true); // Setting the content of layout your provided to the act_content frame
@@ -92,7 +96,19 @@ public class DrawerActivity extends Activity {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
-            Toast.makeText(DrawerActivity.this, ((TextView)view).getText(), Toast.LENGTH_LONG).show();
+        	switch(position){
+        	case 0:
+        		Intent intent = new Intent(DrawerActivity.this, MapActivity.class);
+        		startActivity(intent);
+        	case 1: 
+                Toast.makeText(DrawerActivity.this, "1", Toast.LENGTH_LONG).show();
+        		break;
+        	case 2: 
+                Toast.makeText(DrawerActivity.this, "2", Toast.LENGTH_LONG).show();
+
+        		break;
+        		
+        	}
             drawerLayout.closeDrawer(drawerListView);
  
         }

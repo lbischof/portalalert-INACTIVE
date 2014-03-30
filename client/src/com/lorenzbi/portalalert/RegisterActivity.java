@@ -383,7 +383,7 @@ private void verifiedFrog(String currentFences) {
 	startService(syncIntent);
 	saveInfoToPrefs();
 	ringProgressDialog.dismiss();
-	Intent intent = new Intent(this, MainActivity.class);
+	Intent intent = new Intent(this, ListFragment.class);
 	startActivity(intent);
 	finish();
 	}
