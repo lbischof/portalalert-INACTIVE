@@ -1,6 +1,8 @@
 package com.lorenzbi.portalalert;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -17,7 +19,6 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
@@ -96,19 +97,19 @@ public class DrawerActivity extends Activity {
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
-        	switch(position){
-        	case 0:
-        		Intent intent = new Intent(DrawerActivity.this, MapActivity.class);
-        		startActivity(intent);
-        	case 1: 
-                Toast.makeText(DrawerActivity.this, "1", Toast.LENGTH_LONG).show();
-        		break;
-        	case 2: 
-                Toast.makeText(DrawerActivity.this, "2", Toast.LENGTH_LONG).show();
-
-        		break;
-        		
-        	}
+        	Fragment fragment = null;
+            FragmentManager fragmentManager = getFragmentManager();
+            switch(position) {
+                case 0:
+                    fragment = new MapsFragment();
+                    break;
+                case 1:
+                    fragment = new ListFragment();
+                    break;
+            }
+            fragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit();
             drawerLayout.closeDrawer(drawerListView);
  
         }
