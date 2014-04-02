@@ -6,7 +6,6 @@ import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -20,8 +19,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.readystatesoftware.systembartint.SystemBarTintManager;
-
 
 
 public class DrawerActivity extends Activity {
@@ -33,8 +30,8 @@ public class DrawerActivity extends Activity {
     protected LinearLayout fullLayout;
     protected FrameLayout actContent;
 
-    @Override
-    public void setContentView(final int layoutResID) {
+   
+    public void setupNavigationDrawer() {
     	final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
     	boolean loggedIn = prefs.getBoolean("loggedIn", false);
     	if (!loggedIn) {
@@ -42,19 +39,9 @@ public class DrawerActivity extends Activity {
     		startActivity(intent);
     		finish();
     	}
-    	SystemBarTintManager tintManager = new SystemBarTintManager(this);
-	    // enable status bar tint
-	    tintManager.setStatusBarTintEnabled(true);
-	    // enable navigation bar tint
-	    tintManager.setNavigationBarTintEnabled(true);
-		tintManager.setTintColor(Color.parseColor("#03dc03"));
-        fullLayout= (LinearLayout) getLayoutInflater().inflate(R.layout.layout_drawer, null); // Your base layout here
-        actContent= (FrameLayout) fullLayout.findViewById(R.id.content_frame);
-        getLayoutInflater().inflate(layoutResID, actContent, true); // Setting the content of layout your provided to the act_content frame
-        super.setContentView(fullLayout);
-     // get list items from strings.xml
+    	
+        
         drawerListViewItems = getResources().getStringArray(R.array.nav_drawer_items);
-        // get ListView defined in activity_main.xml
         drawerListView = (ListView) findViewById(R.id.left_drawer);
  
         // Set the adapter for the list view
@@ -108,7 +95,7 @@ public class DrawerActivity extends Activity {
                     break;
             }
             fragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, fragment)
+                .replace(R.id.content_frame, fragment)
                 .commit();
             drawerLayout.closeDrawer(drawerListView);
  
