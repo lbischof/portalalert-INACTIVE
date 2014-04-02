@@ -89,7 +89,8 @@ public class ReceiveTransitionsIntentService extends IntentService {
                 String transitionType = getTransitionString(transition);
                 DatabaseHelper dbHelper = new DatabaseHelper(this);
                 Alert alert = dbHelper.getAlert(ids);
-                sendNotification(alert);
+                if (alert != null)
+                	sendNotification(alert);
 
                 // Log the transition type and a message
                 Log.d(GeofenceUtils.APPTAG,
@@ -119,13 +120,13 @@ public class ReceiveTransitionsIntentService extends IntentService {
 
         // Create an explicit content Intent that starts the main Activity
         Intent notificationIntent =
-                new Intent(getApplicationContext(),ListFragment.class);
+                new Intent(getApplicationContext(),MainActivity.class);
 
         // Construct a task stack
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 
         // Adds the main Activity to the task stack as the parent
-        stackBuilder.addParentStack(ListFragment.class);
+        stackBuilder.addParentStack(MainActivity.class);
 
         // Push the content Intent onto the stack
         stackBuilder.addNextIntent(notificationIntent);

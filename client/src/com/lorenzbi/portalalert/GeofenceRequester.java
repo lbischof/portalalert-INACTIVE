@@ -6,6 +6,7 @@ import java.util.List;
 
 import android.app.IntentService;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -165,7 +166,6 @@ public class GeofenceRequester
     public void onAddGeofencesResult(int statusCode, String[] geofenceRequestIds) {
 
         // Create a broadcast Intent that notifies other components of success or failure
-        Intent broadcastIntent = new Intent();
 
         // Temp storage for messages
         String msg;
@@ -182,8 +182,7 @@ public class GeofenceRequester
             
 
             // Create an Intent to broadcast to the app
-            broadcastIntent.setAction("notifyDatasetChanged");
-
+            MainActivity.getEventBus().post(new String("test message"));
         // If adding the geofences failed
         } else {
 
@@ -201,14 +200,11 @@ public class GeofenceRequester
             Log.e(GeofenceUtils.APPTAG, msg);
 
             // Create an Intent to broadcast to the app
-            broadcastIntent.setAction(GeofenceUtils.ACTION_GEOFENCE_ERROR)
-                           .addCategory(GeofenceUtils.CATEGORY_LOCATION_SERVICES)
-                           .putExtra(GeofenceUtils.EXTRA_GEOFENCE_STATUS, msg);
+            
         }
 
         // Broadcast whichever result occurred
-        MainActivity mainactivity = new MainActivity();
-        LocalBroadcastManager.getInstance(mainactivity).sendBroadcast(broadcastIntent);
+        
 
         // Disconnect the location client
         requestDisconnection();

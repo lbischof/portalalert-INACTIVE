@@ -29,7 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL("CREATE TABLE alerts (_id INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE ON CONFLICT REPLACE, imagesrc TEXT, title TEXT, message TEXT, userid TEXT, type INTEGER, urgency INTEGER, lat REAL, lng REAL, time INTEGER)");
+		db.execSQL("CREATE TABLE IF NOT EXISTS alerts (_id INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE ON CONFLICT REPLACE, imagesrc TEXT, title TEXT, message TEXT, userid TEXT, type INTEGER, urgency INTEGER, lat REAL, lng REAL, time INTEGER)");
 
 		/*ContentValues cv = new ContentValues();
 		cv.put(TITLE, "Gravity, Venus");
@@ -67,11 +67,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         		alertLocation.setLng(cursor.getDouble(cursor.getColumnIndex("lng")));
         		alertLocation.setLat(cursor.getDouble(cursor.getColumnIndex("lat")));
         		Float radius = cursor.getFloat(cursor.getColumnIndex("message"));
-
-
         	   	alert = new Alert(id, imagesrc, title, message, 0, 0, alertLocation, radius, "", 0);
-        	}
+        	   	Log.d("dbhelper","alert created");
+        	} 
+        Log.d("dbhelper","return");
 		return alert;
+
 	}
 	public Cursor getAll(){
 		Cursor  cursor = getReadableDatabase().rawQuery("select * from alerts",null);

@@ -368,8 +368,6 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
     	        Log.e("register failed", statusCode+ "");
     	        Toast.makeText(RegisterActivity.this, "Server not available.", Toast.LENGTH_LONG).show();
     	     }
-
-			
     	});
     }
    protected void notFrog() {
@@ -383,7 +381,7 @@ private void verifiedFrog(String currentFences) {
 	startService(syncIntent);
 	saveInfoToPrefs();
 	ringProgressDialog.dismiss();
-	Intent intent = new Intent(this, ListFragment.class);
+	Intent intent = new Intent(this, MainActivity.class);
 	startActivity(intent);
 	finish();
 	}
