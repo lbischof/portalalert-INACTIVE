@@ -199,7 +199,6 @@ public class GeofenceRemover implements
             PendingIntent requestIntent) {
 
         // Create a broadcast Intent that notifies other components of success or failure
-        Intent broadcastIntent = new Intent();
 
         // If removing the geofences was successful
         if (statusCode == LocationStatusCodes.SUCCESS) {
@@ -209,9 +208,7 @@ public class GeofenceRemover implements
                     mContext.getString(R.string.remove_geofences_intent_success));
 
             // Set the action and add the result message
-            broadcastIntent.setAction(GeofenceUtils.ACTION_GEOFENCES_REMOVED);
-            broadcastIntent.putExtra(GeofenceUtils.EXTRA_GEOFENCE_STATUS,
-                    mContext.getString(R.string.remove_geofences_intent_success));
+            BusProvider.getInstance().post(new String("update"));
 
         // If removing the geocodes failed
         } else {
@@ -221,13 +218,11 @@ public class GeofenceRemover implements
                     mContext.getString(R.string.remove_geofences_intent_failure, statusCode));
 
             // Set the action and add the result message
-            broadcastIntent.setAction(GeofenceUtils.ACTION_GEOFENCE_ERROR);
-            broadcastIntent.putExtra(GeofenceUtils.EXTRA_GEOFENCE_STATUS,
-                    mContext.getString(R.string.remove_geofences_intent_failure, statusCode));
+           
         }
 
         // Broadcast the Intent to all components in this app
-        LocalBroadcastManager.getInstance(mContext).sendBroadcast(broadcastIntent);
+        
 
         // Disconnect the location client
         requestDisconnection();

@@ -112,8 +112,8 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
             // Intent(FastMainActivity.this,LocatorService.class);
             // startService(this.locatorService);
 
-			mIntentService = new Intent(this, LocationService.class);
-	        mPendingIntent = PendingIntent.getService(this, 1, mIntentService, 0);
+			//mIntentService = new Intent(this, LocationService.class);
+	        //mPendingIntent = PendingIntent.getService(this, 1, mIntentService, 0);
 	        
         } catch (Exception error) {
         }
@@ -354,7 +354,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
 							} else if(jsonObject.has("error") && !jsonObject.isNull("error")) {
 								Log.e("unknown error", jsonObject.getString("error"));
 							} else {
-								verifiedFrog(response);
+								verifiedFrog();
 							}
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
@@ -375,9 +375,10 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
 		ringProgressDialog.dismiss();
 		Toast.makeText(this, "Not a verified Frog!", Toast.LENGTH_LONG).show();
 	}
-private void verifiedFrog(String currentFences) {
+private void verifiedFrog() {
 	Intent syncIntent = new Intent(RegisterActivity.this, SyncIntentService.class);
-	syncIntent.putExtra("JSON", currentFences);
+	syncIntent.putExtra("lng", lng);
+	syncIntent.putExtra("lat", lat);
 	startService(syncIntent);
 	saveInfoToPrefs();
 	ringProgressDialog.dismiss();

@@ -5,9 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.location.Location;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.android.gms.location.LocationClient;
 import com.lorenzbi.portalalert.Alerts.Alert;
 import com.lorenzbi.portalalert.Alerts.AlertLocation;
 
@@ -22,6 +24,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	static final String URGENCY = "urgency";
 	static final String LATITUDE = "lat";
 	static final String LONGITUDE = "lng";
+	Double fudge = null;
 
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, 1);
@@ -52,6 +55,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         database.insert("alerts", null, row);
         database.close();
         Log.i("portalalert Lorenz", "db inserted");
+
         return true;
     }
 	public Alert getAlert(String id){
@@ -74,8 +78,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return alert;
 
 	}
-	public Cursor getAll(){
-		Cursor  cursor = getReadableDatabase().rawQuery("select * from alerts",null);
+	public Cursor getNear(Double lng, Double lat){
+		fudge = Math.pow(Math.cos(Math.toRadians(lat)),2);
+		Cursor  cursor = getReadableDatabase().rawQuery("SELECT _id, id, imagesrc, title, message, lng, lat, ( " + lat + " - lat) * ( " + lat +"- lat) + ( " + lng + "- lng) * ( " + lng + "- lng) * " + fudge + " as distance "	+ " from alerts "+ " order by distance asc",null);
 		return cursor;
 	}
 	@Override

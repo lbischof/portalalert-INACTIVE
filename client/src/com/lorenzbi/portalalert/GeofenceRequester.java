@@ -182,8 +182,10 @@ public class GeofenceRequester
             
 
             // Create an Intent to broadcast to the app
-            MainActivity.getEventBus().post(new String("test message"));
-        // If adding the geofences failed
+            
+            BusProvider.getInstance().post(new String("update"));
+
+            // If adding the geofences failed
         } else {
 
             /*

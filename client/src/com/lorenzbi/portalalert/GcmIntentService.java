@@ -85,7 +85,8 @@ public class GcmIntentService extends IntentService {
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 // This loop represents the service doing some work.
             	
-            		String id = extras.getString("_id");
+            		String id = extras.getString("id");
+            		Log.d("id",id);
             		String location = extras.getString("location");
 					AlertLocation alertLocation = new AlertLocation();
             		try {
@@ -102,11 +103,12 @@ public class GcmIntentService extends IntentService {
 					String title = extras.getString("title");
 					String message = extras.getString("message");
 					Alert alert = new Alert(id, imagesrc, title, message, 0, 0, alertLocation, radius, "", 0);
-					createGeofence(alert);
 					
 					DatabaseHelper dbHelper = new DatabaseHelper(this);
-					dbHelper.addAlert(alert);
-					
+					if (dbHelper.addAlert(alert)) {
+						createGeofence(alert);
+					}
+
                 
                 Log.i("lorenz", "Completed work @ " + SystemClock.elapsedRealtime());
                 // Post notification of received message.

@@ -7,6 +7,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateUtils;
+import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 import com.google.gson.Gson;
@@ -34,14 +35,28 @@ public class SyncIntentService extends IntentService {
  
     @Override
     protected void onHandleIntent(Intent intent) {
-        String json = intent.getStringExtra("JSON");
-        createGeofences(json);
+    	//get nearest 3km alert ids from db and send them to server
+    	//receive all new and deleted info
+    	//update database
+    	
+    	//TODO: need to figure out if i should reregister 99 geofences each time the app syncs or not
+    	//check if distance less than 3km last updated {
+    	//create missing geofences and delete old ones
+    	// } else if further than 3km last updated {
+    	//delete all geofences and register the 99 nearest
+    	
+    	
+    	
+    	
+        //String json = intent.getStringExtra("JSON");
+        //createGeofences(json);
     }
     public void createGeofences(String json) {
-    	
+    	Log.d("json",json);
     	Gson gson = new Gson();
     	Alerts root = gson.fromJson(json, Alerts.class);
     	List<Alert> alerts = root.getAlerts();
+    	if (!alerts.isEmpty()){
     	for(Alert a: alerts){
     		SimpleGeofence mGeofence = new SimpleGeofence(
     	            a.getId(),
@@ -55,10 +70,7 @@ public class SyncIntentService extends IntentService {
     			DatabaseHelper dbHelper = new DatabaseHelper(this);
 				dbHelper.addAlert(a);
     	        mCurrentGeofences.add(mGeofence.toGeofence());
-    	        
     	}
-    	
-    	
         // Start the request. Fail if there's already a request in progress
         try {
             // Try to add geofences
@@ -68,5 +80,6 @@ public class SyncIntentService extends IntentService {
            /* Toast.makeText(this, R.string.add_geofences_already_requested_error,
                         Toast.LENGTH_LONG).show();*/
         }
+    	}
     }
 }
