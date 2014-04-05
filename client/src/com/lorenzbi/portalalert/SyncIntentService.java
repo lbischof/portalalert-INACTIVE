@@ -35,6 +35,9 @@ public class SyncIntentService extends IntentService {
  
     @Override
     protected void onHandleIntent(Intent intent) {
+    	//get exras (lng,lat)
+    	
+    	
     	//get nearest 3km alert ids from db and send them to server
     	//receive all new and deleted info
     	//update database

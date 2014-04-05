@@ -97,6 +97,7 @@ exports.alert = function(db) {
 	});  
 	}
 }
+
 exports.sync = function(db) {
 	return function(req, res) {
 		var ids = req.body.ids;
