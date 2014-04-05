@@ -36,6 +36,7 @@ app.get('/users', users.list);
 app.post('/register', routes.register(db));
 app.post('/alert', routes.alert(db));
 app.post('/userlocation', routes.userlocation(db));
+app.post('/sync', routes.sync(db));
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');

@@ -34,13 +34,13 @@ exports.register = function(db) {
     	if (numAffected == 0) {
     		obj.error = "NOT_FROG";
     		res.send(JSON.stringify(obj));
-    	} else {
+    	} /*else {
     		alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}}}, function(err, docs) {
     			obj.error = err;
             	obj.alerts = docs;
             	res.send(JSON.stringify(obj));
             });
-    }
+    }*/
     });
 }
 }
@@ -95,6 +95,20 @@ exports.alert = function(db) {
 			}
 		});
 	});  
+	}
+}
+exports.sync = function(db) {
+	return function(req, res) {
+		var ids = req.body.ids;
+		var lng = req.body.lng;
+		var lat = req.body.lat;
+		//ids to array
+		var alerts = db.get('alerts');
+		alerts.find({$and: [{location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}}},{ _id: {$nin: ["array","of","ids"]}}]}, function(err, docs) {
+    			obj.error = err;
+            	obj.alerts = docs;
+            	res.send(JSON.stringify(obj));
+            });
 	}
 }
 exports.userlocation = function(db) {
