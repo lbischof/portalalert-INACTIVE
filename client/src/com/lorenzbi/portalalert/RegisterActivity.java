@@ -50,8 +50,6 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
 	public static final String EXTRA_MESSAGE = "message";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     //private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    private Intent mIntentService;
-    private PendingIntent mPendingIntent;
     private LocationClient mLocationclient;
 
     /**
@@ -339,8 +337,6 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
     	params.put("name", personName );
     	params.put("email", personEmail);
     	params.put("userid", personId);
-    	params.put("lng", lng.toString());
-    	params.put("lat", lat.toString());
 
     	HttpManager.post("register", params, new AsyncHttpResponseHandler() {
     	    @Override
@@ -375,7 +371,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
 		ringProgressDialog.dismiss();
 		Toast.makeText(this, "Not a verified Frog!", Toast.LENGTH_LONG).show();
 	}
-private void verifiedFrog() {
+   private void verifiedFrog() {
 	Intent syncIntent = new Intent(RegisterActivity.this, SyncIntentService.class);
 	syncIntent.putExtra("lng", lng);
 	syncIntent.putExtra("lat", lat);

@@ -32,11 +32,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL("CREATE TABLE IF NOT EXISTS alerts (_id INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE ON CONFLICT REPLACE, imagesrc TEXT, title TEXT, message TEXT, userid TEXT, type INTEGER, urgency INTEGER, lat REAL, lng REAL, time INTEGER)");
-
-		/*ContentValues cv = new ContentValues();
-		cv.put(TITLE, "Gravity, Venus");
-		cv.put(MESSAGE, SensorManager.GRAVITY_VENUS);
-		db.insert("alerts", TITLE, cv);*/
 	}
 	public boolean addAlert(Alert alert){
 		if(TextUtils.isEmpty(alert.getTitle())){
@@ -77,24 +72,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return alert;
 
 	}
+	public void clearAll(){
+		getReadableDatabase().rawQuery("delete from alerts", null);
+	}
 	public Cursor getNear(Double lng, Double lat){
 		fudge = Math.pow(Math.cos(Math.toRadians(lat)),2);
-		Cursor  cursor = getReadableDatabase().rawQuery("SELECT _id, id, imagesrc, title, message, lng, lat, ( " + lat + " - lat) * ( " + lat +"- lat) + ( " + lng + "- lng) * ( " + lng + "- lng) * " + fudge + " as distance "	+ " from alerts "+ " order by distance asc",null);
+		String query = "SELECT _id, id, imagesrc, title, message, lng, lat, ( " + lat + " - lat) * ( " + lat +"- lat) + ( " + lng + "- lng) * ( " + lng + "- lng) * " + fudge + " as distance "	+ " from alerts "+ " order by distance asc";
+		Cursor  cursor = getReadableDatabase().rawQuery(query,null);
 		return cursor;
 	}
-	/*public String getNearIds(Double lng, Double lat){
-		String ids = "";
-		fudge = Math.pow(Math.cos(Math.toRadians(lat)),2);
-		Cursor  cursor = getReadableDatabase().rawQuery("SELECT id, lng, lat, ( " + lat + " - lat) * ( " + lat +"- lat) + ( " + lng + "- lng) * ( " + lng + "- lng) * " + fudge + " as distance "	+ " from alerts "+ " order by distance asc",null);
-		Location location = new Location();
-		while(cursor.moveToNext()){
-			Double alng = cursor.getDouble(cursor.getColumnIndex("lng"));
-			Double alat = cursor.getDouble(cursor.getColumnIndex("lat"));
-			
-		     ids += ","+cursor.getString(cursor.getColumnIndex("id"));
-		}
-		return ids;
-	}*/
+	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		android.util.Log.w("Constants",

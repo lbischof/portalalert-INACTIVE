@@ -59,10 +59,10 @@ public class MainActivity extends DrawerActivity implements ConnectionCallbacks,
 		Location location = locationClient.getLastLocation();
         if (location != null){
         	sendLocationEvent(location);
-        	Intent syncIntent = new Intent(this, SyncIntentService.class);
+        	/*Intent syncIntent = new Intent(this, SyncIntentService.class);
         	syncIntent.putExtra("lng", location.getLongitude());
         	syncIntent.putExtra("lat", location.getLatitude());
-        	startService(syncIntent);
+        	startService(syncIntent);*/
             Toast.makeText(this, "Location: " + location.getLatitude() + ", " + location.getLongitude(), Toast.LENGTH_SHORT).show();
         }
         }

@@ -27,21 +27,16 @@ exports.register = function(db) {
     	"username" : username,
     	"email" : email,
     	"name" : name,
-    	"regid" : regid,
-    	"location" : { "type": "Point", "coordinates" : [ lng, lat ] }
+    	"regid" : regid
     }, function (err, numAffected) {
     	var obj = new Object();
     	if (numAffected == 0) {
     		obj.error = "NOT_FROG";
-    		res.send(JSON.stringify(obj));
-    	} /*else {
-    		alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}}}, function(err, docs) {
-    			obj.error = err;
-            	obj.alerts = docs;
-            	res.send(JSON.stringify(obj));
-            });
-}*/
-});
+    	} else {
+    		obj.error = err;
+    	}
+    	res.send(JSON.stringify(obj));
+    });
 }
 }
 
@@ -93,7 +88,7 @@ exports.alert = function(db) {
 				});
 			}
 		});
-});  
+    });  
 }
 }
 
