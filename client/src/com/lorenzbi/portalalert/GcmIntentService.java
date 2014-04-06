@@ -85,7 +85,7 @@ public class GcmIntentService extends IntentService {
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 // This loop represents the service doing some work.
             	
-            		String id = extras.getString("id");
+            		String id = extras.getString("_id");
             		Log.d("id",id);
             		String location = extras.getString("location");
 					AlertLocation alertLocation = new AlertLocation();

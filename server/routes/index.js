@@ -67,7 +67,6 @@ exports.alert = function(db) {
     users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}},function(err, docs){
     	registrationIds = docs;
     	alerts.insert({
-    		"regids" : registrationIds,
     		"location" : { "type": "Point", "coordinates" : [ lng,lat ] },
     		"imagesrc" : imagesrc,
     		"title" : title,
@@ -83,7 +82,7 @@ exports.alert = function(db) {
         	var gcm = require('node-gcm');
         	var gcmMessage = new gcm.Message({
 					//collapseKey: 'demo',
-					data: {"id":doc._id,"location":doc.location,"imagesrc":doc.imagesrc,"title":doc.title,"message":doc.message,"type":doc.type}
+					data: doc
 				});
         	var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
 				/**
