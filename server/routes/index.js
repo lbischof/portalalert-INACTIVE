@@ -101,8 +101,8 @@ exports.alert = function(db) {
 exports.sync = function(db) {
 	return function(req, res) {
 		var userid = req.body.userid;
-		var lng = req.body.lng;
-		var lat = req.body.lat;
+		var lng = parseFloat(req.body.lng);
+		var lat = parseFloat(req.body.lat);
 		var alerts = db.get('alerts');
 		var users = db.get('users');
 		alerts.ensureIndex( { "location" : "2dsphere" } );
