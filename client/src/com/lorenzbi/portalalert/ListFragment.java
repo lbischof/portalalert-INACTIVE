@@ -47,9 +47,11 @@ LoaderManager.LoaderCallbacks<Cursor> {
 	@Subscribe
     public void onUpdateEvent(String msg) {
 		Log.d("onupdateevent", "onupdateevent");
+		if (adapter != null) {
 		Cursor cursor = db.getNear(lng,lat);
     	Cursor oldcursor = adapter.swapCursor(cursor);
     	oldcursor.close();
+		}
     }
 	double getDouble(final SharedPreferences prefs, final String key, final double defaultValue) {
 		return Double.longBitsToDouble(prefs.getLong(key, Double.doubleToLongBits(defaultValue)));

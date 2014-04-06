@@ -118,8 +118,10 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
 	}
 	@Override
 	public void onClick(View view) {
+		final EditText usernameInput = (EditText)findViewById(R.id.username);
+		ingressUsername = usernameInput.getText().toString().trim();
 		if (view.getId() == R.id.sign_in_button
-				&& !mGoogleApiClient.isConnecting()) {
+				&& !mGoogleApiClient.isConnecting() && !ingressUsername.matches("")) {
 			mSignInClicked = true;
 			resolveSignInError();
 			ringProgressDialog = ProgressDialog.show(RegisterActivity.this, "Please wait...", "Signing into Google Plus...", true);
