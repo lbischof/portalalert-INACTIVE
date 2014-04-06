@@ -92,6 +92,7 @@ LoaderManager.LoaderCallbacks<Cursor> {
     @Override
     public void onDestroy() {
       super.onDestroy();
+      if (loader != null)
       loader.reset();
       db.close();
     }

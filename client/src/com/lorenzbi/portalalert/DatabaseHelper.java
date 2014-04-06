@@ -9,7 +9,6 @@ import android.location.Location;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.android.gms.location.LocationClient;
 import com.lorenzbi.portalalert.Alerts.Alert;
 import com.lorenzbi.portalalert.Alerts.AlertLocation;
 
@@ -83,6 +82,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		Cursor  cursor = getReadableDatabase().rawQuery("SELECT _id, id, imagesrc, title, message, lng, lat, ( " + lat + " - lat) * ( " + lat +"- lat) + ( " + lng + "- lng) * ( " + lng + "- lng) * " + fudge + " as distance "	+ " from alerts "+ " order by distance asc",null);
 		return cursor;
 	}
+	/*public String getNearIds(Double lng, Double lat){
+		String ids = "";
+		fudge = Math.pow(Math.cos(Math.toRadians(lat)),2);
+		Cursor  cursor = getReadableDatabase().rawQuery("SELECT id, lng, lat, ( " + lat + " - lat) * ( " + lat +"- lat) + ( " + lng + "- lng) * ( " + lng + "- lng) * " + fudge + " as distance "	+ " from alerts "+ " order by distance asc",null);
+		Location location = new Location();
+		while(cursor.moveToNext()){
+			Double alng = cursor.getDouble(cursor.getColumnIndex("lng"));
+			Double alat = cursor.getDouble(cursor.getColumnIndex("lat"));
+			
+		     ids += ","+cursor.getString(cursor.getColumnIndex("id"));
+		}
+		return ids;
+	}*/
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		android.util.Log.w("Constants",

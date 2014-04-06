@@ -17,7 +17,7 @@ exports.register = function(db) {
     // Set our collection
     var users = db.get('users');
     var alerts = db.get('alerts');
-	alerts.ensureIndex( { "location" : "2dsphere" } );
+    alerts.ensureIndex( { "location" : "2dsphere" } );
     users.ensureIndex( { "location" : "2dsphere" } );
     // Submit to the DB
     process.stdout.write(regid+"test");
@@ -40,15 +40,15 @@ exports.register = function(db) {
             	obj.alerts = docs;
             	res.send(JSON.stringify(obj));
             });
-    }*/
-    });
+}*/
+});
 }
 }
 
 exports.alert = function(db) {
 	return function(req, res) {
-	var portal = JSON.parse(req.body.portal);
-	var registrationIds = [];
+		var portal = JSON.parse(req.body.portal);
+		var registrationIds = [];
     // Get our form values. These rely on the "name" attributes
     var lat = parseFloat(portal.lat);
     var lng = parseFloat(portal.lng);
@@ -62,12 +62,12 @@ exports.alert = function(db) {
     var users = db.get('users');
 
     
-	alerts.ensureIndex( { "location" : "2dsphere" } );
+    alerts.ensureIndex( { "location" : "2dsphere" } );
     users.ensureIndex( { "location" : "2dsphere" } );
     users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}},function(err, docs){
-		registrationIds = docs;
- 		alerts.insert({
- 			"regids" : registrationIds,
+    	registrationIds = docs;
+    	alerts.insert({
+    		"regids" : registrationIds,
     		"location" : { "type": "Point", "coordinates" : [ lng,lat ] },
     		"imagesrc" : imagesrc,
     		"title" : title,
@@ -77,15 +77,15 @@ exports.alert = function(db) {
     	}, function (err, doc) {
     		if (err) {
             // If it failed, return error
-            	res.send("There was a problem adding the information to the database.");
-        	} else {
-        		console.log(doc);
-        		var gcm = require('node-gcm');
-				var gcmMessage = new gcm.Message({
+            res.send("There was a problem adding the information to the database.");
+        } else {
+        	console.log(doc);
+        	var gcm = require('node-gcm');
+        	var gcmMessage = new gcm.Message({
 					//collapseKey: 'demo',
 					data: {"id":doc._id,"location":doc.location,"imagesrc":doc.imagesrc,"title":doc.title,"message":doc.message,"type":doc.type}
 				});
-				var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
+        	var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
 				/**
 				* Params: message-literal, registrationIds-array, No. of retries, callback-function
 				**/
@@ -94,51 +94,29 @@ exports.alert = function(db) {
 				});
 			}
 		});
-	});  
-	}
+});  
+}
 }
 
 exports.sync = function(db) {
 	return function(req, res) {
-		var ids = req.body.ids;
+		var userid = req.body.userid;
 		var lng = req.body.lng;
 		var lat = req.body.lat;
-		//ids to array
 		var alerts = db.get('alerts');
-		alerts.find({$and: [{location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}}},{ _id: {$nin: ["array","of","ids"]}}]}, function(err, docs) {
-    			obj.error = err;
-            	obj.alerts = docs;
-            	res.send(JSON.stringify(obj));
-            });
+		var users = db.get('users');
+
+		users.update({ "userid" : userid },{
+			"location" : { "type": "Point", "coordinates" : [ lng, lat ] }
+		}, function (err, numAffected) {
+			var obj = new Object();
+			alerts.find({$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}}, function(err, docs) {
+				obj.error = err;
+				obj.alerts = docs;
+				res.send(JSON.stringify(obj));
+			});
+		});
+		
 	}
 }
-exports.userlocation = function(db) {
-	return function(req, res) {
 
-    // Get our form values. These rely on the "name" attributes
-    var userid = req.body.userid;
-    var lat = req.body.lat;
-    var lng = req.body.lng;
-
-    // Set our collection
-    var users = db.get('users');
-
-    // Submit to the DB
-    process.stdout.write(regid+"test");
-    users.insert({
-    	"userid" : userid,
-    	"location" : [lng,lat]
-    }, function (err, doc) {
-    	if (err) {
-            // If it failed, return error
-            res.send("There was a problem adding the information to the database.");
-        }
-        else {
-            // If it worked, set the header so the address bar doesn't still say /adduser
-            //res.location("userlist");
-            // And forward to success page
-            //res.redirect("userlist");
-        }
-    });
-}
-}
