@@ -105,7 +105,7 @@ exports.sync = function(db) {
 		var lat = req.body.lat;
 		var alerts = db.get('alerts');
 		var users = db.get('users');
-
+		alerts.ensureIndex( { "location" : "2dsphere" } );
 		users.update({ "userid" : userid },{
 			"location" : { "type": "Point", "coordinates" : [ lng, lat ] }
 		}, function (err, numAffected) {
