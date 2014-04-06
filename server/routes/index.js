@@ -110,7 +110,7 @@ exports.sync = function(db) {
 			"location" : { "type": "Point", "coordinates" : [ lng, lat ] }
 		}, function (err, numAffected) {
 			var obj = new Object();
-			alerts.find({$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}}, function(err, docs) {
+			alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}}}, function(err, docs) {
 				obj.error = err;
 				obj.alerts = docs;
 				res.send(JSON.stringify(obj));
