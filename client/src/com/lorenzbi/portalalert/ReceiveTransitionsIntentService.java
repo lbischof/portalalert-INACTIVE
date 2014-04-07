@@ -1,5 +1,6 @@
 package com.lorenzbi.portalalert;
 
+import java.util.Arrays;
 import java.util.List;
 
 import android.app.IntentService;
@@ -38,7 +39,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
-
+    	Log.d("transition onhandleintent", "onhandleintent");
         // Create a local broadcast Intent
         Intent broadcastIntent = new Intent();
 
@@ -93,17 +94,22 @@ public class ReceiveTransitionsIntentService extends IntentService {
                 	startService(syncIntent);
                 } else {
                 DatabaseHelper dbHelper = new DatabaseHelper(this);
-                Alert alert = dbHelper.getAlert(ids);
-                if (alert != null)
-                	sendNotification(alert);
-
+                List<String> idArray = Arrays.asList(ids.split(","));
+                for (String id:idArray){
+                	Alert alert = dbHelper.getAlert(id);
+                    if (alert != null) {
+                    	sendNotification(alert);
+                    	Log.d("sendnotify","sendnotify");
+                    }
+                }
+                
                 // Log the transition type and a message
-                Log.d(GeofenceUtils.APPTAG,
+                Log.d(GeofenceUtils.APPTAG + "transition",
                         getString(
                                 R.string.geofence_transition_notification_title,
                                 transitionType,
                                 ids));
-                Log.d(GeofenceUtils.APPTAG,
+                Log.d(GeofenceUtils.APPTAG + "transition",
                         getString(R.string.geofence_transition_notification_text));
                 }
             // An invalid transition was reported
@@ -154,10 +160,11 @@ public class ReceiveTransitionsIntentService extends IntentService {
             (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Issue the notification
-        String notifyId = alert.getLocation().getLng().toString() + alert.getLocation().getLat().toString();
-        notifyId = notifyId.replace(".", "");
+        String lng = alert.getLocation().getLng().toString();
+        String lat = alert.getLocation().getLat().toString();
+        Integer notifyId =  Integer.parseInt(lng.substring(Math.max(lng.length() - 4, 0)) + lat.substring(Math.max(lat.length() - 4, 0)).replace(".", ""));
         
-        mNotificationManager.notify(Integer.parseInt(notifyId), builder.build());
+        mNotificationManager.notify(notifyId, builder.build());
     }
 
     /**

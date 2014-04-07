@@ -41,6 +41,8 @@ public class SyncService extends Service implements GooglePlayServicesClient.Con
 	LocationClient locationclient;
 	@Override
 	  public int onStartCommand(Intent intent, int flags, int startId) {
+		mGeofenceRemover.removeGeofencesByIntent(mGeofenceRequester.getRequestPendingIntent());
+
 		locationclient = new LocationClient(this,this,this);
 		locationclient.connect();
     	return Service.START_NOT_STICKY;
@@ -87,8 +89,6 @@ public class SyncService extends Service implements GooglePlayServicesClient.Con
 					 Geofence.GEOFENCE_TRANSITION_ENTER |
 					 Geofence.GEOFENCE_TRANSITION_EXIT);
 					 mCurrentGeofences.add(mGeofence.toGeofence());
-			mGeofenceRemover.removeGeofencesByIntent(mGeofenceRequester
-                    .getRequestPendingIntent());
 				mGeofenceRequester.addGeofences(mCurrentGeofences);
 			
 		}
