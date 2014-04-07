@@ -102,7 +102,7 @@ exports.sync = function(db) {
 		var users = db.get('users');
 		alerts.ensureIndex( { "location" : "2dsphere" } );
 		users.update({ "userid" : userid },{ $set: {
-			"location.coordinates" : [ lng, lat ] }}
+			"location.coordinates" : [ lng, lat ] }
 		}
 		}, function (err, numAffected) {
 			console.log(err + numAffected);
