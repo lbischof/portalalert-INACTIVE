@@ -74,6 +74,7 @@ exports.alert = function(db) {
             res.send("There was a problem adding the information to the database.");
         } else {
         	console.log(doc);
+        	res.send(doc);
         	var gcm = require('node-gcm');
         	var gcmMessage = new gcm.Message({
 					//collapseKey: 'demo',
@@ -103,6 +104,7 @@ exports.sync = function(db) {
 		users.update({ "userid" : userid },{
 			"location" : { "type": "Point", "coordinates" : [ lng, lat ] }
 		}, function (err, numAffected) {
+			console.log(err + numAffected);
 			var obj = new Object();
 			alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}}}, function(err, docs) {
 				obj.error = err;
