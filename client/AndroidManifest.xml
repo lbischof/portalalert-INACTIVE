@@ -101,7 +101,7 @@
                 		<category android:name="com.lorenzbi.portalalert" />
             		</intent-filter>
         </receiver>
-        <service android:name=".SyncIntentService" />
+        <service android:name=".SyncService" />
         <service android:name=".GcmIntentService" />
     </application>
 

@@ -1,36 +1,29 @@
 package com.lorenzbi.portalalert;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-
-import android.app.IntentService;
+import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
+import android.location.Location;
+import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.LocationClient;
 import com.google.gson.Gson;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.lorenzbi.portalalert.Alerts.Alert;
 
-public class SyncIntentService extends IntentService {
+public class SyncService extends Service implements GooglePlayServicesClient.ConnectionCallbacks,GooglePlayServicesClient.OnConnectionFailedListener{
 	public static final int NOTIFICATION_ID = 1;
 	NotificationCompat.Builder builder;
 
@@ -45,73 +38,22 @@ public class SyncIntentService extends IntentService {
 
 	Double lng;
 	Double lat;
-	public SyncIntentService() {
-		super("SyncIntentService");
-	}
-
+	LocationClient locationclient;
 	@Override
-	protected void onHandleIntent(Intent intent) {
+	  public int onStartCommand(Intent intent, int flags, int startId) {
+		locationclient = new LocationClient(this,this,this);
+		locationclient.connect();
+    	return Service.START_NOT_STICKY;
+	  }
 
-		final SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(getApplicationContext());
-		String userid = prefs.getString("userid", "");
-		lng = intent.getDoubleExtra("lng", 0);
-		lat = intent.getDoubleExtra("lat", 0);
+	  @Override
+	  public IBinder onBind(Intent intent) {
+	  //TODO for communication return IBinder implementation
+	    return null;
+	  }
+	
 
-		HttpClient httpclient = new DefaultHttpClient();
-		HttpPost httppost = new HttpPost(
-				"http://portalalert.lorenzz.ch:3000/sync");
-
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-		nameValuePairs.add(new BasicNameValuePair("userid", userid));
-		nameValuePairs.add(new BasicNameValuePair("lng", lng.toString()));
-		nameValuePairs.add(new BasicNameValuePair("lat", lat.toString()));
-
-		try {
-			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-		} catch (UnsupportedEncodingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-		try {
-
-			HttpResponse response = httpclient.execute(httppost);
-			String jsonResult = inputStreamToString(
-					response.getEntity().getContent()).toString();
-
-			if (jsonResult != null) {
-				Log.d("http sync response", jsonResult);
-				addToDb(jsonResult);
-				// sendResultBroadcast(jsonResult);
-			}
-
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	private StringBuilder inputStreamToString(InputStream is) {
-		String rLine = "";
-		StringBuilder answer = new StringBuilder();
-
-		InputStreamReader isr = new InputStreamReader(is);
-
-		BufferedReader rd = new BufferedReader(isr);
-
-		try {
-			while ((rLine = rd.readLine()) != null) {
-				answer.append(rLine);
-			}
-		}
-
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-		return answer;
-	}
+	
 
 	public void addToDb(String json) {
 		Gson gson = new Gson();
@@ -176,6 +118,47 @@ public class SyncIntentService extends IntentService {
 	    private double rad2deg(double rad) {
 	      return (rad * 180.0 / Math.PI);
 	    }
+
+		@Override
+		public void onConnectionFailed(ConnectionResult result) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onConnected(Bundle connectionHint) {
+			final SharedPreferences prefs = PreferenceManager
+					.getDefaultSharedPreferences(getApplicationContext());
+			String userid = prefs.getString("userid", "");
+			Log.d("userid", userid);
+			Location location = locationclient.getLastLocation();
+	        if (location != null){
+	        Log.d("location lng", location.getLongitude() + "");
+			lng = location.getLongitude();
+			lat = location.getLatitude();
+
+			RequestParams params = new RequestParams();
+	    	params.put("userid", userid);
+	    	params.put("lng", lng.toString());
+	    	params.put("lat", lat.toString());
+	    	
+	    	HttpManager.post("sync", params, new AsyncHttpResponseHandler() {
+	    	    @Override
+	    	    public void onSuccess(String response) {
+	    	    	Log.d("resonse", response);
+	    	    	addToDb(response);
+	    	    }
+	    	});
+	        }
+		}
+
+		@Override
+		public void onDisconnected() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		
 	
 	
 }

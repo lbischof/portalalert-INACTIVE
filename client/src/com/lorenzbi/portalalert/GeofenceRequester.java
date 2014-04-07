@@ -39,7 +39,7 @@ public class GeofenceRequester
                     OnConnectionFailedListener {
 
     // Storage for a reference to the calling client
-    private final IntentService mActivity;
+    private final Context mActivity;
 
     // Stores the PendingIntent used to send geofence transitions back to the app
     private PendingIntent mGeofencePendingIntent;
@@ -56,7 +56,7 @@ public class GeofenceRequester
      */
     private boolean mInProgress;
 
-    public GeofenceRequester(IntentService gcmIntentService) {
+    public GeofenceRequester(Context gcmIntentService) {
         // Save the context
         mActivity = gcmIntentService;
 

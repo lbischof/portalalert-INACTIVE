@@ -89,10 +89,8 @@ public class ReceiveTransitionsIntentService extends IntentService {
                 String transitionType = getTransitionString(transition);
                 if (ids == "SYNC") {
                 	Log.d("Geofence Sync", transitionType);
-                	/*Intent syncIntent = new Intent(this, SyncIntentService.class);
-                	syncIntent.putExtra("lng", lng);
-                	syncIntent.putExtra("lat", lat);
-                	startService(syncIntent);*/
+                	Intent syncIntent = new Intent(this, SyncService.class);
+                	startService(syncIntent);
                 } else {
                 DatabaseHelper dbHelper = new DatabaseHelper(this);
                 Alert alert = dbHelper.getAlert(ids);

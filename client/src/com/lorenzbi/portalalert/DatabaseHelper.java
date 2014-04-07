@@ -34,9 +34,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL("CREATE TABLE IF NOT EXISTS alerts (_id INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE ON CONFLICT REPLACE, imagesrc TEXT, title TEXT, message TEXT, userid TEXT, type INTEGER, urgency INTEGER, lat REAL, lng REAL, time INTEGER)");
 	}
 	public boolean addAlert(Alert alert){
-		if(TextUtils.isEmpty(alert.getTitle())){
+		
+		/*if(TextUtils.isEmpty(alert.getTitle())){
             return false;
-        }
+        }*/
         ContentValues row = new ContentValues();
         row.put(ID, alert.getId());
         row.put(IMAGESRC, alert.getImageSource());

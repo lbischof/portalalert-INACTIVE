@@ -242,9 +242,9 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
 		editor.putString("email", personEmail);
 		editor.putString("username", ingressUsername);
 		editor.putString("picture", personPhotoUrl);
-		putDouble(editor, "lng", lng);
-		putDouble(editor, "lat", lat);
-		editor.putString("id", personId);
+		/*putDouble(editor, "lng", lng);
+		putDouble(editor, "lat", lat);*/
+		editor.putString("userid", personId);
 		editor.putBoolean("loggedIn", true);
 		editor.commit();
 	}
@@ -374,7 +374,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
 		Toast.makeText(this, "Not a verified Frog!", Toast.LENGTH_LONG).show();
 	}
    private void verifiedFrog() {
-	Intent syncIntent = new Intent(RegisterActivity.this, SyncIntentService.class);
+	Intent syncIntent = new Intent(RegisterActivity.this, SyncService.class);
 	syncIntent.putExtra("lng", lng);
 	syncIntent.putExtra("lat", lat);
 	startService(syncIntent);
