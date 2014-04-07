@@ -40,7 +40,7 @@ public class SyncIntentService extends IntentService {
 
 	// Store a list of geofences to add
 	List<Geofence> mCurrentGeofences = new ArrayList<Geofence>();
-
+	private GeofenceRemover mGeofenceRemover = new GeofenceRemover(this);
 	private GeofenceRequester mGeofenceRequester = new GeofenceRequester(this);
 
 	Double lng;
@@ -145,7 +145,8 @@ public class SyncIntentService extends IntentService {
 					 Geofence.GEOFENCE_TRANSITION_ENTER |
 					 Geofence.GEOFENCE_TRANSITION_EXIT);
 					 mCurrentGeofences.add(mGeofence.toGeofence());
-
+			mGeofenceRemover.removeGeofencesByIntent(mGeofenceRequester
+                    .getRequestPendingIntent());
 				mGeofenceRequester.addGeofences(mCurrentGeofences);
 			
 		}

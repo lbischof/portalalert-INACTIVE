@@ -87,6 +87,13 @@ public class ReceiveTransitionsIntentService extends IntentService {
                 }
                 String ids = TextUtils.join(GeofenceUtils.GEOFENCE_ID_DELIMITER,geofenceIds);
                 String transitionType = getTransitionString(transition);
+                if (ids == "SYNC") {
+                	Log.d("Geofence Sync", transitionType);
+                	/*Intent syncIntent = new Intent(this, SyncIntentService.class);
+                	syncIntent.putExtra("lng", lng);
+                	syncIntent.putExtra("lat", lat);
+                	startService(syncIntent);*/
+                } else {
                 DatabaseHelper dbHelper = new DatabaseHelper(this);
                 Alert alert = dbHelper.getAlert(ids);
                 if (alert != null)
@@ -100,7 +107,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
                                 ids));
                 Log.d(GeofenceUtils.APPTAG,
                         getString(R.string.geofence_transition_notification_text));
-
+                }
             // An invalid transition was reported
             } else {
                 // Always log as an error
@@ -149,7 +156,10 @@ public class ReceiveTransitionsIntentService extends IntentService {
             (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         // Issue the notification
-        mNotificationManager.notify(0, builder.build());
+        String notifyId = alert.getLocation().getLng().toString() + alert.getLocation().getLat().toString();
+        notifyId = notifyId.replace(".", "");
+        
+        mNotificationManager.notify(Integer.parseInt(notifyId), builder.build());
     }
 
     /**
