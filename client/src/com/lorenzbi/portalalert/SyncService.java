@@ -74,10 +74,11 @@ public class SyncService extends Service implements
 				if (counter < 100) {
 					lng2 = a.getLocation().getLng();
 					lat2 = a.getLocation().getLat();
+					Long expire = a.getExpire() - System.currentTimeMillis();
 					SimpleGeofence mGeofence = new SimpleGeofence(a.getId(),
 							lat2, lng2,
 							a.getRadius(), // Set the expiration time
-							GEOFENCE_EXPIRATION_IN_MILLISECONDS,
+							expire,
 							Geofence.GEOFENCE_TRANSITION_ENTER
 									| Geofence.GEOFENCE_TRANSITION_EXIT);
 					mCurrentGeofences.add(mGeofence.toGeofence());
@@ -93,9 +94,8 @@ public class SyncService extends Service implements
 			SimpleGeofence mGeofence = new SimpleGeofence("SYNC", lat,
 					lng,
 					radius, // Set the expiration time
-					GEOFENCE_EXPIRATION_IN_MILLISECONDS,
-					Geofence.GEOFENCE_TRANSITION_ENTER
-							| Geofence.GEOFENCE_TRANSITION_EXIT);
+					Geofence.NEVER_EXPIRE,
+				    Geofence.GEOFENCE_TRANSITION_EXIT);
 			mCurrentGeofences.add(mGeofence.toGeofence());
 			mGeofenceRequester.addGeofences(mCurrentGeofences);
 			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());

@@ -23,6 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	static final String URGENCY = "urgency";
 	static final String LATITUDE = "lat";
 	static final String LONGITUDE = "lng";
+	static final String EXPIRE = "expire";
 	Double fudge = null;
 
 	public DatabaseHelper(Context context) {
@@ -31,7 +32,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL("CREATE TABLE IF NOT EXISTS alerts (_id INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE ON CONFLICT REPLACE, imagesrc TEXT, title TEXT, message TEXT, userid TEXT, type INTEGER, urgency INTEGER, lat REAL, lng REAL, time INTEGER)");
+		db.execSQL("CREATE TABLE IF NOT EXISTS alerts (_id INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE ON CONFLICT REPLACE, imagesrc TEXT, title TEXT, message TEXT, userid TEXT, type INTEGER, urgency INTEGER, lat REAL, lng REAL, expire REAL)");
 	}
 	public boolean addAlert(Alert alert){
 		
@@ -45,7 +46,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         row.put(MESSAGE, alert.getMessage());
         row.put(LONGITUDE, alert.getLocation().getLng());
         row.put(LATITUDE, alert.getLocation().getLat());
-
+        row.put(EXPIRE, alert.getExpire());
         SQLiteDatabase database = getWritableDatabase();
         database.insert("alerts", null, row);
         database.close();
@@ -66,7 +67,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         		alertLocation.setLng(cursor.getDouble(cursor.getColumnIndex("lng")));
         		alertLocation.setLat(cursor.getDouble(cursor.getColumnIndex("lat")));
         		Float radius = cursor.getFloat(cursor.getColumnIndex("message"));
-        	   	alert = new Alert(id, imagesrc, title, message, 0, 0, alertLocation, radius, "", 0);
+        		Long expire = cursor.getLong(cursor.getColumnIndex("expire")) - System.currentTimeMillis();
+        	   	alert = new Alert(id, imagesrc, title, message, 0, 0, alertLocation, radius, "", expire);
         	   	Log.d("dbhelper","alert created");
         	} 
 		return alert;
@@ -77,7 +79,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 	public Cursor getNear(Double lng, Double lat){
 		fudge = Math.pow(Math.cos(Math.toRadians(lat)),2);
-		String query = "SELECT _id, id, imagesrc, title, message, lng, lat, ( " + lat + " - lat) * ( " + lat +"- lat) + ( " + lng + "- lng) * ( " + lng + "- lng) * " + fudge + " as distance "	+ " from alerts "+ " order by distance asc";
+		Long now = System.currentTimeMillis();
+		String query = "SELECT _id, id, imagesrc, title, message, lng, lat, expire, ( " + lat + " - lat) * ( " + lat +"- lat) + ( " + lng + "- lng) * ( " + lng + "- lng) * " + fudge + " as distance "	+ " from alerts WHERE expire >= "+now+ " order by distance asc";
 		Cursor  cursor = getReadableDatabase().rawQuery(query,null);
 		return cursor;
 	}

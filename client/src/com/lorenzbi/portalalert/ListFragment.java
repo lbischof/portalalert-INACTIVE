@@ -49,8 +49,7 @@ LoaderManager.LoaderCallbacks<Cursor> {
 		Log.d("onupdateevent", "onupdateevent");
 		if (adapter != null) {
 		Cursor cursor = db.getNear(lng,lat);
-    	Cursor oldcursor = adapter.swapCursor(cursor);
-    	oldcursor.close();
+    	adapter.swapCursor(cursor);
 		}
     }
 	double getDouble(final SharedPreferences prefs, final String key, final double defaultValue) {
@@ -59,8 +58,9 @@ LoaderManager.LoaderCallbacks<Cursor> {
 	@Override
 	public Loader<Cursor> onCreateLoader(int loaderId, Bundle arg1) {
 		fudge = Math.pow(Math.cos(Math.toRadians(lat)),2);
-
-		loader= new SQLiteCursorLoader(getActivity().getBaseContext(), db, "SELECT _id, id, imagesrc, title, message, lng, lat, ( " + lat + " - lat) * ( " + lat +"- lat) + ( " + lng + "- lng) * ( " + lng + "- lng) * " + fudge + " as distance "	+ " from alerts "+ " order by distance asc", null);
+		Long now = System.currentTimeMillis();
+		Log.d("now",now.toString());
+		loader= new SQLiteCursorLoader(getActivity().getBaseContext(), db, "SELECT _id, id, imagesrc, title, message, lng, lat, expire, ( " + lat + " - lat) * ( " + lat +"- lat) + ( " + lng + "- lng) * ( " + lng + "- lng) * " + fudge + " as distance "	+ " from alerts  WHERE expire >= "+now+ " order by distance asc", null);
 
 		    return(loader);
 	}

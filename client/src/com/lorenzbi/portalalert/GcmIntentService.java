@@ -105,7 +105,8 @@ public class GcmIntentService extends IntentService {
 					String imagesrc = extras.getString("imagesrc");
 					String title = extras.getString("title");
 					String message = extras.getString("message");
-					Alert alert = new Alert(id, imagesrc, title, message, 0, 0, alertLocation, radius, "", 0);
+					Long expire = Long.parseLong(extras.getString("expire"));// - System.currentTimeMillis();
+					Alert alert = new Alert(id, imagesrc, title, message, 0, 0, alertLocation, radius, "", expire);
 					
 					DatabaseHelper dbHelper = new DatabaseHelper(this);
 					if (dbHelper.addAlert(alert) && counter < 99) {
@@ -113,6 +114,7 @@ public class GcmIntentService extends IntentService {
 						editor.putInt("counter", counter++);
 						editor.commit();
 						createGeofence(alert);
+
 					} else {
 						Intent syncIntent = new Intent(this, SyncService.class);
 						startService(syncIntent);

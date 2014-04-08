@@ -21,13 +21,14 @@ public class Alerts {
 		@SerializedName("_id") 
 		private String id;
 		private String title, message, userid, imagesrc;
-		private Integer type, urgency, time;
+		private Integer type, urgency;
+		private Long expire;
 		private Float radius;
 		private AlertLocation location;
 
 		public Alert(String id, String imagesrc, String title, String message, Integer type,
 				Integer urgency, AlertLocation location, Float radius,
-				String userid, Integer time) {
+				String userid, Long expire) {
 			this.id = id;
 			this.imagesrc = imagesrc;
 			this.title = title;
@@ -37,7 +38,7 @@ public class Alerts {
 			this.location = location;
 			this.radius = radius;
 			this.userid = userid;
-			this.time = time;
+			this.expire = expire;
 		}
 
 		public String getId() {
@@ -77,8 +78,8 @@ public class Alerts {
 			return this.userid;
 		}
 
-		public Integer getTime() {
-			return this.time;
+		public Long getExpire() {
+			return this.expire;
 		}
 
 	}
