@@ -106,13 +106,14 @@ exports.sync = function(db) {
 		var lat = parseFloat(req.body.lat);
 		var alerts = db.get('alerts');
 		var users = db.get('users');
+		var now = (new Date).getTime();
 		alerts.ensureIndex( { "location" : "2dsphere" } );
 		users.update({ "userid" : userid },{ $set: {
 			"location" : { "type": "Point", "coordinates" : [ lng,lat ] } }
 		
 		}, function (err, numAffected) {
 			var obj = new Object();
-			alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}}}, function(err, docs) {
+			alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}},expire: {"$gte": now}}, function(err, docs) {
 				obj.error = err;
 				obj.alerts = docs;
 				res.send(JSON.stringify(obj));
