@@ -375,8 +375,6 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
 	}
    private void verifiedFrog() {
 	Intent syncIntent = new Intent(RegisterActivity.this, SyncService.class);
-	syncIntent.putExtra("lng", lng);
-	syncIntent.putExtra("lat", lat);
 	startService(syncIntent);
 	saveInfoToPrefs();
 	ringProgressDialog.dismiss();
@@ -413,10 +411,7 @@ ConnectionCallbacks, OnConnectionFailedListener, OnClickListener,GooglePlayServi
     public void onProviderEnabled(String arg0) {}
     public void onStatusChanged(String arg0, int arg1, Bundle arg2) {}
 	
-	public boolean isFrog(String email) {
-		//TODO: Check if person is a valid Frog (maybe a serverside list of email adresses, don't know...) 
-		return true;
-	}
+	
 	
 	public void onConnectionSuspended(int cause) {
 		mGoogleApiClient.connect();

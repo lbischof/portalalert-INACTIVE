@@ -13,8 +13,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -84,7 +86,8 @@ public class GcmIntentService extends IntentService {
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 // This loop represents the service doing some work.
-            	
+            	 final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+         	    Integer counter = prefs.getInt("counter", 0);
             		String id = extras.getString("_id");
             		Log.d("id",id);
             		String location = extras.getString("location");
@@ -105,8 +108,14 @@ public class GcmIntentService extends IntentService {
 					Alert alert = new Alert(id, imagesrc, title, message, 0, 0, alertLocation, radius, "", 0);
 					
 					DatabaseHelper dbHelper = new DatabaseHelper(this);
-					if (dbHelper.addAlert(alert)) {
+					if (dbHelper.addAlert(alert) && counter < 99) {
+						SharedPreferences.Editor editor = prefs.edit();
+						editor.putInt("counter", counter++);
+						editor.commit();
 						createGeofence(alert);
+					} else {
+						Intent syncIntent = new Intent(this, SyncService.class);
+						startService(syncIntent);
 					}
 
                 

@@ -69,7 +69,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         	   	alert = new Alert(id, imagesrc, title, message, 0, 0, alertLocation, radius, "", 0);
         	   	Log.d("dbhelper","alert created");
         	} 
-        Log.d("dbhelper","return");
 		return alert;
 
 	}

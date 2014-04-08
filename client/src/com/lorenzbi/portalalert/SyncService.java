@@ -23,7 +23,9 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.lorenzbi.portalalert.Alerts.Alert;
 
-public class SyncService extends Service implements GooglePlayServicesClient.ConnectionCallbacks,GooglePlayServicesClient.OnConnectionFailedListener{
+public class SyncService extends Service implements
+		GooglePlayServicesClient.ConnectionCallbacks,
+		GooglePlayServicesClient.OnConnectionFailedListener {
 	public static final int NOTIFICATION_ID = 1;
 	NotificationCompat.Builder builder;
 
@@ -39,29 +41,29 @@ public class SyncService extends Service implements GooglePlayServicesClient.Con
 	Double lng;
 	Double lat;
 	LocationClient locationclient;
+
 	@Override
-	  public int onStartCommand(Intent intent, int flags, int startId) {
-		mGeofenceRemover.removeGeofencesByIntent(mGeofenceRequester.getRequestPendingIntent());
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		mGeofenceRemover.removeGeofencesByIntent(mGeofenceRequester
+				.getRequestPendingIntent());
 
-		locationclient = new LocationClient(this,this,this);
+		locationclient = new LocationClient(this, this, this);
 		locationclient.connect();
-    	return Service.START_NOT_STICKY;
-	  }
+		return Service.START_NOT_STICKY;
+	}
 
-	  @Override
-	  public IBinder onBind(Intent intent) {
-	  //TODO for communication return IBinder implementation
-	    return null;
-	  }
-	
-
-	
+	@Override
+	public IBinder onBind(Intent intent) {
+		// TODO for communication return IBinder implementation
+		return null;
+	}
 
 	public void addToDb(String json) {
 		Gson gson = new Gson();
 		Alerts root = gson.fromJson(json, Alerts.class);
 		List<Alert> alerts = root.getAlerts();
 		Integer counter = 0;
+		Float radius;
 		Double lng2 = null;
 		Double lat2 = null;
 		if (!alerts.isEmpty()) {
@@ -69,96 +71,104 @@ public class SyncService extends Service implements GooglePlayServicesClient.Con
 			dbHelper.clearAll();
 			for (Alert a : alerts) {
 				dbHelper.addAlert(a);
-				if (counter < 99) {
+				if (counter < 100) {
 					lng2 = a.getLocation().getLng();
 					lat2 = a.getLocation().getLat();
-					 SimpleGeofence mGeofence = new SimpleGeofence( a.getId(),
-							 lat2, lng2, a.getRadius(), //Set the expiration time 
-							 GEOFENCE_EXPIRATION_IN_MILLISECONDS,
-							 Geofence.GEOFENCE_TRANSITION_ENTER |
-							 Geofence.GEOFENCE_TRANSITION_EXIT);
-							 mCurrentGeofences.add(mGeofence.toGeofence());
+					SimpleGeofence mGeofence = new SimpleGeofence(a.getId(),
+							lat2, lng2,
+							a.getRadius(), // Set the expiration time
+							GEOFENCE_EXPIRATION_IN_MILLISECONDS,
+							Geofence.GEOFENCE_TRANSITION_ENTER
+									| Geofence.GEOFENCE_TRANSITION_EXIT);
+					mCurrentGeofences.add(mGeofence.toGeofence());
 					counter++;
-				} 
+				}
 			}
-			Float radius = (float) distance(lat, lng, lat2, lng2);
-			Log.d("radius lastgeofenc",radius.toString());
-			SimpleGeofence mGeofence = new SimpleGeofence( "SYNC",
-					 lat, lng, radius, //Set the expiration time 
-					 GEOFENCE_EXPIRATION_IN_MILLISECONDS,
-					 Geofence.GEOFENCE_TRANSITION_ENTER |
-					 Geofence.GEOFENCE_TRANSITION_EXIT);
-					 mCurrentGeofences.add(mGeofence.toGeofence());
-				mGeofenceRequester.addGeofences(mCurrentGeofences);
-			
+			if (counter == 99) {
+				radius = (float) distance(lat, lng, lat2, lng2);
+			} else {
+				radius = (float) 3000;
+			}
+			Log.d("radius lastgeofenc", radius.toString());
+			SimpleGeofence mGeofence = new SimpleGeofence("SYNC", lat,
+					lng,
+					radius, // Set the expiration time
+					GEOFENCE_EXPIRATION_IN_MILLISECONDS,
+					Geofence.GEOFENCE_TRANSITION_ENTER
+							| Geofence.GEOFENCE_TRANSITION_EXIT);
+			mCurrentGeofences.add(mGeofence.toGeofence());
+			mGeofenceRequester.addGeofences(mCurrentGeofences);
+			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putInt("counter", counter);
+			editor.commit();
 		}
 	}
 
-
 	private double distance(double lat1, double lon1, double lat2, double lon2) {
-	      double theta = lon1 - lon2;
-	      double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
-	      dist = Math.acos(dist);
-	      dist = rad2deg(dist);
-	      dist = dist * 60 * 1.1515;
-	      dist = dist * 1.609344;
-	      return (dist);
-	    }
+		double theta = lon1 - lon2;
+		double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2))
+				+ Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2))
+				* Math.cos(deg2rad(theta));
+		dist = Math.acos(dist);
+		dist = rad2deg(dist);
+		dist = dist * 60 * 1.1515;
+		dist = dist * 1.609344;
+		return (dist);
+	}
 
-	    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	    /*::  This function converts decimal degrees to radians             :*/
-	    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	    private double deg2rad(double deg) {
-	      return (deg * Math.PI / 180.0);
-	    }
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	/* :: This function converts decimal degrees to radians : */
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	private double deg2rad(double deg) {
+		return (deg * Math.PI / 180.0);
+	}
 
-	    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	    /*::  This function converts radians to decimal degrees             :*/
-	    /*:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::*/
-	    private double rad2deg(double rad) {
-	      return (rad * 180.0 / Math.PI);
-	    }
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	/* :: This function converts radians to decimal degrees : */
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	private double rad2deg(double rad) {
+		return (rad * 180.0 / Math.PI);
+	}
 
-		@Override
-		public void onConnectionFailed(ConnectionResult result) {
-			// TODO Auto-generated method stub
-			
-		}
+	@Override
+	public void onConnectionFailed(ConnectionResult result) {
+		// TODO Auto-generated method stub
 
-		@Override
-		public void onConnected(Bundle connectionHint) {
-			final SharedPreferences prefs = PreferenceManager
-					.getDefaultSharedPreferences(getApplicationContext());
-			String userid = prefs.getString("userid", "");
-			Log.d("userid", userid);
-			Location location = locationclient.getLastLocation();
-	        if (location != null){
-	        Log.d("location lng", location.getLongitude() + "");
+	}
+
+	@Override
+	public void onConnected(Bundle connectionHint) {
+		final SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext());
+		String userid = prefs.getString("userid", "");
+		Log.d("userid", userid);
+		Location location = locationclient.getLastLocation();
+		if (location != null) {
+			Log.d("location lng", location.getLongitude() + "");
 			lng = location.getLongitude();
 			lat = location.getLatitude();
 
 			RequestParams params = new RequestParams();
-	    	params.put("userid", userid);
-	    	params.put("lng", lng.toString());
-	    	params.put("lat", lat.toString());
-	    	
-	    	HttpManager.post("sync", params, new AsyncHttpResponseHandler() {
-	    	    @Override
-	    	    public void onSuccess(String response) {
-	    	    	Log.d("resonse", response);
-	    	    	addToDb(response);
-	    	    }
-	    	});
-	        }
-		}
+			params.put("userid", userid);
+			params.put("lng", lng.toString());
+			params.put("lat", lat.toString());
 
-		@Override
-		public void onDisconnected() {
-			// TODO Auto-generated method stub
-			
+			HttpManager.post("sync", params, new AsyncHttpResponseHandler() {
+				@Override
+				public void onSuccess(String response) {
+					Log.d("resonse", response);
+					addToDb(response);
+				}
+			});
+			stopSelf();
 		}
+	}
 
-		
-	
-	
+	@Override
+	public void onDisconnected() {
+		// TODO Auto-generated method stub
+
+	}
+
 }

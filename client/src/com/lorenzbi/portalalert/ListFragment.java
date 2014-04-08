@@ -78,9 +78,8 @@ LoaderManager.LoaderCallbacks<Cursor> {
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {
-	    Cursor cursor = adapter.swapCursor(null);
-	    cursor.close();
-	}
+	    adapter.swapCursor(null);
+	   	}
 	public void onResume() {
 		super.onResume();
 		BusProvider.getInstance().register(this);
