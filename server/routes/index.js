@@ -51,6 +51,11 @@ exports.alert = function(db) {
     var title = portal.title;
     //var urgency = req.body.urgency;
     var type = portal.type;
+
+    var ttl = portal.ttl;
+    var expire = ttl + (new Date).getTime();
+    console.log(ttl);
+    console.log(expire);
     var message = portal.message;
     // Set our collection
     var alerts = db.get('alerts');
@@ -67,7 +72,8 @@ exports.alert = function(db) {
     		"title" : title,
     		//"urgency" : urgency,
     		"message" : message,
-    		"type" : type
+    		"type" : type,
+    		"expire" : expire
     	}, function (err, doc) {
     		if (err) {
             // If it failed, return error
