@@ -32,66 +32,92 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL("CREATE TABLE IF NOT EXISTS alerts (_id INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE ON CONFLICT REPLACE, imagesrc TEXT, title TEXT, message TEXT, userid TEXT, type INTEGER, urgency INTEGER, lat REAL, lng REAL, expire REAL)");
 	}
-	public boolean addAlert(Alert alert){
-		
-		/*if(TextUtils.isEmpty(alert.getTitle())){
-            return false;
-        }*/
-        ContentValues row = new ContentValues();
-        row.put(ID, alert.getId());
-        row.put(IMAGESRC, alert.getImageSource());
-        row.put(TITLE, alert.getTitle());
-        row.put(MESSAGE, alert.getMessage());
-        row.put(LONGITUDE, alert.getLocation().getLng());
-        row.put(LATITUDE, alert.getLocation().getLat());
-        row.put(EXPIRE, alert.getExpire());
-        SQLiteDatabase database = getWritableDatabase();
-        database.insert("alerts", null, row);
-        database.close();
-        Log.i("portalalert Lorenz", "db inserted");
 
-        return true;
-    }
-	public String getId(Long listId) {
-        Cursor cursor = getReadableDatabase().rawQuery("select id from alerts where _id = ?", new String[] { listId.toString() });
-        String id = null;
-        if (cursor.moveToFirst()){
-        		id = cursor.getString(cursor.getColumnIndex("id"));
-        	} 
-		return id;
-		
+	public boolean addAlert(Alert alert) {
+
+		/*
+		 * if(TextUtils.isEmpty(alert.getTitle())){ return false; }
+		 */
+		ContentValues row = new ContentValues();
+		row.put(ID, alert.getId());
+		row.put(IMAGESRC, alert.getImageSource());
+		row.put(TITLE, alert.getTitle());
+		row.put(MESSAGE, alert.getMessage());
+		row.put(LONGITUDE, alert.getLocation().getLng());
+		row.put(LATITUDE, alert.getLocation().getLat());
+		row.put(EXPIRE, alert.getExpire());
+		SQLiteDatabase database = getWritableDatabase();
+		database.insert("alerts", null, row);
+		database.close();
+		Log.i("portalalert Lorenz", "db inserted");
+
+		return true;
 	}
-	public Alert getAlert(String id){
-		Alert alert = null;
-        Cursor cursor = getReadableDatabase().rawQuery("select * from alerts where id = ?", new String[] { id });
-        if (cursor.moveToFirst()){
-        		String imagesrc = cursor.getString(cursor.getColumnIndex("imagesrc"));
-        		String title = cursor.getString(cursor.getColumnIndex("title"));
-        		String message = cursor.getString(cursor.getColumnIndex("message"));
-        		AlertLocation alertLocation = new AlertLocation();
-        		Log.i("getlng portalalert" , cursor.getDouble(cursor.getColumnIndex("lng")) + "");
 
-        		alertLocation.setLng(cursor.getDouble(cursor.getColumnIndex("lng")));
-        		alertLocation.setLat(cursor.getDouble(cursor.getColumnIndex("lat")));
-        		Float radius = cursor.getFloat(cursor.getColumnIndex("message"));
-        		Long expire = cursor.getLong(cursor.getColumnIndex("expire")) - System.currentTimeMillis();
-        	   	alert = new Alert(id, imagesrc, title, message, 0, 0, alertLocation, radius, "", expire);
-        	   	Log.d("dbhelper","alert created");
-        	} 
+	public String getId(Long listId) {
+		Cursor cursor = getReadableDatabase().rawQuery(
+				"select id from alerts where _id = ?",
+				new String[] { listId.toString() });
+		String id = null;
+		if (cursor.moveToFirst()) {
+			id = cursor.getString(cursor.getColumnIndex("id"));
+		}
+		return id;
+
+	}
+
+	public Alert getAlert(String id) {
+		Alert alert = null;
+		Cursor cursor = getReadableDatabase().rawQuery(
+				"select * from alerts where id = ?", new String[] { id });
+		if (cursor.moveToFirst()) {
+			String imagesrc = cursor.getString(cursor
+					.getColumnIndex("imagesrc"));
+			String title = cursor.getString(cursor.getColumnIndex("title"));
+			String message = cursor.getString(cursor.getColumnIndex("message"));
+			AlertLocation alertLocation = new AlertLocation();
+			Log.i("getlng portalalert",
+					cursor.getDouble(cursor.getColumnIndex("lng")) + "");
+
+			alertLocation
+					.setLng(cursor.getDouble(cursor.getColumnIndex("lng")));
+			alertLocation
+					.setLat(cursor.getDouble(cursor.getColumnIndex("lat")));
+			Float radius = cursor.getFloat(cursor.getColumnIndex("message"));
+			Long expire = cursor.getLong(cursor.getColumnIndex("expire"))
+					- System.currentTimeMillis();
+			alert = new Alert(id, imagesrc, title, message, 0, 0,
+					alertLocation, radius, "", expire);
+		}
 		return alert;
 
 	}
-	public void clearAll(){
+
+	public void clearAll() {
 		getReadableDatabase().rawQuery("delete from alerts", null);
 	}
-	public Cursor getNear(Double lng, Double lat){
-		fudge = Math.pow(Math.cos(Math.toRadians(lat)),2);
+
+	public Cursor getNear(Double lng, Double lat) {
+		fudge = Math.pow(Math.cos(Math.toRadians(lat)), 2);
 		Long now = System.currentTimeMillis();
-		String query = "SELECT _id, id, imagesrc, title, message, lng, lat, expire, ( " + lat + " - lat) * ( " + lat +"- lat) + ( " + lng + "- lng) * ( " + lng + "- lng) * " + fudge + " as distance "	+ " from alerts WHERE expire >= "+now+ " order by distance asc";
-		Cursor  cursor = getReadableDatabase().rawQuery(query,null);
+		String query = "SELECT _id, id, imagesrc, title, message, lng, lat, expire, ( "
+				+ lat
+				+ " - lat) * ( "
+				+ lat
+				+ "- lat) + ( "
+				+ lng
+				+ "- lng) * ( "
+				+ lng
+				+ "- lng) * "
+				+ fudge
+				+ " as distance "
+				+ " from alerts WHERE expire >= "
+				+ now
+				+ " order by distance asc";
+		Cursor cursor = getReadableDatabase().rawQuery(query, null);
 		return cursor;
 	}
-	
+
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		android.util.Log.w("Constants",

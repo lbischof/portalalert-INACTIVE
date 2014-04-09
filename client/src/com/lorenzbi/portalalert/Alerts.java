@@ -18,7 +18,7 @@ public class Alerts {
 	}
 
 	public static class Alert {
-		@SerializedName("_id") 
+		@SerializedName("_id")
 		private String id;
 		private String title, message, userid, imagesrc;
 		private Integer type, urgency;
@@ -26,9 +26,9 @@ public class Alerts {
 		private Float radius;
 		private AlertLocation location;
 
-		public Alert(String id, String imagesrc, String title, String message, Integer type,
-				Integer urgency, AlertLocation location, Float radius,
-				String userid, Long expire) {
+		public Alert(String id, String imagesrc, String title, String message,
+				Integer type, Integer urgency, AlertLocation location,
+				Float radius, String userid, Long expire) {
 			this.id = id;
 			this.imagesrc = imagesrc;
 			this.title = title;
@@ -45,9 +45,10 @@ public class Alerts {
 			return this.id;
 		}
 
-		public String getImageSource(){
+		public String getImageSource() {
 			return this.imagesrc;
 		}
+
 		public String getTitle() {
 			return this.title;
 		}
@@ -98,9 +99,9 @@ public class Alerts {
 
 		public void setLng(Double lng) {
 			if (indexExists(this.coordinates, 0)) {
-			    this.coordinates.set(0, lng);
+				this.coordinates.set(0, lng);
 			} else {
-			    this.coordinates.add(0, lng);
+				this.coordinates.add(0, lng);
 			}
 		}
 
@@ -110,15 +111,15 @@ public class Alerts {
 
 		public void setLat(Double lat) {
 			if (indexExists(this.coordinates, 1)) {
-			    this.coordinates.set(1, lat);
+				this.coordinates.set(1, lat);
 			} else {
-			    this.coordinates.add(1, lat);
+				this.coordinates.add(1, lat);
 			}
 		}
+
 		public boolean indexExists(List<Double> list, int index) {
-		    return index >= 0 && index < list.size();
+			return index >= 0 && index < list.size();
 		}
 	}
-	
 
 }

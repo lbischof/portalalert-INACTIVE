@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-
 public class ListAdapter extends CursorAdapter {
 	private LayoutInflater mInflator;
 
@@ -22,7 +21,7 @@ public class ListAdapter extends CursorAdapter {
 		super(context, cursor, flags);
 		mInflator = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		
+
 	}
 
 	static class ViewHolder {
@@ -41,26 +40,25 @@ public class ListAdapter extends CursorAdapter {
 			holder.txtTitle = (TextView) view.findViewById(R.id.title);
 			holder.txtMessage = (TextView) view.findViewById(R.id.message);
 
-			
-			//String id = cursor.getString(cursor.getColumnIndex("id"));
+			// String id = cursor.getString(cursor.getColumnIndex("id"));
 			String imagesrc = cursor.getString(cursor
 					.getColumnIndex("imagesrc"));
 			String title = cursor.getString(cursor.getColumnIndex("title"));
 			String message = cursor.getString(cursor.getColumnIndex("message"));
-			
-			//Double lng = cursor.getDouble(cursor.getColumnIndex("lng"));
-			//Double lat = cursor.getDouble(cursor.getColumnIndex("lat"));
-			//Float radius = cursor.getFloat(cursor.getColumnIndex("message"));
-			Picasso.with(context).load(imagesrc).fit().centerCrop().into(holder.imageView);
+
+			// Double lng = cursor.getDouble(cursor.getColumnIndex("lng"));
+			// Double lat = cursor.getDouble(cursor.getColumnIndex("lat"));
+			// Float radius = cursor.getFloat(cursor.getColumnIndex("message"));
+			Picasso.with(context).load(imagesrc).fit().centerCrop()
+					.into(holder.imageView);
 			holder.roboto = FontCache.get("Roboto-Light.ttf", context);
 			holder.txtTitle.setTypeface(holder.roboto);
 			holder.txtMessage.setTypeface(holder.roboto);
 			holder.txtTitle.setText(title);
 			holder.txtMessage.setText(message);
-			
-			
+
 		}
-		
+
 	}
 
 	@Override
@@ -68,5 +66,5 @@ public class ListAdapter extends CursorAdapter {
 		final View customListView = mInflator.inflate(R.layout.row, null);
 		return customListView;
 	}
-	
+
 }

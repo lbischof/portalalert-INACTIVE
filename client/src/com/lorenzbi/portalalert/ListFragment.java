@@ -27,6 +27,8 @@ public class ListFragment extends Fragment implements
 	private DatabaseHelper db = null;
 	private ListAdapter adapter = null;
 	public SQLiteCursorLoader loader = null;
+	private int index = -1;
+	private int top = 0;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -83,14 +85,15 @@ public class ListFragment extends Fragment implements
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		this.loader = (SQLiteCursorLoader) loader;
-		adapter = new ListAdapter(getActivity().getApplicationContext(),
-				cursor, 0);
+		if (adapter == null) {
+			adapter = new ListAdapter(getActivity().getApplicationContext(),
+					cursor, 0);
+		}
 		ListView lv = (ListView) getActivity().findViewById(R.id.contentlist);
 		lv.setClickable(true);
 		lv.setOnItemClickListener(this);
 		lv.setAdapter(adapter);
 		registerForContextMenu(lv);
-
 		Log.d("onloadfinished register", "onloadfinished register");
 	}
 
@@ -103,11 +106,26 @@ public class ListFragment extends Fragment implements
 		super.onResume();
 		BusProvider.getInstance().register(this);
 		// Log.d("register onresume", "register onresume");
+		if (index != -1) {
+			ListView lv = (ListView) getActivity().findViewById(
+					R.id.contentlist);
+			lv.setSelectionFromTop(index, top);
+		}
 	}
 
 	public void onPause() {
 		super.onPause();
 		BusProvider.getInstance().unregister(this);
+		try {
+			ListView lv = (ListView) getActivity().findViewById(
+					R.id.contentlist);
+
+			index = lv.getFirstVisiblePosition();
+			View v = lv.getChildAt(0);
+			top = (v == null) ? 0 : v.getTop();
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 	}
 
 	@Override
@@ -128,8 +146,7 @@ public class ListFragment extends Fragment implements
 		 */
 		DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
 		String id = dbHelper.getId(listId);
-		
-		
+
 		FragmentManager fragmentManager = getFragmentManager();
 		Fragment fragment = new DetailFragment();
 		Bundle bundle = new Bundle();
@@ -137,8 +154,6 @@ public class ListFragment extends Fragment implements
 		fragment.setArguments(bundle);
 		fragmentManager.beginTransaction().addToBackStack(null)
 				.replace(R.id.content_frame, fragment).commit();
-		
-		
 
 	}
 }

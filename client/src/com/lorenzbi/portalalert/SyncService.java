@@ -76,29 +76,27 @@ public class SyncService extends Service implements
 					lat2 = a.getLocation().getLat();
 					Long expire = a.getExpire() - System.currentTimeMillis();
 					SimpleGeofence mGeofence = new SimpleGeofence(a.getId(),
-							lat2, lng2,
-							a.getRadius(), // Set the expiration time
-							expire,
-							Geofence.GEOFENCE_TRANSITION_ENTER
+							lat2, lng2, a.getRadius(), // Set the expiration
+														// time
+							expire, Geofence.GEOFENCE_TRANSITION_ENTER
 									| Geofence.GEOFENCE_TRANSITION_EXIT);
 					mCurrentGeofences.add(mGeofence.toGeofence());
 					counter++;
 				}
 			}
-			//if (counter == 99) {
-				radius = (float) distance(lat, lng, lat2, lng2) * 1000;
-			//} else {
-			//	radius = (float) 3000;
-			//}
+			// if (counter == 99) {
+			radius = (float) distance(lat, lng, lat2, lng2) * 1000;
+			// } else {
+			// radius = (float) 3000;
+			// }
 			Log.d("radius lastgeofenc", radius.toString());
-			SimpleGeofence mGeofence = new SimpleGeofence("SYNC", lat,
-					lng,
+			SimpleGeofence mGeofence = new SimpleGeofence("SYNC", lat, lng,
 					radius, // Set the expiration time
-					Geofence.NEVER_EXPIRE,
-				    Geofence.GEOFENCE_TRANSITION_EXIT);
+					Geofence.NEVER_EXPIRE, Geofence.GEOFENCE_TRANSITION_EXIT);
 			mCurrentGeofences.add(mGeofence.toGeofence());
 			mGeofenceRequester.addGeofences(mCurrentGeofences);
-			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+			final SharedPreferences prefs = PreferenceManager
+					.getDefaultSharedPreferences(getApplicationContext());
 			SharedPreferences.Editor editor = prefs.edit();
 			editor.putInt("counter", counter);
 			editor.commit();
