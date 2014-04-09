@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.support.v4.widget.CursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,6 @@ public class ListAdapter extends CursorAdapter {
 
 	ListAdapter(Context context, Cursor cursor, int flags) {
 		super(context, cursor, flags);
-		Log.d("listadapter","construct");
 		mInflator = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		
@@ -44,16 +42,15 @@ public class ListAdapter extends CursorAdapter {
 			holder.txtMessage = (TextView) view.findViewById(R.id.message);
 
 			
-			Log.d("_id", cursor.getInt(cursor.getColumnIndex("_id")) + "");
-			String id = cursor.getString(cursor.getColumnIndex("id"));
+			//String id = cursor.getString(cursor.getColumnIndex("id"));
 			String imagesrc = cursor.getString(cursor
 					.getColumnIndex("imagesrc"));
 			String title = cursor.getString(cursor.getColumnIndex("title"));
 			String message = cursor.getString(cursor.getColumnIndex("message"));
 			
-			Double lng = cursor.getDouble(cursor.getColumnIndex("lng"));
-			Double lat = cursor.getDouble(cursor.getColumnIndex("lat"));
-			Float radius = cursor.getFloat(cursor.getColumnIndex("message"));
+			//Double lng = cursor.getDouble(cursor.getColumnIndex("lng"));
+			//Double lat = cursor.getDouble(cursor.getColumnIndex("lat"));
+			//Float radius = cursor.getFloat(cursor.getColumnIndex("message"));
 			Picasso.with(context).load(imagesrc).fit().centerCrop().into(holder.imageView);
 			holder.roboto = FontCache.get("Roboto-Light.ttf", context);
 			holder.txtTitle.setTypeface(holder.roboto);
@@ -63,18 +60,7 @@ public class ListAdapter extends CursorAdapter {
 			
 			
 		}
-		// Set the Menu Image
-		/*
-		 * ImageView menuImage=(ImageView)arg0.findViewById(R.id.iv_ContactImg);
-		 * menuImage.setImageResource(R.drawable.ic_launcher);
-		 * 
-		 * //Set the Name TextView
-		 * heading=(TextView)arg0.findViewById(R.id.tv_ContactName);
-		 * heading.setText(name); //Set Availability TextView
-		 * randomText=(TextView)arg0.findViewById(R.id.tv_ContactNumber);
-		 * randomText.setText("Not Available");
-		 */
-
+		
 	}
 
 	@Override

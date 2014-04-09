@@ -85,11 +85,11 @@ public class SyncService extends Service implements
 					counter++;
 				}
 			}
-			if (counter == 99) {
-				radius = (float) distance(lat, lng, lat2, lng2);
-			} else {
-				radius = (float) 3000;
-			}
+			//if (counter == 99) {
+				radius = (float) distance(lat, lng, lat2, lng2) * 1000;
+			//} else {
+			//	radius = (float) 3000;
+			//}
 			Log.d("radius lastgeofenc", radius.toString());
 			SimpleGeofence mGeofence = new SimpleGeofence("SYNC", lat,
 					lng,
