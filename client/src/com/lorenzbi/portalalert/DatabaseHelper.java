@@ -5,8 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.location.Location;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.lorenzbi.portalalert.Alerts.Alert;
@@ -54,6 +52,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return true;
     }
+	public String getId(Long listId) {
+        Cursor cursor = getReadableDatabase().rawQuery("select id from alerts where _id = ?", new String[] { listId.toString() });
+        String id = null;
+        if (cursor.moveToFirst()){
+        		id = cursor.getString(cursor.getColumnIndex("id"));
+        	} 
+		return id;
+		
+	}
 	public Alert getAlert(String id){
 		Alert alert = null;
         Cursor cursor = getReadableDatabase().rawQuery("select * from alerts where id = ?", new String[] { id });

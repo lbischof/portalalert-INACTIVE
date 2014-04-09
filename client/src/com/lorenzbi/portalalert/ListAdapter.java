@@ -44,7 +44,7 @@ public class ListAdapter extends CursorAdapter {
 			holder.txtMessage = (TextView) view.findViewById(R.id.message);
 
 			
-			
+			Log.d("_id", cursor.getInt(cursor.getColumnIndex("_id")) + "");
 			String id = cursor.getString(cursor.getColumnIndex("id"));
 			String imagesrc = cursor.getString(cursor
 					.getColumnIndex("imagesrc"));
