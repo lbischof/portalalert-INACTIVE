@@ -139,13 +139,14 @@ public class GcmIntentService extends IntentService {
          * can fix the error
          */
         mRequestType = GeofenceUtils.REQUEST_TYPE.ADD;
+        Long expire = alert.getExpire() - System.currentTimeMillis();
         SimpleGeofence mGeofence = new SimpleGeofence(
             alert.getId(),
             alert.getLocation().getLat(),
             alert.getLocation().getLng(),
             alert.getRadius(),
             // Set the expiration time
-            GEOFENCE_EXPIRATION_IN_MILLISECONDS,
+            expire,
             Geofence.GEOFENCE_TRANSITION_ENTER |
             Geofence.GEOFENCE_TRANSITION_EXIT);
         
