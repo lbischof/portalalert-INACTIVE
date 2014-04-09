@@ -135,7 +135,7 @@ public class ListFragment extends Fragment implements
 		Bundle bundle = new Bundle();
 		bundle.putString("id", id);
 		fragment.setArguments(bundle);
-		fragmentManager.beginTransaction()
+		fragmentManager.beginTransaction().addToBackStack(null)
 				.replace(R.id.content_frame, fragment).commit();
 		
 		Log.i("DisplayListCustom", "Click detected " + id + ", position "
