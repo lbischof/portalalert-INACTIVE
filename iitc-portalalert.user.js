@@ -46,6 +46,8 @@ function wrapper() {
   });
     }
 	var setup = function(){
+		L.Icon.Default.imagePath = 'http://portalalert.lorenzz.ch:3000/images';
+        L.marker([46.948233,7.446284]).addTo(map);
 		window.addHook('portalDetailsUpdated', window.plugin.portalalert.setup_link);
         $('head').append('<style>' +
                          '#dialog-portalalert label { display: block; }' +
