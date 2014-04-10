@@ -101,6 +101,7 @@ exports.alert = function(db) {
 
 exports.sync = function(db) {
 	return function(req, res) {
+		res.setHeader('Access-Control-Allow-Origin', 'http://www.ingress.com');
 		var userid = req.body.userid;
 		var lng = parseFloat(req.body.lng);
 		var lat = parseFloat(req.body.lat);
