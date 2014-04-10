@@ -31,11 +31,42 @@ function wrapper() {
 	window.plugin.portalalert.submit_portal = function(){
         		$.ajax({url: 'http://portalalert.lorenzz.ch:3000/alert',type: 'POST', data:{'portal': JSON.stringify(window.plugin.portalalert.portal)},dataType: 'jsop',success: function(r){return;}});
     }
-	
-    window.plugin.portalalert.add_markers = function() {
-    	L.Icon.Default.imagePath = 'http://portalalert.lorenzz.ch:3000/images';
-        var icon = new window.plugin.portalalert.icon();
-        L.marker([46.947918,7.446424], {icon: icon}).addTo(map);
+    window.plugin.portalalert.sync = function() {
+        L.Icon.Default.imagePath = 'http://portalalert.lorenzz.ch:3000/images';
+        $.post( "http://portalalert.lorenzz.ch:3000/sync", { lat: map.getCenter().lat.toString(), lng: map.getCenter().lng.toString() }, function( data ) {
+            var obj = $.parseJSON(data);
+            $.each(obj.alerts, function() {
+                var lnglat = this.location.coordinates;
+                 var icon = new window.plugin.portalalert.icon();
+        		L.marker([lnglat[1],lnglat[0]], {icon: icon}).addTo(map);
+            });
+
+  			//alert(obj.alerts);
+		});
+       
+    }
+    
+    
+    
+	var lastSyncLat;
+    var lastSyncLng;
+    window.plugin.portalalert.checkDistanceMoved = function() {
+        var center = map.getCenter();
+        if (!lastSyncLat){
+            lastSyncLat = map.getCenter().lat;
+        	lastSyncLng = map.getCenter().lng;
+        }
+        var sync = center.distanceTo(L.latLng(lastSyncLat,lastSyncLng));
+        console.log(sync);
+        if (sync > 3000) {
+            console.log('sync');
+         	window.plugin.portalalert.sync(); 
+            lastSyncLat = map.getCenter().lat;
+        	lastSyncLng = map.getCenter().lng;
+        }
+       
+        
+    	
     }
     window.plugin.portalalert.open_dialog = function() {
         var dialogtext = "<select id=alert-type><option value=1>Upgrade</option><option value=2>Destroy</option></select><br><select id=alert-ttl><option value=1>1 Stunde</option><option value=3>3 Stunden</option><option value=6>6 Stunden</option><option value=12>12 Stunden</option><option value=24>24 Stunden</option><option value=0>Immer</option></select><br><label>Message</label><textarea id=alert-message></textarea>";
@@ -55,8 +86,10 @@ function wrapper() {
     }
   });
     }
+
 	var setup = function(){
-		window.plugin.portalalert.add_markers();
+                map.on('moveend', function() { window.plugin.portalalert.checkDistanceMoved() });
+
 		window.addHook('portalDetailsUpdated', window.plugin.portalalert.setup_link);
         $('head').append('<style>' +
                          '#dialog-portalalert label { display: block; }' +
