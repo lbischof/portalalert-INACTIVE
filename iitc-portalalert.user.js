@@ -15,6 +15,14 @@ function wrapper() {
 	if(typeof window.plugin !== 'function') window.plugin = function() {};
 	window.plugin.portalalert = function() {};
 	window.plugin.portalalert.portal = [];
+    window.plugin.portalalert.icon = L.Icon.Default.extend({options: {
+    iconUrl: 'http://portalalert.lorenzz.ch:3000/images/marker-icon.png',
+        shadowUrl : '',
+        iconSize: new L.Point(32,41),
+        iconAnchor: new L.Point(16,40)
+        
+        
+  	}});
 	window.plugin.portalalert.setup_link = function(data){
 		var d = data.portalDetails;
 		var lat = d.locationE6.latE6 / 1e6
@@ -47,7 +55,9 @@ function wrapper() {
     }
 	var setup = function(){
 		L.Icon.Default.imagePath = 'http://portalalert.lorenzz.ch:3000/images';
-        L.marker([46.948233,7.446284]).addTo(map);
+        var icon = new window.plugin.portalalert.icon();
+		var markerPos = new L.LatLng(46.947918,7.446424);
+        L.marker(markerPos, {icon: icon}).addTo(map);
 		window.addHook('portalDetailsUpdated', window.plugin.portalalert.setup_link);
         $('head').append('<style>' +
                          '#dialog-portalalert label { display: block; }' +
