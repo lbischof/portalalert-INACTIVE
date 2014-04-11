@@ -48,9 +48,7 @@ public class MainActivity extends DrawerActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         // Take appropriate action for each action item click
         switch (item.getItemId()) {
-        case R.id.action_search:
-            Log.d("search menu","search menu");
-            return true;
+        
         case R.id.action_add:
         	Log.d("add menu","add menu");
             return true;

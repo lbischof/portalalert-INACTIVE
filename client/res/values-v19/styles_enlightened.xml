@@ -4,6 +4,7 @@
         <item name="android:actionBarStyle">@style/MyActionBarTheme</item>
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:fitsSystemWindows">true</item>
+        <item name="android:actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
     </style>
     <style name="MyActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:titleTextStyle">@style/ActionBar.TitleTextStyle</item>
@@ -12,5 +13,8 @@
     <style name="ActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Large">
     <item name="android:textColor">#fff</item>
     <item name="android:fontFamily">sans-serif-light</item>
+</style>
+<style name="MyActionButtonOverflow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+    <item name="android:src">@drawable/ic_action_overflow</item>
 </style>
 </resources>

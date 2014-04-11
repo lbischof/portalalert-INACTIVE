@@ -6,10 +6,10 @@
     
     
      <!-- Search / will display always -->
-    <item android:id="@+id/action_search"
+     <!-- <item android:id="@+id/action_search"
           android:icon="@android:drawable/ic_menu_search"
           android:title="Suchen"
-          android:showAsAction="ifRoom"/>
+          android:showAsAction="ifRoom"/>-->
          
     
     <!-- Check updates -->

@@ -19,15 +19,19 @@
 
 <resources>
     <style name="Theme.Enlightened" parent="@android:style/Theme.Holo.Light">
-        <item name="android:actionBarStyle">@style/MyActionBarTheme</item>
-        
+        <item name="android:actionBarStyle">@style/MyActionBarTheme</item> 
+        <item name="android:actionOverflowButtonStyle">@style/MyActionButtonOverflow</item>
     </style>
 
     <style name="MyActionBarTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">#03dc03</item>
         <item name="android:titleTextStyle">@style/ActionBar.TitleTextStyle</item>
     </style>
+    
     <style name="ActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Large">
     <item name="android:textColor">#fff</item>
+</style>
+<style name="MyActionButtonOverflow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+    <item name="android:src">@drawable/ic_action_overflow</item>
 </style>
 </resources>
