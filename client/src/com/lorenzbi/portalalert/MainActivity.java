@@ -4,6 +4,9 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -35,7 +38,26 @@ public class MainActivity extends DrawerActivity implements
 		// setContentView(R.layout.activity_main);
 
 	}
-
+	@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Take appropriate action for each action item click
+        switch (item.getItemId()) {
+        case R.id.action_search:
+            Log.d("search menu","search menu");
+            return true;
+        case R.id.action_add:
+        	Log.d("add menu","add menu");
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
 	@Override
 	protected void onResume() {
 		super.onResume();

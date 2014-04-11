@@ -10,6 +10,8 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -38,6 +40,7 @@ public class ListFragment extends Fragment implements
 
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		setHasOptionsMenu(true);
 		db = new DatabaseHelper(getActivity().getBaseContext());
 		if (lat != null && lng != null) { // if no location wait for
 											// locationevent
@@ -102,6 +105,16 @@ public class ListFragment extends Fragment implements
 		adapter.swapCursor(null);
 	}
 
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+	{
+	    super.onCreateOptionsMenu(menu, inflater);
+	    inflater.inflate(R.menu.menu_list, menu);
+	}
+	
+
+	
+	
 	public void onResume() {
 		super.onResume();
 		BusProvider.getInstance().register(this);
