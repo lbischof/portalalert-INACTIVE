@@ -109,9 +109,9 @@ exports.done = function(db) {
 		alerts.update({"_id":id},{ $set: { "done" : true }}, function(err, numAffected){
 			if(numAffected == 1){
 				res.send(id);
-				/*users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}},function(err, docs){
+				users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}},function(err, docs){
 					registrationIds = docs;
-					var gcm = require('node-gcm');
+					/*var gcm = require('node-gcm');
 					var gcmMessage = new gcm.Message({
 					//collapseKey: 'demo',
 						data: {"done":id}
@@ -120,8 +120,8 @@ exports.done = function(db) {
 				
 				sender.send(gcmMessage, registrationIds, 4, function (err, result) {
 					console.log(result);
-				});
-			});*/
+				});*/
+			});
 			}
 		});
 	}
