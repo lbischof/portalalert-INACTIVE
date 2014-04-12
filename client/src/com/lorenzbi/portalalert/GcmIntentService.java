@@ -84,50 +84,53 @@ public class GcmIntentService extends IntentService {
 				// If it's a regular GCM message, do some work.
 			} else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE
 					.equals(messageType)) {
-				// This loop represents the service doing some work.
-				final SharedPreferences prefs = PreferenceManager
-						.getDefaultSharedPreferences(getApplicationContext());
-				Integer counter = prefs.getInt("counter", 0);
-				String id = extras.getString("_id");
-				Log.d("id", id);
-				String location = extras.getString("location");
-				AlertLocation alertLocation = new AlertLocation();
-				try {
-					JSONObject jsonObject = new JSONObject(location);
-					JSONArray jsonArray = jsonObject
-							.getJSONArray("coordinates");
-					alertLocation.setLng(jsonArray.getDouble(0));
-					alertLocation.setLat(jsonArray.getDouble(1));
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				Float radius = Float.parseFloat("100");// extras.getInt("radius");
-				String imagesrc = extras.getString("imagesrc");
-				String title = extras.getString("title");
-				String message = extras.getString("message");
-				Long expire = Long.parseLong(extras.getString("expire"));// -
-																			// System.currentTimeMillis();
-				Alert alert = new Alert(id, imagesrc, title, message, 0, 0,
-						alertLocation, radius, "", expire);
-
-				DatabaseHelper dbHelper = new DatabaseHelper(this);
-				if (dbHelper.addAlert(alert) && counter < 99) {
-					SharedPreferences.Editor editor = prefs.edit();
-					editor.putInt("counter", counter++);
-					editor.commit();
-					createGeofence(alert);
-					Log.d("createdgeofence", counter.toString());
+				if (extras.getString("done") != null) {
+					//remove db entry and geofence
 				} else {
-					Intent syncIntent = new Intent(this, SyncService.class);
-					startService(syncIntent);
-				}
+					final SharedPreferences prefs = PreferenceManager
+							.getDefaultSharedPreferences(getApplicationContext());
+					Integer counter = prefs.getInt("counter", 0);
+					String id = extras.getString("_id");
+					Log.d("id", id);
+					String location = extras.getString("location");
+					AlertLocation alertLocation = new AlertLocation();
+					try {
+						JSONObject jsonObject = new JSONObject(location);
+						JSONArray jsonArray = jsonObject
+								.getJSONArray("coordinates");
+						alertLocation.setLng(jsonArray.getDouble(0));
+						alertLocation.setLat(jsonArray.getDouble(1));
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Float radius = Float.parseFloat("100");// extras.getInt("radius");
+					String imagesrc = extras.getString("imagesrc");
+					String title = extras.getString("title");
+					String message = extras.getString("message");
+					Long expire = Long.parseLong(extras.getString("expire"));// -
+																				// System.currentTimeMillis();
+					Alert alert = new Alert(id, imagesrc, title, message, 0, 0,
+							alertLocation, radius, "", expire);
 
-				Log.i("lorenz",
-						"Completed work @ " + SystemClock.elapsedRealtime());
-				// Post notification of received message.
-				sendNotification("Received: " + extras.toString());
-				Log.i("lorenz", "Received: " + extras.toString());
+					DatabaseHelper dbHelper = new DatabaseHelper(this);
+					if (dbHelper.addAlert(alert) && counter < 99) {
+						SharedPreferences.Editor editor = prefs.edit();
+						editor.putInt("counter", counter++);
+						editor.commit();
+						createGeofence(alert);
+						Log.d("createdgeofence", counter.toString());
+					} else {
+						Intent syncIntent = new Intent(this, SyncService.class);
+						startService(syncIntent);
+					}
+
+					Log.i("lorenz",
+							"Completed work @ " + SystemClock.elapsedRealtime());
+					// Post notification of received message.
+					sendNotification("Received: " + extras.toString());
+					Log.i("lorenz", "Received: " + extras.toString());
+				}
 			}
 		}
 		// Release the wake lock provided by the WakefulBroadcastReceiver.

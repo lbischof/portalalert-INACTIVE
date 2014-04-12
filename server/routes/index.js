@@ -103,12 +103,13 @@ exports.done = function(db) {
 		var id = req.body.id;
 		var lng = parseFloat(req.body.lng);
 		var lat = parseFloat(req.body.lat);
+		var userid = req.body.userid;
 		var registrationIds = [];
 		var alerts = db.get('alerts');
 		var users = db.get('users');
 		alerts.update({"_id":id},{ $set: { "done" : true }}, function(err, numAffected){
 			if(numAffected == 1){
-				users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}},function(err, docs){
+				users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}, userid: {$not : userid}},function(err, docs){
 					res.send(id);
 					registrationIds = docs;
 					var gcm = require('node-gcm');

@@ -56,18 +56,19 @@ public class DetailFragment extends Fragment {
         switch (item.getItemId()) {
         
         case R.id.action_done:
-        	alertDone(alert);
+        	alertDone();
             return true;
         default:
             return super.onOptionsItemSelected(item);
         }
     }
-	public void alertDone(Alert alert){
+	public void alertDone(){
 		String id = alert.getId();
+		Log.d("alert done id", alert.getLocation().getLng().toString());
 		RequestParams params = new RequestParams();
 		params.put("id", id);
-		params.put("lng", alert.getLocation().getLng());
-		params.put("lat", alert.getLocation().getLat());
+		params.put("lng", alert.getLocation().getLng().toString());
+		params.put("lat", alert.getLocation().getLat().toString());
 		HttpManager.post("done", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(String response) {
