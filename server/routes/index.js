@@ -106,23 +106,21 @@ exports.done = function(db) {
 		var registrationIds = [];
 		var alerts = db.get('alerts');
 		var users = db.get('users');
-		console.log(lng);
 		alerts.update({"_id":id},{ $set: { "done" : true }}, function(err, numAffected){
 			if(numAffected == 1){
 				users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}},function(err, docs){
 					res.send(id);
-					console.log(docs);
 					registrationIds = docs;
 					var gcm = require('node-gcm');
 					var gcmMessage = new gcm.Message({
 					//collapseKey: 'demo',
-					data: {"done":"true"}
+					data: {"done":id}
 				});
 					var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
 
-				/*sender.send(gcmMessage, registrationIds, 4, function (err, result) {
+				sender.send(gcmMessage, registrationIds, 4, function (err, result) {
 					console.log(result);
-				});*/
+				});
 			});
 			}
 		});
