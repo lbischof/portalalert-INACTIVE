@@ -112,6 +112,7 @@ exports.done = function(db) {
 				users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}, userid: {$not : userid}},function(err, docs){
 					res.send(id);
 					registrationIds = docs;
+					if (registrationIds) {
 					var gcm = require('node-gcm');
 					var gcmMessage = new gcm.Message({
 					//collapseKey: 'demo',
@@ -122,6 +123,7 @@ exports.done = function(db) {
 				sender.send(gcmMessage, registrationIds, 4, function (err, result) {
 					console.log(result);
 				});
+			}
 			});
 			}
 		});
