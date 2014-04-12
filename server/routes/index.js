@@ -107,7 +107,7 @@ exports.done = function(db) {
 		var users = db.get('users');
 
 		alerts.update({"_id":id},{ $set: { "done" : true }}, function(err, numAffected){
-			if(numAffected == 1){
+			
 				res.send(id);
 				users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}},function(err, docs){
 					registrationIds = docs;
@@ -124,7 +124,7 @@ exports.done = function(db) {
 					console.log(result);
 				});
 			});
-			}
+			
 		});
 	}
 }
