@@ -114,7 +114,7 @@ exports.done = function(db) {
 					var gcm = require('node-gcm');
 					var gcmMessage = new gcm.Message({
 					//collapseKey: 'demo',
-						data: {"done":id}
+						data: {done:id}
 					});
 					var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
 				
