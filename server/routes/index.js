@@ -101,8 +101,8 @@ exports.alert = function(db) {
 exports.done = function(db) {
 	return function(req, res) {
 		var id = req.body.id;
-		var lng = req.body.lng;
-		var lat = req.body.lat;
+		var lng = parseFloat(req.body.lng);
+		var lat = parseFloat(req.body.lat);
 		var registrationIds = [];
 		var alerts = db.get('alerts');
 		var users = db.get('users');
