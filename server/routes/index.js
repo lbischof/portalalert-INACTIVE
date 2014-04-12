@@ -106,7 +106,7 @@ exports.done = function(db) {
 		var registrationIds = [];
 		var alerts = db.get('alerts');
 		var users = db.get('users');
-
+		console.log(lng);
 		alerts.update({"_id":id},{ $set: { "done" : true }}, function(err, numAffected){
 			if(numAffected == 1){
 				users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}},function(err, docs){
