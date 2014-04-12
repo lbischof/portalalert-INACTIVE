@@ -1,8 +1,10 @@
 package com.lorenzbi.portalalert;
 
 import android.app.Fragment;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -64,15 +66,20 @@ public class DetailFragment extends Fragment {
     }
 	public void alertDone(){
 		String id = alert.getId();
-		Log.d("alert done id", alert.getLocation().getLng().toString());
+		final SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(getActivity().getApplicationContext());
 		RequestParams params = new RequestParams();
 		params.put("id", id);
+		params.put("userid", prefs.getString("userid", ""));
 		params.put("lng", alert.getLocation().getLng().toString());
 		params.put("lat", alert.getLocation().getLat().toString());
 		HttpManager.post("done", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(String response) {
-				//remove db entry and geofence
+				getFragmentManager().popBackStack(); 
+				
+				DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
+				dbHelper.removeAlert(response, getActivity());
 			}
 		});
 	}

@@ -18,7 +18,6 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,25 +25,12 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.location.Geofence;
 import com.lorenzbi.portalalert.Alerts.Alert;
 import com.lorenzbi.portalalert.Alerts.AlertLocation;
-import com.lorenzbi.portalalert.GeofenceUtils.REMOVE_TYPE;
-import com.lorenzbi.portalalert.GeofenceUtils.REQUEST_TYPE;
 
 public class GcmIntentService extends IntentService {
 	public static final int NOTIFICATION_ID = 1;
 	private NotificationManager mNotificationManager;
 	NotificationCompat.Builder builder;
 
-	private static final long GEOFENCE_EXPIRATION_IN_HOURS = 12;
-	private static final long GEOFENCE_EXPIRATION_IN_MILLISECONDS = GEOFENCE_EXPIRATION_IN_HOURS
-			* DateUtils.HOUR_IN_MILLIS;
-
-	// Store the current request
-	private REQUEST_TYPE mRequestType;
-
-	// Store the current type of removal
-	private REMOVE_TYPE mRemoveType;
-
-	// Persistent storage for geofences
 
 	// Store a list of geofences to add
 	List<Geofence> mCurrentGeofences = new ArrayList<Geofence>();
@@ -84,8 +70,10 @@ public class GcmIntentService extends IntentService {
 				// If it's a regular GCM message, do some work.
 			} else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE
 					.equals(messageType)) {
+				DatabaseHelper dbHelper = new DatabaseHelper(this);
 				if (extras.getString("done") != null) {
-					//remove db entry and geofence
+					String id = extras.getString("done");
+					dbHelper.removeAlert(id, this);
 				} else {
 					final SharedPreferences prefs = PreferenceManager
 							.getDefaultSharedPreferences(getApplicationContext());
@@ -113,7 +101,7 @@ public class GcmIntentService extends IntentService {
 					Alert alert = new Alert(id, imagesrc, title, message, 0, 0,
 							alertLocation, radius, "", expire);
 
-					DatabaseHelper dbHelper = new DatabaseHelper(this);
+					
 					if (dbHelper.addAlert(alert) && counter < 99) {
 						SharedPreferences.Editor editor = prefs.edit();
 						editor.putInt("counter", counter++);
@@ -144,7 +132,6 @@ public class GcmIntentService extends IntentService {
 		 * can automatically restart the add request if Google Play services can
 		 * fix the error
 		 */
-		mRequestType = GeofenceUtils.REQUEST_TYPE.ADD;
 		Long expire = alert.getExpire() - System.currentTimeMillis();
 		SimpleGeofence mGeofence = new SimpleGeofence(alert.getId(), alert
 				.getLocation().getLat(), alert.getLocation().getLng(),
@@ -168,21 +155,7 @@ public class GcmIntentService extends IntentService {
 	}
 
 	public void removeGeofences(String id) {
-		/*
-		 * Remove the geofence by creating a List of geofences to remove and
-		 * sending it to Location Services. The List contains the id of geofence
-		 * 2, which is "2". The removal happens asynchronously; Location
-		 * Services calls onRemoveGeofencesByPendingIntentResult() (implemented
-		 * in the current Activity) when the removal is done.
-		 */
-
-		/*
-		 * Record the removal as remove by list. If a connection error occurs,
-		 * the app can automatically restart the removal if Google Play services
-		 * can fix the error
-		 */
-		mRemoveType = GeofenceUtils.REMOVE_TYPE.LIST;
-
+		
 		// Create a List of 1 Geofence with the ID "2" and store it in the
 		// global list
 		mGeofenceIdsToRemove = Collections.singletonList(id);

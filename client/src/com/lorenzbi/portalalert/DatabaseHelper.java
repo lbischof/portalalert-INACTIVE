@@ -1,5 +1,8 @@
 package com.lorenzbi.portalalert;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -53,7 +56,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		return true;
 	}
-
+	public void removeAlert(String id, Context context){
+		SQLiteDatabase database = getWritableDatabase();
+		database.delete("alerts", "id = ?", new String[] {id});
+		List<String> mGeofenceIdsToRemove = new ArrayList<String>();
+		GeofenceRemover mGeofenceRemover = new GeofenceRemover(context);
+		mGeofenceIdsToRemove.add(id);
+		mGeofenceRemover.removeGeofencesById(mGeofenceIdsToRemove);
+	}
 	public String getId(Long listId) {
 		Cursor cursor = getReadableDatabase().rawQuery(
 				"select id from alerts where _id = ?",
