@@ -101,9 +101,30 @@ exports.alert = function(db) {
 exports.done = function(db) {
 	return function(req, res) {
 		var id = req.body.id;
+		var lng = req.body.lng;
+		var lat = req.body.lat;
 		var alerts = db.get('alerts');
-		alerts.update({"_id":id},{ $set: { "done" : true }}, function(err, numAffected){
+		var users = db.get('users');
 
+		alerts.update({"_id":id},{ $set: { "done" : true }}, function(err, numAffected){
+			if(numAffected == 1){
+				res.send(id);
+				users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}},function(err, docs){
+					registrationIds = docs;
+					var gcm = require('node-gcm');
+					var gcmMessage = new gcm.Message({
+					//collapseKey: 'demo',
+						data: {"done":id}
+					});
+					var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
+				/**
+				* Params: message-literal, registrationIds-array, No. of retries, callback-function
+				**/
+				sender.send(gcmMessage, registrationIds, 4, function (err, result) {
+					console.log(result);
+				});
+			});
+			}
 		});
 	}
 }
@@ -119,7 +140,7 @@ exports.sync = function(db) {
 		alerts.ensureIndex( { "location" : "2dsphere" } );
 		users.update({ "userid" : userid },{ $set: {
 			"location" : { "type": "Point", "coordinates" : [ lng,lat ] } }
-		
+
 		}, function (err, numAffected) {
 			var obj = new Object();
 			alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}},expire: {"$gte": now}}, function(err, docs) {
