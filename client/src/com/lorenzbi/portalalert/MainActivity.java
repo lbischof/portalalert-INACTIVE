@@ -16,9 +16,9 @@ import com.google.android.gms.location.LocationClient;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 public class MainActivity extends DrawerActivity implements
-		ConnectionCallbacks, OnConnectionFailedListener {
+		ConnectionCallbacks, OnConnectionFailedListener{
 	LocationClient locationClient;
-
+	private Boolean updateNeeded = false;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -28,6 +28,7 @@ public class MainActivity extends DrawerActivity implements
 			getFragmentManager().beginTransaction()
 					.replace(R.id.content_frame, listFragment).commit();
 		}
+
 		SystemBarTintManager tintManager = new SystemBarTintManager(this);
 		tintManager.setStatusBarTintEnabled(true);
 		tintManager.setNavigationBarTintEnabled(false);
@@ -96,10 +97,16 @@ public class MainActivity extends DrawerActivity implements
 					.show();
 		}
 	}
-
+	public Boolean getUpdateNeeded(){
+		return this.updateNeeded;
+	}
+	public void setUpdateNeeded(Boolean updateNeeded){
+		this.updateNeeded = updateNeeded;
+	}
 	@Override
 	public void onDisconnected() {
 		// TODO Auto-generated method stub
 	}
+	
 
 }

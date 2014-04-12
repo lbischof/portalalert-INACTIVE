@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,7 +30,9 @@ public class DetailFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
+	
 		DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
+
 		TextView txtTitle = (TextView) getActivity().findViewById(R.id.title);
 		TextView txtMessage = (TextView) getActivity().findViewById(
 				R.id.message);
@@ -65,6 +66,7 @@ public class DetailFragment extends Fragment {
         }
     }
 	public void alertDone(){
+		((MainActivity)getActivity()).setUpdateNeeded(true);
 		String id = alert.getId();
 		final SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(getActivity().getApplicationContext());

@@ -1,5 +1,7 @@
 package com.lorenzbi.portalalert;
 
+import android.animation.Animator;
+import android.animation.Animator.AnimatorListener;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.LoaderManager;
@@ -14,6 +16,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -112,11 +116,13 @@ public class ListFragment extends Fragment implements
 	    inflater.inflate(R.menu.menu_list, menu);
 	}
 	
-
-	
-	
 	public void onResume() {
 		super.onResume();
+		if (((MainActivity)getActivity()).getUpdateNeeded()){
+			((MainActivity)getActivity()).setUpdateNeeded(false);
+			onUpdateEvent("update");
+		}
+
 		BusProvider.getInstance().register(this);
 		// Log.d("register onresume", "register onresume");
 		if (index != -1) {
@@ -167,7 +173,8 @@ public class ListFragment extends Fragment implements
 		fragment.setArguments(bundle);
 		fragmentManager.beginTransaction().addToBackStack(null)
 				.replace(R.id.content_frame, fragment).commit();
-
 	}
+	
+
 	
 }
