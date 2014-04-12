@@ -103,6 +103,7 @@ exports.done = function(db) {
 		var id = req.body.id;
 		var lng = req.body.lng;
 		var lat = req.body.lat;
+		var registrationIds = [];
 		var alerts = db.get('alerts');
 		var users = db.get('users');
 
