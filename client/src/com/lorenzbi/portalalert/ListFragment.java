@@ -169,4 +169,5 @@ public class ListFragment extends Fragment implements
 				.replace(R.id.content_frame, fragment).commit();
 
 	}
+	
 }

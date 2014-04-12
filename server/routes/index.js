@@ -98,7 +98,15 @@ exports.alert = function(db) {
     });  
 }
 }
+exports.done = function(db) {
+	return function(req, res) {
+		var id = req.body.id;
+		var alerts = db.get('alerts');
+		alerts.update({"_id":id},{ $set: { "done" : true }}, function(err, numAffected){
 
+		});
+	}
+}
 exports.sync = function(db) {
 	return function(req, res) {
 		res.setHeader('Access-Control-Allow-Origin', 'http://www.ingress.com');

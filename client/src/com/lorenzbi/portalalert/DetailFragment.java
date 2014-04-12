@@ -3,18 +3,23 @@ package com.lorenzbi.portalalert;
 import android.app.Fragment;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.lorenzbi.portalalert.Alerts.Alert;
 import com.squareup.picasso.Picasso;
 
 public class DetailFragment extends Fragment {
+	Alert alert;
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
@@ -30,7 +35,7 @@ public class DetailFragment extends Fragment {
 				R.id.message);
 		ImageView imgView = (ImageView) getActivity().findViewById(R.id.image);
 		String id = getArguments().getString("id");
-		Alert alert = dbHelper.getAlert(id);
+		alert = dbHelper.getAlert(id);
 		Picasso.with(getActivity()).load(alert.getImageSource()).fit()
 				.centerCrop().into(imgView);
 		Typeface typeFace = FontCache.get("Roboto-Light.ttf", getActivity());
@@ -44,5 +49,28 @@ public class DetailFragment extends Fragment {
 	{
 	    super.onCreateOptionsMenu(menu, inflater);
 	    inflater.inflate(R.menu.menu_detail, menu);
+	}
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Take appropriate action for each action item click
+        switch (item.getItemId()) {
+        
+        case R.id.action_done:
+        	Log.d("done menu","done menu");
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }
+	public void removeAlert(Alert alert){
+		String id = alert.getId();
+		RequestParams params = new RequestParams();
+		params.put("id", id);
+		HttpManager.post("done", params, new AsyncHttpResponseHandler() {
+			@Override
+			public void onSuccess(String response) {
+				//remove db entry and geofence
+			}
+		});
 	}
 }
