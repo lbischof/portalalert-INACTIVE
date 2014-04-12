@@ -115,13 +115,13 @@ exports.done = function(db) {
 					var gcm = require('node-gcm');
 					var gcmMessage = new gcm.Message({
 					//collapseKey: 'demo',
-						data: {"done":id}
-					});
+					data: {"done":"true"}
+				});
 					var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
-				
-				/*sender.send(gcmMessage, registrationIds, 4, function (err, result) {
+
+				sender.send(gcmMessage, registrationIds, 4, function (err, result) {
 					console.log(result);
-				});*/
+				});
 			});
 			}
 		});
