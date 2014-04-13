@@ -23,6 +23,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.commonsware.cwac.loaderex.SQLiteCursorLoader;
+import com.lorenzbi.portalalert.R.animator;
 import com.squareup.otto.Subscribe;
 
 public class ListFragment extends Fragment implements
@@ -171,7 +172,10 @@ public class ListFragment extends Fragment implements
 		Bundle bundle = new Bundle();
 		bundle.putString("id", id);
 		fragment.setArguments(bundle);
-		fragmentManager.beginTransaction().addToBackStack(null)
+		fragmentManager.beginTransaction().setCustomAnimations(R.animator.fragment_slide_left_enter,
+                R.animator.fragment_slide_left_exit,
+                R.animator.fragment_slide_right_enter,
+                R.animator.fragment_slide_right_exit).addToBackStack(null)
 				.replace(R.id.content_frame, fragment).commit();
 	}
 	

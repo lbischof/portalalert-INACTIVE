@@ -25,7 +25,7 @@ public class DrawerActivity extends Activity {
 	private String[] drawerListViewItems;
 	private DrawerLayout drawerLayout;
 	private ListView drawerListView;
-	private ActionBarDrawerToggle actionBarDrawerToggle;
+	public ActionBarDrawerToggle actionBarDrawerToggle;
 	protected LinearLayout fullLayout;
 	protected FrameLayout actContent;
 
@@ -56,7 +56,6 @@ public class DrawerActivity extends Activity {
 		R.string.drawer_open, /* "open drawer" description */
 		R.string.drawer_close /* "close drawer" description */
 		);
-
 		// Set actionBarDrawerToggle as the DrawerListener
 		drawerLayout.setDrawerListener(actionBarDrawerToggle);
 

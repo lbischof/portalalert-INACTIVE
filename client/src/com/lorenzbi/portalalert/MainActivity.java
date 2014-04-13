@@ -1,8 +1,10 @@
 package com.lorenzbi.portalalert;
 
+import android.app.FragmentManager.OnBackStackChangedListener;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,13 +18,14 @@ import com.google.android.gms.location.LocationClient;
 import com.readystatesoftware.systembartint.SystemBarTintManager;
 
 public class MainActivity extends DrawerActivity implements
-		ConnectionCallbacks, OnConnectionFailedListener{
+		ConnectionCallbacks, OnConnectionFailedListener, OnBackStackChangedListener{
 	LocationClient locationClient;
 	private Boolean updateNeeded = false;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		super.setContentView(R.layout.layout_main);
+
 		if (savedInstanceState == null) {
 			ListFragment listFragment = new ListFragment();
 			getFragmentManager().beginTransaction()
@@ -35,6 +38,7 @@ public class MainActivity extends DrawerActivity implements
 		tintManager.setTintColor(Color.parseColor("#03dc03"));
 		setupNavigationDrawer();
 		locationClient = new LocationClient(this, this, this);
+		  getFragmentManager().addOnBackStackChangedListener(this);
 
 		// setContentView(R.layout.activity_main);
 
@@ -49,7 +53,9 @@ public class MainActivity extends DrawerActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         // Take appropriate action for each action item click
         switch (item.getItemId()) {
-        
+        case android.R.id.home: 
+			getFragmentManager().popBackStack(); 
+        	return super.onOptionsItemSelected(item);
         case R.id.action_add:
         	Log.d("add menu","add menu");
             return true;
@@ -82,6 +88,7 @@ public class MainActivity extends DrawerActivity implements
 	@Override
 	public void onConnected(Bundle connectionHint) {
 		Location location = locationClient.getLastLocation();
+
 		if (location != null) {
 			sendLocationEvent(location);
 			/*
@@ -106,6 +113,15 @@ public class MainActivity extends DrawerActivity implements
 	@Override
 	public void onDisconnected() {
 		// TODO Auto-generated method stub
+	}
+	@Override
+	public void onBackStackChanged() {
+		int backStackEntryCount = getFragmentManager().getBackStackEntryCount();
+		  if(backStackEntryCount > 0){
+				actionBarDrawerToggle.setDrawerIndicatorEnabled(false);
+		  }else{
+				actionBarDrawerToggle.setDrawerIndicatorEnabled(true);
+		  }
 	}
 	
 
