@@ -145,7 +145,7 @@ exports.sync = function(db) {
 
 		}, function (err, numAffected) {
 			var obj = new Object();
-			alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}},expire: {"$gte": now}, done: {$not: true}}, function(err, docs) {
+			alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}},expire: {"$gte": now}, done: {$ne: true}}, function(err, docs) {
 				obj.error = err;
 				obj.alerts = docs;
 				res.send(JSON.stringify(obj));
