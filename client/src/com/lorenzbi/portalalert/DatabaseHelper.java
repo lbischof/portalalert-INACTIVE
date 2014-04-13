@@ -10,10 +10,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.google.android.gms.location.Geofence;
 import com.lorenzbi.portalalert.Alerts.Alert;
 import com.lorenzbi.portalalert.Alerts.AlertLocation;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
+	Context context;
 	private static final String DATABASE_NAME = "db";
 	static final String ID = "id";
 	static final String IMAGESRC = "imagesrc";
@@ -27,18 +29,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	static final String EXPIRE = "expire";
 	static final String DONE = "done";
 	Double fudge = null;
+	Double lng;
+	Double lat;
+	GeofenceRemover mGeofenceRemover;
+	GeofenceRequester mGeofenceRequester;
+
+	List<String> mGeofenceIdsToRemove = new ArrayList<String>();
+	List<Geofence> mCurrentGeofences = new ArrayList<Geofence>();
+
 
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, 1);
+		this.context = context;
+		mGeofenceRemover = new GeofenceRemover(context);
+		mGeofenceRequester = new GeofenceRequester(context);
 	}
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL("CREATE TABLE IF NOT EXISTS alerts (_id INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE ON CONFLICT REPLACE, imagesrc TEXT, title TEXT, message TEXT, userid TEXT, type INTEGER, urgency INTEGER, lat REAL, lng REAL, done BOOLEAN, expire REAL)");
 	}
-
+	public boolean addAlert(List<Alert> alerts, Double lng, Double lat){
+		this.lng = lng;
+		this.lat = lat;
+		for (Alert alert : alerts) {
+			addAlert(alert);
+		}
+		return false;
+	}
 	public boolean addAlert(Alert alert) {
-
 		/*
 		 * if(TextUtils.isEmpty(alert.getTitle())){ return false; }
 		 */
@@ -54,19 +73,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		SQLiteDatabase database = getWritableDatabase();
 		database.insert("alerts", null, row);
 		database.close();
-		Log.i("portalalert Lorenz", "db inserted");
-
 		return true;
 	}
-	public void removeAlert(String id, Context context){
+	public void removeAlert(String id){
 		SQLiteDatabase database = getWritableDatabase();
 		ContentValues cv = new ContentValues();
 		cv.put("done", 1);
 		database.update("alerts",cv, "id = ?", new String[] {id});
-		List<String> mGeofenceIdsToRemove = new ArrayList<String>();
-		GeofenceRemover mGeofenceRemover = new GeofenceRemover(context);
-		mGeofenceIdsToRemove.add(id);
-		mGeofenceRemover.removeGeofencesById(mGeofenceIdsToRemove);
+		removeFence(id);
+		
+	}
+	public void undoRemove(String id){
+		SQLiteDatabase database = getWritableDatabase();
+		ContentValues cv = new ContentValues();
+		cv.put("done", 0);
+		database.update("alerts",cv, "id = ?", new String[] {id});
+		createFence(getAlert(id));
 	}
 	public String getId(Long listId) {
 		Cursor cursor = getReadableDatabase().rawQuery(
@@ -97,7 +119,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 					.setLng(cursor.getDouble(cursor.getColumnIndex("lng")));
 			alertLocation
 					.setLat(cursor.getDouble(cursor.getColumnIndex("lat")));
-			Float radius = cursor.getFloat(cursor.getColumnIndex("message"));
+			Float radius = (float) 200;//cursor.getFloat(cursor.getColumnIndex("radius"));
 			Long expire = cursor.getLong(cursor.getColumnIndex("expire"))
 					- System.currentTimeMillis();
 			alert = new Alert(id, imagesrc, title, message, 0, 0,
@@ -106,7 +128,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return alert;
 
 	}
+	public void createFence(Alert alert){
+			Long expire = alert.getExpire() - System.currentTimeMillis();
+			SimpleGeofence mGeofence = new SimpleGeofence(alert.getId(), alert
+					.getLocation().getLat(), alert.getLocation().getLng(),
+					alert.getRadius(),
+					// Set the expiration time
+					expire, Geofence.GEOFENCE_TRANSITION_ENTER
+							| Geofence.GEOFENCE_TRANSITION_EXIT);
 
+			mCurrentGeofences.add(mGeofence.toGeofence());
+
+			// Start the request. Fail if there's already a request in progress
+			try {
+				// Try to add geofences
+				mGeofenceRequester.addGeofences(mCurrentGeofences);
+			} catch (UnsupportedOperationException e) {
+				// Notify user that previous request hasn't finished.
+			}
+		
+	}
+	public void removeFence(String id){
+		mGeofenceIdsToRemove.add(id);
+		mGeofenceRemover.removeGeofencesById(mGeofenceIdsToRemove);
+	}
 	public void clearAll() {
 		getReadableDatabase().rawQuery("delete from alerts", null);
 	}
@@ -139,4 +184,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS alerts");
 		onCreate(db);
 	}
+	
 }

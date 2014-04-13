@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
-import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -29,10 +28,7 @@ public class SyncService extends Service implements
 	public static final int NOTIFICATION_ID = 1;
 	NotificationCompat.Builder builder;
 
-	private static final long GEOFENCE_EXPIRATION_IN_HOURS = 12;
-	private static final long GEOFENCE_EXPIRATION_IN_MILLISECONDS = GEOFENCE_EXPIRATION_IN_HOURS
-			* DateUtils.HOUR_IN_MILLIS;
-
+	
 	// Store a list of geofences to add
 	List<Geofence> mCurrentGeofences = new ArrayList<Geofence>();
 	private GeofenceRemover mGeofenceRemover = new GeofenceRemover(this);
@@ -72,23 +68,17 @@ public class SyncService extends Service implements
 			for (Alert a : alerts) {
 				dbHelper.addAlert(a);
 				if (counter < 100) {
+					dbHelper.createFence(a);
 					lng2 = a.getLocation().getLng();
 					lat2 = a.getLocation().getLat();
-					Long expire = a.getExpire() - System.currentTimeMillis();
-					SimpleGeofence mGeofence = new SimpleGeofence(a.getId(),
-							lat2, lng2, a.getRadius(), // Set the expiration
-														// time
-							expire, Geofence.GEOFENCE_TRANSITION_ENTER
-									| Geofence.GEOFENCE_TRANSITION_EXIT);
-					mCurrentGeofences.add(mGeofence.toGeofence());
 					counter++;
 				}
 			}
-			// if (counter == 99) {
+			if (counter == 99) {
 			radius = (float) distance(lat, lng, lat2, lng2) * 1000;
-			// } else {
-			// radius = (float) 3000;
-			// }
+			} else {
+			radius = (float) 3000;
+			}
 			Log.d("radius lastgeofenc", radius.toString());
 			SimpleGeofence mGeofence = new SimpleGeofence("SYNC", lat, lng,
 					radius, // Set the expiration time
@@ -99,6 +89,9 @@ public class SyncService extends Service implements
 					.getDefaultSharedPreferences(getApplicationContext());
 			SharedPreferences.Editor editor = prefs.edit();
 			editor.putInt("counter", counter);
+			editor.putString("lng", lng.toString());
+			editor.putString("lat", lat.toString());
+			editor.putFloat("radius", radius);
 			editor.commit();
 		}
 	}

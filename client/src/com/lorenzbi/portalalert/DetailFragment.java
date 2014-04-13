@@ -1,12 +1,12 @@
 package com.lorenzbi.portalalert;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +25,7 @@ import com.squareup.picasso.Picasso;
 
 public class DetailFragment extends Fragment implements UndoListener {
 	Alert alert;
+	Context context;
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
@@ -34,8 +35,8 @@ public class DetailFragment extends Fragment implements UndoListener {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
-	
-		DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
+		context = getActivity();
+		DatabaseHelper dbHelper = new DatabaseHelper(context);
 
 		TextView txtTitle = (TextView) getActivity().findViewById(R.id.title);
 		TextView txtMessage = (TextView) getActivity().findViewById(
@@ -72,12 +73,14 @@ public class DetailFragment extends Fragment implements UndoListener {
 	
 	public void alertDone(){
 		((MainActivity)getActivity()).setUpdateNeeded(true);
+
 		String id = alert.getId();
-		String title = alert.getTitle();
-		//Some sort of undo toast like in gmail
-		Bundle bundle = new Bundle();
+		final String title = alert.getTitle();
+		DatabaseHelper dbHelper = new DatabaseHelper(context);
+		dbHelper.removeAlert(id);
+		final Bundle bundle = new Bundle();
 		bundle.putString("id", id);
-	    UndoBarController.show(getActivity(), title , this, bundle);
+		getFragmentManager().popBackStack(); 
 
 		final SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(getActivity().getApplicationContext());
@@ -89,10 +92,7 @@ public class DetailFragment extends Fragment implements UndoListener {
 		HttpManager.post("done", params, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(String response) {
-				getFragmentManager().popBackStack(); 
-				
-				DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
-				dbHelper.removeAlert(response, getActivity());
+			    UndoBarController.show(getActivity(), title , DetailFragment.this, bundle);
 			}
 		});
 	}
@@ -101,9 +101,13 @@ public class DetailFragment extends Fragment implements UndoListener {
 	public void onUndo(Parcelable token) {
 		if (token != null) {
 			String id = ((Bundle) token).getString("id");
-			Log.d("id",id);
+			DatabaseHelper dbHelper = new DatabaseHelper(context);
+			dbHelper.undoRemove(id);
+			//Alert alert = dbHelper.getAlert(id);
+			//add geofence again
+			BusProvider.getInstance().post(new String("update"));
 		}
 	}
-
+	
 	
 }

@@ -4,7 +4,6 @@ import android.app.FragmentManager.OnBackStackChangedListener;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;

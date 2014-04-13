@@ -1,46 +1,22 @@
 package com.lorenzbi.portalalert;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.IntentService;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.location.Geofence;
 import com.lorenzbi.portalalert.Alerts.Alert;
 import com.lorenzbi.portalalert.Alerts.AlertLocation;
 
 public class GcmIntentService extends IntentService {
-	public static final int NOTIFICATION_ID = 1;
-	private NotificationManager mNotificationManager;
-	NotificationCompat.Builder builder;
-
-
-	// Store a list of geofences to add
-	List<Geofence> mCurrentGeofences = new ArrayList<Geofence>();
-	// Store the list of geofences to remove
-	private List<String> mGeofenceIdsToRemove = new ArrayList<String>();
-	// Add geofences handler
-	private GeofenceRequester mGeofenceRequester = new GeofenceRequester(this);
-	// Remove geofences handler
-	private GeofenceRemover mGeofenceRemover = new GeofenceRemover(this);
-
+	
 	public GcmIntentService() {
 		super("GcmIntentService");
 	}
@@ -62,22 +38,22 @@ public class GcmIntentService extends IntentService {
 			 */
 			if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR
 					.equals(messageType)) {
-				sendNotification("Send error: " + extras.toString());
+				//sendNotification("Send error: " + extras.toString());
 			} else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED
 					.equals(messageType)) {
-				sendNotification("Deleted messages on server: "
-						+ extras.toString());
+				//sendNotification("Deleted messages on server: "+ extras.toString());
 				// If it's a regular GCM message, do some work.
 			} else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE
 					.equals(messageType)) {
+				final SharedPreferences prefs = PreferenceManager
+						.getDefaultSharedPreferences(getApplicationContext());
+				Integer counter = prefs.getInt("counter", 0);
 				DatabaseHelper dbHelper = new DatabaseHelper(this);
 				if (extras.getString("done") != null) {
 					String id = extras.getString("done");
-					dbHelper.removeAlert(id, this);
+					dbHelper.removeAlert(id);
 				} else {
-					final SharedPreferences prefs = PreferenceManager
-							.getDefaultSharedPreferences(getApplicationContext());
-					Integer counter = prefs.getInt("counter", 0);
+					
 					String id = extras.getString("_id");
 					Log.d("id", id);
 					String location = extras.getString("location");
@@ -101,22 +77,21 @@ public class GcmIntentService extends IntentService {
 					Alert alert = new Alert(id, imagesrc, title, message, 0, 0,
 							alertLocation, radius, "", expire);
 
-					
 					if (dbHelper.addAlert(alert) && counter < 99) {
+						dbHelper.createFence(alert);
 						SharedPreferences.Editor editor = prefs.edit();
 						editor.putInt("counter", counter++);
 						editor.commit();
-						createGeofence(alert);
-						Log.d("createdgeofence", counter.toString());
 					} else {
-						Intent syncIntent = new Intent(this, SyncService.class);
-						startService(syncIntent);
+						Double lng = Double.parseDouble(prefs.getString("lng", ""));
+						Double lat = Double.parseDouble(prefs.getString("lat", ""));
+						Float largestRadius = prefs.getFloat("radius", 3000);
+						if (distance(lat, lng, alert.getLocation().getLat(),alert.getLocation().getLng()) < largestRadius){
+							Intent syncIntent = new Intent(this, SyncService.class);
+							startService(syncIntent);
+						}
+						
 					}
-
-					Log.i("lorenz",
-							"Completed work @ " + SystemClock.elapsedRealtime());
-					// Post notification of received message.
-					sendNotification("Received: " + extras.toString());
 					Log.i("lorenz", "Received: " + extras.toString());
 				}
 			}
@@ -124,81 +99,30 @@ public class GcmIntentService extends IntentService {
 		// Release the wake lock provided by the WakefulBroadcastReceiver.
 		GcmBroadcastReceiver.completeWakefulIntent(intent);
 	}
-
-	public void createGeofence(Alert alert) {
-
-		/*
-		 * Record the request as an ADD. If a connection error occurs, the app
-		 * can automatically restart the add request if Google Play services can
-		 * fix the error
-		 */
-		Long expire = alert.getExpire() - System.currentTimeMillis();
-		SimpleGeofence mGeofence = new SimpleGeofence(alert.getId(), alert
-				.getLocation().getLat(), alert.getLocation().getLng(),
-				alert.getRadius(),
-				// Set the expiration time
-				expire, Geofence.GEOFENCE_TRANSITION_ENTER
-						| Geofence.GEOFENCE_TRANSITION_EXIT);
-
-		mCurrentGeofences.add(mGeofence.toGeofence());
-
-		// Start the request. Fail if there's already a request in progress
-		try {
-			// Try to add geofences
-			mGeofenceRequester.addGeofences(mCurrentGeofences);
-		} catch (UnsupportedOperationException e) {
-			// Notify user that previous request hasn't finished.
-			Toast.makeText(this,
-					R.string.add_geofences_already_requested_error,
-					Toast.LENGTH_LONG).show();
-		}
+	private double distance(double lat1, double lon1, double lat2, double lon2) {
+		double theta = lon1 - lon2;
+		double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2))
+				+ Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2))
+				* Math.cos(deg2rad(theta));
+		dist = Math.acos(dist);
+		dist = rad2deg(dist);
+		dist = dist * 60 * 1.1515;
+		dist = dist * 1.609344;
+		return (dist);
 	}
 
-	public void removeGeofences(String id) {
-		
-		// Create a List of 1 Geofence with the ID "2" and store it in the
-		// global list
-		mGeofenceIdsToRemove = Collections.singletonList(id);
-
-		/*
-		 * Check for Google Play services. Do this after setting the request
-		 * type. If connecting to Google Play services fails, onActivityResult
-		 * is eventually called, and it needs to know what type of request was
-		 * in progress.
-		 */
-
-		// Try to remove the geofence
-		try {
-			mGeofenceRemover.removeGeofencesById(mGeofenceIdsToRemove);
-
-			// Catch errors with the provided geofence IDs
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (UnsupportedOperationException e) {
-			// Notify user that previous request hasn't finished.
-			Toast.makeText(this,
-					R.string.remove_geofences_already_requested_error,
-					Toast.LENGTH_LONG).show();
-		}
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	/* :: This function converts decimal degrees to radians : */
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	private double deg2rad(double deg) {
+		return (deg * Math.PI / 180.0);
 	}
 
-	// Put the message into a notification and post it.
-	// This is just one simple example of what you might choose to do with
-	// a GCM message.
-	private void sendNotification(String msg) {
-		mNotificationManager = (NotificationManager) this
-				.getSystemService(Context.NOTIFICATION_SERVICE);
-
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-				new Intent(this, ListFragment.class), 0);
-
-		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-				this).setSmallIcon(R.drawable.ic_drawer)
-				.setContentTitle("GCM Notification")
-				.setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
-				.setContentText(msg);
-
-		mBuilder.setContentIntent(contentIntent);
-		mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	/* :: This function converts radians to decimal degrees : */
+	/* ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+	private double rad2deg(double rad) {
+		return (rad * 180.0 / Math.PI);
 	}
+
 }
