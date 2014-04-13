@@ -23,7 +23,6 @@
     <string name="options_clear">Clear</string>
     <string name="options_exit">Exit</string>
     <string name="title_activity_border_guard">BorderGuardActivity</string>
-    <string name="action_settings">Settings</string>
     <!-- app name and title -->
     <string name="title_activity_geofence">Geofence Entry</string>
 
@@ -103,7 +102,6 @@
     </string>
    
 	<!-- Nav Drawer -->
-    <string name="action_settings">Settings</string>
     <string name="drawer_open">Slider Menu Opened</string>
     <string name="drawer_close">Slider Menu Closed</string>
      

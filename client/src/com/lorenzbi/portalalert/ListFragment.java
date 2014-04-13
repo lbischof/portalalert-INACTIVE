@@ -80,11 +80,11 @@ public class ListFragment extends Fragment implements
 		Long now = System.currentTimeMillis();
 		Log.d("now", now.toString());
 		loader = new SQLiteCursorLoader(getActivity().getBaseContext(), db,
-				"SELECT _id, id, imagesrc, title, message, lng, lat, expire, ( "
+				"SELECT _id, id, imagesrc, title, message, lng, lat, expire, done, ( "
 						+ lat + " - lat) * ( " + lat + "- lat) + ( " + lng
 						+ "- lng) * ( " + lng + "- lng) * " + fudge
 						+ " as distance " + " from alerts  WHERE expire >= "
-						+ now + " order by distance asc", null);
+						+ now + " AND NOT done order by distance asc", null);
 
 		return (loader);
 	}

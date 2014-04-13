@@ -25,6 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	static final String LATITUDE = "lat";
 	static final String LONGITUDE = "lng";
 	static final String EXPIRE = "expire";
+	static final String DONE = "done";
 	Double fudge = null;
 
 	public DatabaseHelper(Context context) {
@@ -33,7 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL("CREATE TABLE IF NOT EXISTS alerts (_id INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE ON CONFLICT REPLACE, imagesrc TEXT, title TEXT, message TEXT, userid TEXT, type INTEGER, urgency INTEGER, lat REAL, lng REAL, expire REAL)");
+		db.execSQL("CREATE TABLE IF NOT EXISTS alerts (_id INTEGER PRIMARY KEY AUTOINCREMENT, id TEXT UNIQUE ON CONFLICT REPLACE, imagesrc TEXT, title TEXT, message TEXT, userid TEXT, type INTEGER, urgency INTEGER, lat REAL, lng REAL, done BOOLEAN, expire REAL)");
 	}
 
 	public boolean addAlert(Alert alert) {
@@ -49,6 +50,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		row.put(LONGITUDE, alert.getLocation().getLng());
 		row.put(LATITUDE, alert.getLocation().getLat());
 		row.put(EXPIRE, alert.getExpire());
+		row.put(DONE, 0);
 		SQLiteDatabase database = getWritableDatabase();
 		database.insert("alerts", null, row);
 		database.close();
@@ -58,7 +60,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 	public void removeAlert(String id, Context context){
 		SQLiteDatabase database = getWritableDatabase();
-		database.delete("alerts", "id = ?", new String[] {id});
+		ContentValues cv = new ContentValues();
+		cv.put("done", 1);
+		database.update("alerts",cv, "id = ?", new String[] {id});
 		List<String> mGeofenceIdsToRemove = new ArrayList<String>();
 		GeofenceRemover mGeofenceRemover = new GeofenceRemover(context);
 		mGeofenceIdsToRemove.add(id);
@@ -110,7 +114,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public Cursor getNear(Double lng, Double lat) {
 		fudge = Math.pow(Math.cos(Math.toRadians(lat)), 2);
 		Long now = System.currentTimeMillis();
-		String query = "SELECT _id, id, imagesrc, title, message, lng, lat, expire, ( "
+		String query = "SELECT _id, id, imagesrc, title, message, lng, lat, expire, done, ( "
 				+ lat
 				+ " - lat) * ( "
 				+ lat
@@ -123,7 +127,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ " as distance "
 				+ " from alerts WHERE expire >= "
 				+ now
-				+ " order by distance asc";
+				+ " AND NOT done ORDER BY distance asc";
 		Cursor cursor = getReadableDatabase().rawQuery(query, null);
 		return cursor;
 	}
