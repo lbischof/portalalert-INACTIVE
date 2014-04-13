@@ -73,9 +73,8 @@ exports.alert = function(db) {
     		//"urgency" : urgency,
     		"message" : message,
     		"type" : type,
-    		"expire" : expire,
-    		"done" : false
-    	}, function (err, doc) {
+    		"expire" : expire
+        	}, function (err, doc) {
     		if (err) {
             // If it failed, return error
             res.send("There was a problem adding the information to the database.");
