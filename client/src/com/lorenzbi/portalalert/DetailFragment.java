@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,16 +17,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.cocosw.undobar.UndoBarController;
-import com.cocosw.undobar.UndoBarController.UndoListener;
+import com.jensdriller.libs.undobar.UndoBar;
+import com.jensdriller.libs.undobar.UndoBar.Listener;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.lorenzbi.portalalert.Alerts.Alert;
 import com.squareup.picasso.Picasso;
 
-public class DetailFragment extends Fragment implements UndoListener {
+public class DetailFragment extends Fragment implements Listener {
 	Alert alert;
 	Context context;
+	DatabaseHelper dbHelper;
+	String userid;
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
@@ -72,41 +75,48 @@ public class DetailFragment extends Fragment implements UndoListener {
     }
 	
 	public void alertDone(){
-		((MainActivity)getActivity()).setUpdateNeeded(true);
-
 		String id = alert.getId();
-		final String title = alert.getTitle();
-		DatabaseHelper dbHelper = new DatabaseHelper(context);
+		String title = alert.getTitle();
+		((MainActivity)getActivity()).setUpdateNeeded(true);
+		
+		dbHelper = new DatabaseHelper(context);
 		dbHelper.removeAlert(id);
 		final Bundle bundle = new Bundle();
 		bundle.putString("id", id);
 		getFragmentManager().popBackStack(); 
-
-		final SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(getActivity().getApplicationContext());
-		RequestParams params = new RequestParams();
-		params.put("id", id);
-		params.put("userid", prefs.getString("userid", ""));
-		params.put("lng", alert.getLocation().getLng().toString());
-		params.put("lat", alert.getLocation().getLat().toString());
-		HttpManager.post("done", params, new AsyncHttpResponseHandler() {
-			@Override
-			public void onSuccess(String response) {
-			    UndoBarController.show(getActivity(), title , DetailFragment.this, bundle);
-			}
-		});
+		new UndoBar.Builder(getActivity())//
+		  .setMessage(title)
+		  .setUndoToken(bundle)
+		  .setListener(DetailFragment.this)//
+		  .show();
+		
 	}
 
 	@Override
 	public void onUndo(Parcelable token) {
 		if (token != null) {
 			String id = ((Bundle) token).getString("id");
-			DatabaseHelper dbHelper = new DatabaseHelper(context);
 			dbHelper.undoRemove(id);
-			//Alert alert = dbHelper.getAlert(id);
-			//add geofence again
 			BusProvider.getInstance().post(new String("update"));
 		}
+	}
+
+	@Override
+	public void onHide() {
+		Log.d("onhide","onhide");
+		String id = alert.getId();
+		RequestParams params = new RequestParams();
+		params.put("id", id);
+		params.put("userid", "");
+		params.put("lng", alert.getLocation().getLng().toString());
+		params.put("lat", alert.getLocation().getLat().toString());
+		HttpManager.post("done", params, new AsyncHttpResponseHandler() {
+			@Override
+			public void onSuccess(String response) {
+				
+			}
+		});
+		
 	}
 	
 	
