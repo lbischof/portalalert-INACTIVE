@@ -3,6 +3,7 @@ package com.lorenzbi.portalalert;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -15,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.jensdriller.libs.undobar.UndoBar;
@@ -22,6 +24,7 @@ import com.jensdriller.libs.undobar.UndoBar.Listener;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.lorenzbi.portalalert.Alerts.Alert;
+import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 public class DetailFragment extends Fragment implements Listener {
@@ -116,8 +119,18 @@ public class DetailFragment extends Fragment implements Listener {
 				
 			}
 		});
-		
 	}
-	
-	
+	@Subscribe
+	public void onUpdateEvent(String msg) {
+		Log.d("onupdateevent", "onupdateevent");
+		((MainActivity)getActivity()).setUpdateNeeded(true);
+	}
+	public void onResume() {
+		super.onResume();
+		BusProvider.getInstance().register(this);
+	}
+	public void onPause() {
+		super.onPause();
+		BusProvider.getInstance().unregister(this);
+	}
 }
