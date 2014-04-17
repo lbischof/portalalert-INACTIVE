@@ -30,7 +30,7 @@ exports.register = function(db) {
     }, function (err, numAffected) {
     	var obj = new Object();
     	if (numAffected == 0) {
-            scrape(function(userids){
+            debounce(scrape(function(userids){
                 if (userids.indexOf(userid) > -1){
                     users.insert({
                         "userid" : userid,
@@ -44,7 +44,7 @@ exports.register = function(db) {
                     obj.error = "NOT_FROG";
                 }
                 res.send(JSON.stringify(obj));
-            });
+            }),900000);
     	} else {
     		obj.error = err;
             res.send(JSON.stringify(obj));
@@ -222,5 +222,20 @@ exports.sync = function(db) {
 		
 	}
 }
+function debounce(func, wait, immediate) {
+    var timeout;
+    return function() {
+        var context = this, args = arguments;
+        var later = function() {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
+  }
+
 
 
