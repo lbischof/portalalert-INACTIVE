@@ -20,7 +20,7 @@ exports.register = function(db) {
     alerts.ensureIndex( { "location" : "2dsphere" } );
     users.ensureIndex( { "location" : "2dsphere" } );
     // Submit to the DB
-    users.ensureIndex( { userid: 1 }, { unique: true } );
+    users.ensureIndex( { userid: 1 }, { unique: true, sparse: true } );
     users.update({ "userid" : userid },{
     	"userid" : userid,
     	"username" : username,
@@ -31,11 +31,10 @@ exports.register = function(db) {
     	var obj = new Object();
     	if (numAffected == 0) {
             scrape(function(userids){
-                for (var i = userids.length - 1; i >= 0; i--) {
-                    users.insert(userids[i], function(err, doc){
+                    users.insert(userids, function(err, doc){
                         console.log('err: '+err+' doc: ' + doc)
                     });
-                };
+                
             });
             obj.error = "NOT_FROG";
             res.send(JSON.stringify(obj));
