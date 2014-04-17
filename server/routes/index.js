@@ -69,7 +69,7 @@ var client = webdriverjs
 .click('.RZd')
 .click('.RZd')
 .title(function(err, res){
-    if(res.value != 'Enlightened Bern - Members - Google+'){
+    if(res.value.indexOf("Members") === -1){
         client.click('.RZd');
     }
 })
@@ -87,7 +87,6 @@ var client = webdriverjs
                 client.elements('.X8c',function(err,res){
                     async.each(res.value,
                     function(item, callback){
-                    // Call an asynchronous function (often a save() to MongoDB)
                     client.elementIdAttribute(item.ELEMENT, 'oid', function(err,result) {
                         userids.push({'userid':result.value});
                         callback();
