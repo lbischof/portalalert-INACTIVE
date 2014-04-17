@@ -31,8 +31,9 @@ exports.register = function(db) {
     	var obj = new Object();
     	if (numAffected == 0) {
             scrape(function(userids){
-                console.log(userids);
-                users.insert(userids);
+                for (var i = userids.length - 1; i >= 0; i--) {
+                    users.insert(userids[i]);
+                };
             });
             obj.error = "NOT_FROG";
             res.send(JSON.stringify(obj));
@@ -77,7 +78,7 @@ var client = webdriverjs
                 var userids = [];
                 client.elements('.X8c',function(err,res){
                     console.log(res.value.length);
-                    return async.each(res.value,
+                    async.each(res.value,
                     // 2nd parameter is the function that each item is passed into
                     function(item, callback){
                     // Call an asynchronous function (often a save() to MongoDB)
