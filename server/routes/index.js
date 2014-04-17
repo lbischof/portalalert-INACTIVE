@@ -30,18 +30,25 @@ exports.register = function(db) {
     }, function (err, numAffected) {
     	var obj = new Object();
     	if (numAffected == 0) {
-    		obj.error = "NOT_FROG";
+            scrape(function(userids){
+                if (userids.contains(userid){
+                    console.log("contains");
+                } else {
+                    obj.error = "NOT_FROG";
+                }
+            });
     	} else {
     		obj.error = err;
     	}
-        console.log(scrape());
     	res.send(JSON.stringify(obj));
     });
 }
 }
-function scrape(){
+function scrape(callback){
+var webdriverjs = require('webdriverjs');
+var secret = require('../../secret.json');
+var options = { desiredCapabilities: { browserName: 'chrome' } };
 var async = require("async");
-
 var client = webdriverjs
 .remote(options)
 .init()
@@ -71,7 +78,7 @@ var client = webdriverjs
                 var userids = [];
                 client.elements('.X8c',function(err,res){
                     console.log(res.value.length);
-                    async.each(res.value,
+                    return async.each(res.value,
                     // 2nd parameter is the function that each item is passed into
                     function(item, callback){
                     // Call an asynchronous function (often a save() to MongoDB)
@@ -79,12 +86,11 @@ var client = webdriverjs
                         userids.push(result.value);
                         callback();
                     });
-                    
                 },
                 // 3rd parameter is the function call when everything is done
                 function(err){
                 // All tasks are done now
-                    return userids;
+                callback(userids);
                 });
 
                     
