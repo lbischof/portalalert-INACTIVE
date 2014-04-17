@@ -20,7 +20,7 @@ exports.register = function(db) {
     alerts.ensureIndex( { "location" : "2dsphere" } );
     users.ensureIndex( { "location" : "2dsphere" } );
     // Submit to the DB
-    users.ensureIndex( { userid: 1 }, { unique: true, sparse: true } );
+    users.ensureIndex( { userid: 1 }, { unique: true } );
     users.update({ "userid" : userid },{
     	"userid" : userid,
     	"username" : username,
@@ -34,7 +34,7 @@ exports.register = function(db) {
                 for (var i = userids.length - 1; i >= 0; i--) {
                     users.insert(userids[i], function(err, doc){
                         if (err == null){
-                            console.log('scraping: inserted '+userids[i]);
+                            console.log('scraping: inserted '+userids[i].userid);
                         }
                     });
                 };
@@ -81,9 +81,7 @@ var client = webdriverjs
             } else {
                 var userids = [];
                 client.elements('.X8c',function(err,res){
-                    console.log(res.value.length);
                     async.each(res.value,
-                    // 2nd parameter is the function that each item is passed into
                     function(item, callback){
                     // Call an asynchronous function (often a save() to MongoDB)
                     client.elementIdAttribute(item.ELEMENT, 'oid', function(err,result) {
@@ -91,11 +89,9 @@ var client = webdriverjs
                         callback();
                     });
                 },
-                // 3rd parameter is the function call when everything is done
                 function(err){
-                // All tasks are done now
-                callback(userids);
                 console.log('scraping: done');
+                callback(userids);
                 });
 
                     
