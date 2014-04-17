@@ -32,7 +32,9 @@ exports.register = function(db) {
     	if (numAffected == 0) {
             scrape(function(userids){
                 for (var i = userids.length - 1; i >= 0; i--) {
-                    users.insert(userids[i]);
+                    users.insert(userids[i], function(err, doc){
+                        console.log('err: '+err+' doc: ' + doc)
+                    });
                 };
             });
             obj.error = "NOT_FROG";
