@@ -32,15 +32,23 @@ exports.register = function(db) {
     	if (numAffected == 0) {
             scrape(function(userids){
                 if (userids.indexOf(userid) > -1){
-                    console.log("contains");
+                    users.insert({
+                        "userid" : userid,
+                        "username" : username,
+                        "email" : email,
+                        "name" : name,
+                        "regid" : regid 
+                    });
+                    obj.error = err;
                 } else {
                     obj.error = "NOT_FROG";
                 }
+                res.send(JSON.stringify(obj));
             });
     	} else {
     		obj.error = err;
+            res.send(JSON.stringify(obj));
     	}
-    	res.send(JSON.stringify(obj));
     });
 }
 }
