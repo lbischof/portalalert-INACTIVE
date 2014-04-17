@@ -20,7 +20,6 @@ exports.register = function(db) {
     alerts.ensureIndex( { "location" : "2dsphere" } );
     users.ensureIndex( { "location" : "2dsphere" } );
     // Submit to the DB
-    process.stdout.write(regid+"test");
     users.ensureIndex( { userid: 1 }, { unique: true } );
     users.update({ "userid" : userid },{
     	"userid" : userid,
@@ -35,11 +34,67 @@ exports.register = function(db) {
     	} else {
     		obj.error = err;
     	}
+        console.log(scrape());
     	res.send(JSON.stringify(obj));
     });
 }
 }
+function scrape(){
+var async = require("async");
 
+var client = webdriverjs
+.remote(options)
+.init()
+.url('https://accounts.google.com/ServiceLogin?continue=https://plus.google.com/communities/115821855317076020954')
+.setValue('#Email','ingressportalalert')
+.setValue('#Passwd',secret.gpassword)
+.submitForm('#signIn')
+.waitFor('.RZd',5000)
+.click('.RZd')
+.click('.RZd')
+.title(function(err, res){
+    if(res.value != 'Enlightened Bern - Members - Google+'){
+        client.click('.RZd');
+    }
+})
+.waitFor('.dFd',5000,function(){
+    test();
+    function test(){
+        client.waitFor('.r0:not([style])',5000)
+        .getAttribute('.r0','style',function(err,value){
+            console.log(value);
+            if(value == ''){
+                client.click('.dFd')
+                .pause(500);
+                test();
+            } else {
+                var userids = [];
+                client.elements('.X8c',function(err,res){
+                    console.log(res.value.length);
+                    async.each(res.value,
+                    // 2nd parameter is the function that each item is passed into
+                    function(item, callback){
+                    // Call an asynchronous function (often a save() to MongoDB)
+                    client.elementIdAttribute(item.ELEMENT, 'oid', function(err,result) {
+                        userids.push(result.value);
+                        callback();
+                    });
+                    
+                },
+                // 3rd parameter is the function call when everything is done
+                function(err){
+                // All tasks are done now
+                    return userids;
+                });
+
+                    
+                }
+            );
+            }
+        });
+    }
+}).end();
+}
 exports.alert = function(db) {
 	return function(req, res) {
 		var portal = JSON.parse(req.body.portal);
@@ -153,4 +208,5 @@ exports.sync = function(db) {
 		
 	}
 }
+
 
