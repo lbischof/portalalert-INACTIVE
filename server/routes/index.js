@@ -46,6 +46,7 @@ exports.register = function(db) {
 }
 function scrape(callback){
 var webdriverjs = require('webdriverjs');
+var secret = require('../../../secret.json');
 var options = { desiredCapabilities: { browserName: 'chrome' } };
 var async = require("async");
 var client = webdriverjs
