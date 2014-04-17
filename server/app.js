@@ -27,6 +27,8 @@ app.use(express.urlencoded());
 app.use(express.json());
 
 app.use(cookieParser());
+app.use(express.session({secret: '1234567890QWERTY'}));
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(app.router);
 

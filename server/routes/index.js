@@ -30,21 +30,11 @@ exports.register = function(db) {
     }, function (err, numAffected) {
     	var obj = new Object();
     	if (numAffected == 0) {
-            debounce(scrape(function(userids){
-                if (userids.indexOf(userid) > -1){
-                    users.insert({
-                        "userid" : userid,
-                        "username" : username,
-                        "email" : email,
-                        "name" : name,
-                        "regid" : regid 
-                    });
-                    obj.error = err;
-                } else {
-                    obj.error = "NOT_FROG";
-                }
-                res.send(JSON.stringify(obj));
-            }),900000);
+            scrape(function(userids){
+                users.insert(userids);
+            });
+            obj.error = "NOT_FROG";
+            res.send(JSON.stringify(obj));
     	} else {
     		obj.error = err;
             res.send(JSON.stringify(obj));
@@ -91,7 +81,7 @@ var client = webdriverjs
                     function(item, callback){
                     // Call an asynchronous function (often a save() to MongoDB)
                     client.elementIdAttribute(item.ELEMENT, 'oid', function(err,result) {
-                        userids.push(result.value);
+                        userids.push({'userid':result.value});
                         callback();
                     });
                 },
@@ -222,20 +212,5 @@ exports.sync = function(db) {
 		
 	}
 }
-function debounce(func, wait, immediate) {
-    var timeout;
-    return function() {
-        var context = this, args = arguments;
-        var later = function() {
-            timeout = null;
-            if (!immediate) func.apply(context, args);
-        };
-        var callNow = immediate && !timeout;
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-        if (callNow) func.apply(context, args);
-    };
-  }
-
 
 
