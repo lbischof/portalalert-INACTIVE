@@ -2,6 +2,7 @@
 exports.index = function(req, res){
 	res.render('index', { title: 'Express' });
 };
+var scraping = false;
 exports.register = function(db) {
 	return function(req, res) {
 
@@ -30,15 +31,17 @@ exports.register = function(db) {
     }, function (err, numAffected) {
     	var obj = new Object();
     	if (numAffected == 0) {
-            scrape(function(userids){
-                for (var i = userids.length - 1; i >= 0; i--) {
-                    users.insert(userids[i], function(err, doc){
-                        if (err == null){
-                            console.log('scraping: inserted '+doc.userid);
-                        }
-                    });
-                };
-            });
+            if (!scraping){ 
+                scrape(function(userids){
+                    for (var i = userids.length - 1; i >= 0; i--) {
+                        users.insert(userids[i], function(err, doc){
+                            if (err == null){
+                                console.log('scraping: inserted '+doc.userid);
+                            }
+                        });
+                    };
+                });
+            }
             obj.error = "NOT_FROG";
             res.send(JSON.stringify(obj));
     	} else {
@@ -49,6 +52,7 @@ exports.register = function(db) {
 }
 }
 function scrape(callback){
+scraping = true;
 console.log('scraping: begin');
 var webdriverjs = require('webdriverjs');
 var secret = require('../../../secret.json');
@@ -91,6 +95,7 @@ var client = webdriverjs
                 },
                 function(err){
                 console.log('scraping: done');
+                scraping = false;
                 callback(userids);
                 });
 
