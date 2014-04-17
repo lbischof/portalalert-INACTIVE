@@ -33,7 +33,9 @@ exports.register = function(db) {
             scrape(function(userids){
                 for (var i = userids.length - 1; i >= 0; i--) {
                     users.insert(userids[i], function(err, doc){
-                        console.log('err: '+err+' doc: ' + doc)
+                        if (err == null){
+                            console.log('scraping: inserted '+userids[i]);
+                        }
                     });
                 };
             });
@@ -47,6 +49,7 @@ exports.register = function(db) {
 }
 }
 function scrape(callback){
+console.log('scraping: begin');
 var webdriverjs = require('webdriverjs');
 var secret = require('../../../secret.json');
 var options = { desiredCapabilities: { browserName: 'chrome' } };
@@ -71,7 +74,6 @@ var client = webdriverjs
     function test(){
         client.waitFor('.r0:not([style])',5000)
         .getAttribute('.r0','style',function(err,value){
-            console.log(value);
             if(value == ''){
                 client.click('.dFd')
                 .pause(500);
@@ -93,6 +95,7 @@ var client = webdriverjs
                 function(err){
                 // All tasks are done now
                 callback(userids);
+                console.log('scraping: done');
                 });
 
                     
