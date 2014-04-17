@@ -4,7 +4,7 @@ var options = { desiredCapabilities: { browserName: 'chrome' } };
 var async = require("async");
 
 var client = webdriverjs
-.remote()
+.remote(options)
 .init()
 .url('https://accounts.google.com/ServiceLogin?continue=https://plus.google.com/communities/115821855317076020954')
 .setValue('#Email','ingressportalalert')
