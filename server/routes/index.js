@@ -31,6 +31,7 @@ exports.register = function(db) {
     	var obj = new Object();
     	if (numAffected == 0) {
             scrape(function(userids){
+                console.log(userids);
                 users.insert(userids);
             });
             obj.error = "NOT_FROG";
