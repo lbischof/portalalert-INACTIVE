@@ -34,7 +34,7 @@ exports.register = function(db) {
                 for (var i = userids.length - 1; i >= 0; i--) {
                     users.insert(userids[i], function(err, doc){
                         if (err == null){
-                            console.log('scraping: inserted '+userids[i].userid);
+                            console.log('scraping: inserted '+doc.userid);
                         }
                     });
                 };
