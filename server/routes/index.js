@@ -31,7 +31,7 @@ exports.register = function(db) {
     	var obj = new Object();
     	if (numAffected == 0) {
             scrape(function(userids){
-                if (userids.contains(userid){
+                if (userids.indexOf(userid) > -1){
                     console.log("contains");
                 } else {
                     obj.error = "NOT_FROG";
