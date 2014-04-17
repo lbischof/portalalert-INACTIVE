@@ -32,7 +32,7 @@ exports.register = function(db) {
     	var obj = new Object();
     	if (numAffected == 0) {
             if (!scraping){ 
-                scrape(function(userids){
+                scrape('115821855317076020954', function(userids){
                     for (var i = userids.length - 1; i >= 0; i--) {
                         users.insert(userids[i], function(err, doc){
                             if (err == null){
@@ -51,7 +51,7 @@ exports.register = function(db) {
     });
 }
 }
-function scrape(callback){
+function scrape(community, callback){
 scraping = true;
 console.log('scraping: begin');
 var webdriverjs = require('webdriverjs');
@@ -61,7 +61,7 @@ var async = require("async");
 var client = webdriverjs
 .remote(options)
 .init()
-.url('https://accounts.google.com/ServiceLogin?continue=https://plus.google.com/communities/115821855317076020954')
+.url('https://accounts.google.com/ServiceLogin?continue=https://plus.google.com/communities/'+community)
 .setValue('#Email','ingressportalalert')
 .setValue('#Passwd',secret.gpassword)
 .submitForm('#signIn')
