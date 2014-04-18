@@ -224,6 +224,7 @@ exports.plugin = function(){
     var fs = require("fs");
     fs.readFile('../../iitc-portalalert.user.js', function(error, content) {
         if (error) {
+            console.log(error);
             res.writeHead(500);
             res.end();
         }
