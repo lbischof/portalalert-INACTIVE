@@ -227,6 +227,7 @@ exports.plugin = function(){
         }
         else {
             response.writeHead(200, { 'Content-Type': 'application/javascript' });
+            res.write(content);
             response.end(content, 'utf-8');
         }
     });
