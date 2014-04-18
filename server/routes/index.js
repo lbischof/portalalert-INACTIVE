@@ -222,7 +222,7 @@ exports.sync = function(db) {
 exports.plugin = function(){
     return function(req, res){
     var fs = require("fs");
-    fs.readFile('./../../iitc-portalalert.user.js', function(error, content) {
+    fs.readFile('../iitc-portalalert.user.js', function(error, content) {
         if (error) {
             console.log(error);
             res.writeHead(500);
