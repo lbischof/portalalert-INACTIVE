@@ -3,7 +3,7 @@
 // ==UserScript==
 // @id             ingress-portalalert
 // @name           PortalAlert
-// @version        0.1
+// @version        0.1.1
 // @updateURL      http://portalalert.lorenzz.ch:3000/iitc-portalalert.user.js
 // @description    PortalAlert tool for Ingress
 // @include        http://www.ingress.com/intel*
