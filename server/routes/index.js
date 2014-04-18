@@ -220,6 +220,7 @@ exports.sync = function(db) {
 	}
 }
 exports.plugin = function(){
+    var fs = require("fs");
     fs.readFile('../../iitc-portalalert.user.js', function(error, content) {
         if (error) {
             response.writeHead(500);
