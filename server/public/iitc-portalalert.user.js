@@ -3,8 +3,8 @@
 // @name           PortalAlert
 // @version        3
 // @namespace      https://github.com/Lorenzbi/portalalert
-// @downloadURL    http://portalalert.lorenzz.ch:3000/plugin
-// @updateURL      http://portalalert.lorenzz.ch:3000/plugin
+// @downloadURL    http://portalalert.lorenzz.ch:3000/iitc-portalalert.user.js
+// @updateURL      http://portalalert.lorenzz.ch:3000/iitc-portalalert.user.js
 // @description    PortalAlert tool for Ingress
 // @include        http://www.ingress.com/intel*
 // @include        https://www.ingress.com/intel*
