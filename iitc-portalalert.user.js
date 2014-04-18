@@ -1,6 +1,4 @@
 // ==UserScript==
-// @id             ingress-ph-portal-submission
-// ==UserScript==
 // @id             ingress-portalalert
 // @name           PortalAlert
 // @version        0.1.1
