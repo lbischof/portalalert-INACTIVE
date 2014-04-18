@@ -230,7 +230,6 @@ exports.plugin = function(){
         }
         else {
             res.writeHead(200, { 'Content-Type': 'application/javascript' });
-            res.write(content);
             res.end(content, 'utf-8');
         }
     });
