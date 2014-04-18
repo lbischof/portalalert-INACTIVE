@@ -219,7 +219,7 @@ exports.sync = function(db) {
 		
 	}
 }
-exports.plugin = function(){
+exports.iitc-portalalert.user.js = function(){
     return function(req, res){
     var fs = require("fs");
     fs.readFile('../iitc-portalalert.user.js', function(error, content) {

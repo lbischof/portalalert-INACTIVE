@@ -39,7 +39,7 @@ app.post('/register', routes.register(db));
 app.post('/alert', routes.alert(db));
 app.post('/sync', routes.sync(db));
 app.post('/done', routes.done(db));
-app.get('/plugin', routes.plugin());
+app.get('/iitc-portalalert.user.js', routes.plugin());
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
