@@ -216,23 +216,7 @@ exports.sync = function(db) {
 				res.send(JSON.stringify(obj));
 			});
 		});
-		
 	}
 }
-exports.iitc-portalalert.user.js = function(){
-    return function(req, res){
-    var fs = require("fs");
-    fs.readFile('../iitc-portalalert.user.js', function(error, content) {
-        if (error) {
-            console.log(error);
-            res.writeHead(500);
-            res.end();
-        }
-        else {
-            res.writeHead(200, { 'Content-Type': 'application/javascript' });
-            res.end(content, 'utf-8');
-        }
-    });
-}
-}
+
 
