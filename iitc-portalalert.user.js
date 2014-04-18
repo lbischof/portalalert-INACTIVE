@@ -41,8 +41,6 @@ function wrapper() {
                  var icon = new window.plugin.portalalert.icon();
         		L.marker([lnglat[1],lnglat[0]], {icon: icon}).addTo(map);
             });
-
-  			//alert(obj.alerts);
 		});
        
     }
