@@ -4,6 +4,7 @@
 // @id             ingress-portalalert
 // @name           PortalAlert
 // @version        0.1
+// @updateURL      http://portalalert.lorenzz.ch:3000/iitc-portalalert.user.js
 // @description    PortalAlert tool for Ingress
 // @include        http://www.ingress.com/intel*
 // @include        https://www.ingress.com/intel*
@@ -88,7 +89,7 @@ function wrapper() {
     }
 
 	var setup = function(){
-                map.on('moveend', function() { window.plugin.portalalert.checkDistanceMoved() });
+                //map.on('moveend', function() { window.plugin.portalalert.checkDistanceMoved() });
 
 		window.addHook('portalDetailsUpdated', window.plugin.portalalert.setup_link);
         $('head').append('<style>' +

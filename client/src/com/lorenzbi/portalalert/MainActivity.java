@@ -90,17 +90,7 @@ public class MainActivity extends DrawerActivity implements
 
 		if (location != null) {
 			sendLocationEvent(location);
-			/*
-			 * Intent syncIntent = new Intent(this, SyncIntentService.class);
-			 * syncIntent.putExtra("lng", location.getLongitude());
-			 * syncIntent.putExtra("lat", location.getLatitude());
-			 * startService(syncIntent);
-			 */
-			Toast.makeText(
-					this,
-					"Location: " + location.getLatitude() + ", "
-							+ location.getLongitude(), Toast.LENGTH_SHORT)
-					.show();
+			
 		}
 	}
 	public Boolean getUpdateNeeded(){

@@ -101,44 +101,52 @@ public class RegisterActivity extends Activity implements ConnectionCallbacks,
 
 		// TODO: Check if google play services is installed
 
+		final SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext());
+		ingressUsername = prefs.getString("username", "");
+		final EditText usernameInput = (EditText) findViewById(R.id.username);
+		usernameInput.setText(ingressUsername);
+		usernameInput.setSelection(ingressUsername.length());
 		mGoogleApiClient = new GoogleApiClient.Builder(this)
 				.addConnectionCallbacks(this)
 				.addOnConnectionFailedListener(this).addApi(Plus.API, null)
 				.addScope(Plus.SCOPE_PLUS_LOGIN).build();
 		findViewById(R.id.sign_in_button).setOnClickListener(this);
 
-		try {
-			// this.locatorService= new
-			// Intent(FastMainActivity.this,LocatorService.class);
-			// startService(this.locatorService);
-
-			// mIntentService = new Intent(this, LocationService.class);
-			// mPendingIntent = PendingIntent.getService(this, 1,
-			// mIntentService, 0);
-
-		} catch (Exception error) {
-		}
 	}
 
 	@Override
 	public void onClick(View view) {
 		final EditText usernameInput = (EditText) findViewById(R.id.username);
 		ingressUsername = usernameInput.getText().toString().trim();
+		final SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext());
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString("username", ingressUsername);
+		editor.commit();
 		if (view.getId() == R.id.sign_in_button
 				&& !mGoogleApiClient.isConnecting()
+				&& !mGoogleApiClient.isConnected()
 				&& !ingressUsername.matches("")) {
 			mSignInClicked = true;
 			resolveSignInError();
 			ringProgressDialog = ProgressDialog.show(RegisterActivity.this,
 					"Please wait...", "Signing into Google Plus...", true);
 			ringProgressDialog.setCancelable(true);
+		} else if (mGoogleApiClient.isConnected()){
+			ringProgressDialog = ProgressDialog.show(RegisterActivity.this,
+					"Please wait...", "Hunting Smurfs...", true);
+			ringProgressDialog.setCancelable(true);
+			getPersonInfo();
 		}
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mGoogleApiClient.connect();
+		if (ingressUsername != null){
+			mGoogleApiClient.connect();
+		}
 		int resp = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
 		if (resp == ConnectionResult.SUCCESS) {
 			mLocationclient = new LocationClient(this, this, this);
@@ -153,8 +161,14 @@ public class RegisterActivity extends Activity implements ConnectionCallbacks,
 
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
+		final EditText usernameInput = (EditText) findViewById(R.id.username);
+		ingressUsername = usernameInput.getText().toString().trim();
+		final SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext());
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString("username", ingressUsername);
+		editor.commit();
 		if (mGoogleApiClient.isConnected()) {
 			mGoogleApiClient.disconnect();
 		}
@@ -196,7 +210,7 @@ public class RegisterActivity extends Activity implements ConnectionCallbacks,
 				mIntentInProgress = false;
 				mGoogleApiClient.connect();
 			}
-		}
+		} 
 	}
 
 	public void onConnectionFailed(ConnectionResult result) {
@@ -205,6 +219,7 @@ public class RegisterActivity extends Activity implements ConnectionCallbacks,
 			// Store the ConnectionResult so that we can use it later when the
 			// user clicks
 			// 'sign-in'.
+			Log.d("failed","failed");
 			mConnectionResult = result;
 
 			if (mSignInClicked) {
@@ -218,19 +233,16 @@ public class RegisterActivity extends Activity implements ConnectionCallbacks,
 
 	@Override
 	public void onConnected(Bundle connectionHint) {
+		getPersonInfo();
+	}
+	public void getPersonInfo(){
 		if (mLocationclient != null && mLocationclient.isConnected()
 				&& mGoogleApiClient.isConnected()) {
 			Location loc = mLocationclient.getLastLocation();
 			final EditText usernameInput = (EditText) findViewById(R.id.username);
 			ingressUsername = usernameInput.getText().toString(); // TODO do
-																	// something
-																	// with this
 			mSignInClicked = false;
 			try {
-				/*
-				 * if ( loc.getTime() < (System.currentTimeMillis() -
-				 * 60*60*60*5)) Log.i(TAG, "smaller");
-				 */
 				lat = loc.getLatitude();
 				lng = loc.getLongitude();
 				Person currentPerson = Plus.PeopleApi
@@ -251,7 +263,6 @@ public class RegisterActivity extends Activity implements ConnectionCallbacks,
 
 		}
 	}
-
 	public void tryRegistering() {
 		if (regid != null && !regid.isEmpty() && lat != null
 				&& personId != null && !personId.isEmpty()) {
@@ -276,15 +287,7 @@ public class RegisterActivity extends Activity implements ConnectionCallbacks,
 		editor.commit();
 	}
 
-	Editor putDouble(final Editor edit, final String key, final double value) {
-		return edit.putLong(key, Double.doubleToRawLongBits(value));
-	}
-
-	double getDouble(final SharedPreferences prefs, final String key,
-			final double defaultValue) {
-		return Double.longBitsToDouble(prefs.getLong(key,
-				Double.doubleToLongBits(defaultValue)));
-	}
+	
 
 	public void registerGCM() {
 		context = getApplicationContext();
@@ -401,6 +404,8 @@ public class RegisterActivity extends Activity implements ConnectionCallbacks,
 			public void onFailure(int statusCode, Header[] headers,
 					byte[] responseBody, Throwable error) {
 				ringProgressDialog.dismiss();
+				//resolveSignInError();
+
 				Log.e("register failed", statusCode + "");
 				Toast.makeText(RegisterActivity.this, "Server not available.",
 						Toast.LENGTH_LONG).show();
@@ -446,23 +451,12 @@ public class RegisterActivity extends Activity implements ConnectionCallbacks,
 
 	}
 
-	// Required functions
-	public void onProviderDisabled(String arg0) {
-	}
-
-	public void onProviderEnabled(String arg0) {
-	}
-
-	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-	}
-
+	
 	public void onConnectionSuspended(int cause) {
 		mGoogleApiClient.connect();
 	}
 
-	public void onDisconnected() {
-
-	}
+	
 
 	protected void onActivityResult(int requestCode, int responseCode,
 			Intent intent) {
@@ -482,7 +476,14 @@ public class RegisterActivity extends Activity implements ConnectionCallbacks,
 	@Override
 	public void onLocationChanged(Location location) {
 		// TODO Auto-generated method stub
-
+		
 	}
+
+	@Override
+	public void onDisconnected() {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }
