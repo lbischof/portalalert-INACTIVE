@@ -1,7 +1,9 @@
 // ==UserScript==
 // @id             ingress-portalalert
 // @name           PortalAlert
-// @version        0.1.1
+// @version        2
+// @namespace      https://github.com/Lorenzbi/portalalert
+// @downloadURL    http://portalalert.lorenzz.ch:3000/plugin
 // @updateURL      http://portalalert.lorenzz.ch:3000/plugin
 // @description    PortalAlert tool for Ingress
 // @include        http://www.ingress.com/intel*
