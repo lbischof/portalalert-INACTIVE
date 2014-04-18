@@ -219,5 +219,16 @@ exports.sync = function(db) {
 		
 	}
 }
-
+exports.plugin = function(){
+    fs.readFile('../../iitc-portalalert.user.js', function(error, content) {
+        if (error) {
+            response.writeHead(500);
+            response.end();
+        }
+        else {
+            response.writeHead(200, { 'Content-Type': 'application/javascript' });
+            response.end(content, 'utf-8');
+        }
+    });
+}
 
