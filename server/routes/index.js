@@ -220,17 +220,19 @@ exports.sync = function(db) {
 	}
 }
 exports.plugin = function(){
+    return function(req, res){
     var fs = require("fs");
     fs.readFile('../../iitc-portalalert.user.js', function(error, content) {
         if (error) {
-            response.writeHead(500);
-            response.end();
+            res.writeHead(500);
+            res.end();
         }
         else {
-            response.writeHead(200, { 'Content-Type': 'application/javascript' });
+            res.writeHead(200, { 'Content-Type': 'application/javascript' });
             res.write(content);
-            response.end(content, 'utf-8');
+            res.end(content, 'utf-8');
         }
     });
+}
 }
 
