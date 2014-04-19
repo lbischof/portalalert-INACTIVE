@@ -126,8 +126,6 @@ exports.alert = function(db) {
     // Set our collection
     var alerts = db.get('alerts');
     var users = db.get('users');
-
-    
     alerts.ensureIndex( { "location" : "2dsphere" } );
     users.ensureIndex( { "location" : "2dsphere" } );
     users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}},function(err, docs){
@@ -218,5 +216,20 @@ exports.sync = function(db) {
 		});
 	}
 }
-
+exports.upload = function(db) {
+    return function(req, res) {
+        res.setHeader('Access-Control-Allow-Origin', 'http://www.ingress.com');
+        var portals = req.body.portals;
+        var portals = db.get('portals');
+        console.log(portals);
+        portals.ensureIndex( { "location" : "2dsphere" } );
+        
+            /*alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}},expire: {"$gte": now}, done: {$ne: true}}, function(err, docs) {
+                obj.error = err;
+                obj.alerts = docs;
+                res.send(JSON.stringify(obj));
+            });*/
+        
+    }
+}
 

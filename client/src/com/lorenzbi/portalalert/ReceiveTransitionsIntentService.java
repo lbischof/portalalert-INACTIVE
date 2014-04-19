@@ -1,9 +1,9 @@
 package com.lorenzbi.portalalert;
 
-import java.util.Arrays;
 import java.util.List;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -45,10 +45,16 @@ public class ReceiveTransitionsIntentService extends IntentService {
 		Log.d("transition onhandleintent", "onhandleintent");
 		// Create a local broadcast Intent
 		Intent broadcastIntent = new Intent();
+		DatabaseHelper dbHelper = new DatabaseHelper(this);
 
 		// Give it the category for all intents sent by the Intent Service
 		broadcastIntent.addCategory(GeofenceUtils.CATEGORY_LOCATION_SERVICES);
-
+		List<Geofence> geofences = LocationClient
+				.getTriggeringGeofences(intent);
+		String[] geofenceIds = new String[geofences.size()];
+		for (int index = 0; index < geofences.size(); index++) {
+			geofenceIds[index] = geofences.get(index).getRequestId();
+		}
 		// First check for errors
 		if (LocationClient.hasError(intent)) {
 
@@ -81,27 +87,19 @@ public class ReceiveTransitionsIntentService extends IntentService {
 			int transition = LocationClient.getGeofenceTransition(intent);
 
 			// Test that a valid transition was reported
-			if ((transition == Geofence.GEOFENCE_TRANSITION_ENTER)
-					|| (transition == Geofence.GEOFENCE_TRANSITION_EXIT)) {
+			if (transition == Geofence.GEOFENCE_TRANSITION_ENTER) {
 
 				// Post a notification
-				List<Geofence> geofences = LocationClient
-						.getTriggeringGeofences(intent);
-				String[] geofenceIds = new String[geofences.size()];
-				for (int index = 0; index < geofences.size(); index++) {
-					geofenceIds[index] = geofences.get(index).getRequestId();
-				}
+				
 				String ids = TextUtils.join(
 						GeofenceUtils.GEOFENCE_ID_DELIMITER, geofenceIds);
-				String transitionType = getTransitionString(transition);
+				//String transitionType = getTransitionString(transition);
 				if (ids == "SYNC") {
-					Log.d("Geofence Sync", transitionType);
+					Log.d("Geofence Sync", "SYNC");
 					Intent syncIntent = new Intent(this, SyncService.class);
 					startService(syncIntent);
 				} else {
-					DatabaseHelper dbHelper = new DatabaseHelper(this);
-					List<String> idArray = Arrays.asList(ids.split(","));
-					for (String id : idArray) {
+					for (String id : geofenceIds) {
 						Alert alert = dbHelper.getAlert(id);
 						if (alert != null) {
 							sendNotification(alert);
@@ -113,11 +111,19 @@ public class ReceiveTransitionsIntentService extends IntentService {
 					Log.d(GeofenceUtils.APPTAG + "transition",
 							getString(
 									R.string.geofence_transition_notification_title,
-									transitionType, ids));
+									transition, ids));
 					Log.d(GeofenceUtils.APPTAG + "transition",
 							getString(R.string.geofence_transition_notification_text));
 				}
-				// An invalid transition was reported
+			} else if (transition == Geofence.GEOFENCE_TRANSITION_EXIT) {
+				for (String id : geofenceIds) {
+					Alert alert = dbHelper.getAlert(id);
+					if (alert != null) {
+						removeNotification(alert);
+						Log.d("removenotify", "removenotify");
+					}
+				}
+				
 			} else {
 				// Always log as an error
 				Log.e(GeofenceUtils.APPTAG,
@@ -137,37 +143,19 @@ public class ReceiveTransitionsIntentService extends IntentService {
 	 * 
 	 */
 	private void sendNotification(Alert alert) {
-
 		// Create an explicit content Intent that starts the main Activity
-		Intent notificationIntent = new Intent(getApplicationContext(),
-				MainActivity.class);
-
-		// Construct a task stack
-		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-
-		// Adds the main Activity to the task stack as the parent
-		stackBuilder.addParentStack(MainActivity.class);
-
-		// Push the content Intent onto the stack
-		stackBuilder.addNextIntent(notificationIntent);
-
-		// Get a PendingIntent containing the entire back stack
-		PendingIntent notificationPendingIntent = stackBuilder
-				.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-		// Get a notification builder that's compatible with platform versions
-		// >= 4
+				// Get an instance of the Notification manager
+				NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+				Intent intent = new Intent(this, MainActivity.class);
+				intent.setAction("detail"+alert.getId());
+				PendingIntent notificationPendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(
-				this);
-
-		// Set the notification contents
-		builder.setSmallIcon(R.drawable.ic_drawer)
-				.setContentTitle(alert.getTitle())
-				.setContentText(alert.getMessage())
-				.setContentIntent(notificationPendingIntent);
-
-		// Get an instance of the Notification manager
-		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                this);
+        Notification notification = builder.setContentIntent(notificationPendingIntent)
+                .setSmallIcon(R.drawable.ic_drawer).setTicker("Portal Alert").setWhen(0)
+                .setAutoCancel(true).setContentTitle(alert.getTitle())
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(alert.getMessage()))
+                .setContentText(alert.getMessage()).build();
 
 		// Issue the notification
 		String lng = alert.getLocation().getLng().toString();
@@ -177,9 +165,19 @@ public class ReceiveTransitionsIntentService extends IntentService {
 						+ lat.substring(Math.max(lat.length() - 4, 0)).replace(
 								".", ""));
 
-		mNotificationManager.notify(notifyId, builder.build());
+		mNotificationManager.notify(notifyId, notification);
 	}
+	public void removeNotification(Alert alert){
+		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
+		String lng = alert.getLocation().getLng().toString();
+		String lat = alert.getLocation().getLat().toString();
+		Integer notifyId = Integer
+				.parseInt(lng.substring(Math.max(lng.length() - 4, 0))
+						+ lat.substring(Math.max(lat.length() - 4, 0)).replace(
+								".", ""));
+		mNotificationManager.cancel(notifyId);
+	}
 	/**
 	 * Maps geofence transition types to their human-readable equivalents.
 	 * 

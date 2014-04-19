@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
@@ -23,9 +22,16 @@ public class MainActivity extends DrawerActivity implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		super.setContentView(R.layout.layout_main);
-
-		if (savedInstanceState == null) {
+		super.setContentView(R.layout.layout_main);		
+		Log.d("action"," "+getIntent().getAction());
+		if (getIntent().getAction() != null && getIntent().getAction().contains("detail")){
+			String id = getIntent().getAction().replace("detail", "");
+			DetailFragment detailFragment = new DetailFragment();
+			Bundle bundle = new Bundle();
+			bundle.putString("id", id);
+			detailFragment.setArguments(bundle);
+			getFragmentManager().beginTransaction().replace(R.id.content_frame, detailFragment).commit();
+		} else if (savedInstanceState == null) {
 			ListFragment listFragment = new ListFragment();
 			getFragmentManager().beginTransaction()
 					.replace(R.id.content_frame, listFragment).commit();
