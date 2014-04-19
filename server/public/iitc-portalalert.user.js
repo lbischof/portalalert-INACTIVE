@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             ingress-portalalert
 // @name           PortalAlert
-// @version        4
+// @version        5
 // @namespace      https://github.com/Lorenzbi/portalalert
 // @downloadURL    http://portalalert.lorenzz.ch:3000/iitc-portalalert.user.js
 // @updateURL      http://portalalert.lorenzz.ch:3000/iitc-portalalert.user.js
@@ -95,7 +95,7 @@ function wrapper() {
         });
         $.post( "http://portalalert.lorenzz.ch:3000/upload", { portals: list }, function( response ) {
             console.log(response);
-        }
+        });
     }
     var setup = function(){
                 //map.on('moveend', function() { window.plugin.portalalert.checkDistanceMoved() });
