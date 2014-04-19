@@ -220,7 +220,7 @@ exports.upload = function(db) {
     return function(req, res) {
         res.setHeader('Access-Control-Allow-Origin', 'http://www.ingress.com');
         var portals = req.body.portals;
-        var portals = db.get('portals');
+        //var portals = db.get('portals');
         console.log(portals);
         portals.ensureIndex( { "location" : "2dsphere" } );
         
