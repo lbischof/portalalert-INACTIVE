@@ -94,7 +94,9 @@ function wrapper() {
             list.push (thisPortal);
         });
         $.post( "http://portalalert.lorenzz.ch:3000/upload", { portals: list }, function( response ) {
-            console.log(response);
+            alert("Portals added to Database. Thank You.")
+        }).fail(function(){
+            alert("Something went wrong. Please try again later.")
         });
     }
     var setup = function(){
