@@ -239,7 +239,8 @@ exports.search = function(db) {
         var lat = parseFloat(req.body.lat);
         var title = req.body.title;
         var portals = db.get('portals');
-        portals.find({title: { $regex: '^'+title, $options: 'i' } }, function(err, docs) {
+        if (title.length > 3) {
+        portals.find({title: { $regex: '^'+title, $options: 'ix' } }, function(err, docs) {
             console.log(docs);
                 var obj = new Object();
                 obj.error = err;
@@ -247,6 +248,7 @@ exports.search = function(db) {
                 res.send(JSON.stringify(obj));
            
         });
+    }
     }
 }
 
