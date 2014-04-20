@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             ingress-portalalert
 // @name           PortalAlert
-// @version        6
+// @version        7
 // @namespace      https://github.com/Lorenzbi/portalalert
 // @downloadURL    http://portalalert.lorenzz.ch:3000/iitc-portalalert.user.js
 // @updateURL      http://portalalert.lorenzz.ch:3000/iitc-portalalert.user.js
@@ -89,7 +89,7 @@ function wrapper() {
                 '_id': i, // the primary key for couchdb is _id and for that we use the guid
                 'title': d.title,
                 'image': d.image,
-                'location':{'type':'Point','coordinates': [ parseFloat(d.lngE6 / 1e6), parseFloat(d.latE6 / 1e6) ]}
+                'location':{'type':'Point','coordinates': [ d.lngE6 / 1e6, d.latE6 / 1e6 ]}
                 };
             list.push (thisPortal);
         });
