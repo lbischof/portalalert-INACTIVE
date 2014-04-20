@@ -239,7 +239,8 @@ exports.search = function(db) {
         var lat = parseFloat(req.body.lat);
         var title = req.body.title;
         var portals = db.get('portals');
-        portals.find({title: /.*title.*/i }, function(err, docs) {
+        portals.find({title: /^title.*/i }, function(err, docs) {
+            console.log(docs);
                 var obj = new Object();
                 obj.error = err;
                 obj.portals = docs;
