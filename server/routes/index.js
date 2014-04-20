@@ -230,6 +230,7 @@ exports.upload = function(db) {
                 console.log("err: "+err+" doc: "+doc);
             });
         };
+        res.send("success");
             /*alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}},expire: {"$gte": now}, done: {$ne: true}}, function(err, docs) {
                 obj.error = err;
                 obj.alerts = docs;
