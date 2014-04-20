@@ -3,12 +3,14 @@ package com.lorenzbi.portalalert;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
+
 import com.google.gson.annotations.SerializedName;
 
 public class Alerts {
 	private String error = null;
 	private List<Alert> alerts;
-
+	private List<Alert> portals;
 	public String getError() {
 		return error;
 	}
@@ -16,7 +18,19 @@ public class Alerts {
 	public List<Alert> getAlerts() {
 		return alerts;
 	}
-
+	public List<Alert> getPortals(){
+		return portals;
+	}
+	public List<String> getPortalsList(){
+		List<String> portaltitles = new ArrayList<String>();
+		for (Alert portal : getPortals()){
+			portaltitles.add(portal.getTitle());
+		}
+		Log.d("portaltitles",portaltitles.toString());
+		return portaltitles;
+		
+	}
+	
 	public static class Alert {
 		@SerializedName("_id")
 		private String id;

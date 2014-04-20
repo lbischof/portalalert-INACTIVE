@@ -15,13 +15,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
+import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.lorenzbi.portalalert.Alerts.Alert;
 
 public class CreateFragment extends DialogFragment {
 	public AutoCompleteTextView autoComplete;
 	public String data;
 	public List<String> suggest;
+	ArrayAdapter<String> aAdapter;
 	public CreateFragment() {
 	}
 	@Override
@@ -56,19 +59,22 @@ public class CreateFragment extends DialogFragment {
 				params.put("lng", lastLocation.getLongitude()+"");
 				params.put("lat", lastLocation.getLatitude()+"");
 				params.put("title", title);
-
+				if (title.length() > 3){
 				HttpManager.post("search", params, new AsyncHttpResponseHandler() {
 					@Override
-					public void onSuccess(String response) {
-						ArrayAdapter<String> aAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),R.layout.dropdown_row,suggest);
+					public void onSuccess(String json) {
+						Gson gson = new Gson();
+						Alerts root = gson.fromJson(json, Alerts.class);
+						suggest = root.getPortalsList();
+						aAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),R.layout.dropdown_row,suggest);
 						autoComplete.setAdapter(aAdapter);
 						aAdapter.notifyDataSetChanged();
 
-						Log.d("onTextChanged onSuccess", response);
+						Log.d("onTextChanged onSuccess", json);
 					}
 				});
 			}
- 
+			}
         });
 	}
 }
