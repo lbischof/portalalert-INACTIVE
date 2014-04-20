@@ -53,9 +53,8 @@ public class CreateFragment extends DialogFragment {
 				
 				RequestParams params = new RequestParams();
 				Location lastLocation = ((MainActivity)getActivity()).getLastLocation();
-
-				params.put("lng", lastLocation.getLongitude());
-				params.put("lat", lastLocation.getLatitude());
+				params.put("lng", lastLocation.getLongitude()+"");
+				params.put("lat", lastLocation.getLatitude()+"");
 				params.put("title", title);
 
 				HttpManager.post("search", params, new AsyncHttpResponseHandler() {

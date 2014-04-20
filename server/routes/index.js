@@ -235,8 +235,8 @@ exports.upload = function(db) {
 }
 exports.search = function(db) {
     return function(req, res) {
-        var lng = req.body.lng;
-        var lat = req.body.lat;
+        var lng = parseFloat(req.body.lng);
+        var lat = parseFloat(req.body.lat);
         var title = req.body.title;
         var portals = db.get('portals');
         portals.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}}},title: /.*title.*/i }, function(err, docs) {
