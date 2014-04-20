@@ -243,7 +243,7 @@ exports.search = function(db) {
                 obj.error = err;
                 obj.portals = docs;
                 res.send(JSON.stringify(obj));
-            });
+           
         });
     }
 }
