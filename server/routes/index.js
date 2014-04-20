@@ -225,7 +225,7 @@ exports.upload = function(db) {
         portals.ensureIndex( { "location" : "2dsphere" } );
         for (var i = portalsuploaded.length - 1; i >= 0; i--) {
             portals.insert(portalsuploaded[i],function(err,doc){
-                
+                console.log("err: "+err+" doc: "+doc);
             });
         };
             /*alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}},expire: {"$gte": now}, done: {$ne: true}}, function(err, docs) {
