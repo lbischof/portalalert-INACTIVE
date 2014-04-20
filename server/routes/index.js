@@ -224,8 +224,8 @@ exports.upload = function(db) {
         console.log(portals);
         portals.ensureIndex( { "location" : "2dsphere" } );
         for (var i = portalsuploaded.length - 1; i >= 0; i--) {
-            portalsuploaded[i].lng = parseFloat(portalsuploaded[i].lng);
-            portalsuploaded[i].lat = parseFloat(portalsuploaded[i].lat);
+            portalsuploaded[i].location.coordinates[0] = parseFloat(portalsuploaded[i].location.coordinates[0]);
+            portalsuploaded[i].location.coordinates[1] = parseFloat(portalsuploaded[i].location.coordinates[1]);
             portals.insert(portalsuploaded[i],function(err,doc){
                 console.log("err: "+err+" doc: "+doc);
             });
