@@ -1,5 +1,6 @@
 package com.lorenzbi.portalalert;
 
+import android.app.FragmentManager;
 import android.app.FragmentManager.OnBackStackChangedListener;
 import android.graphics.Color;
 import android.location.Location;
@@ -19,6 +20,7 @@ public class MainActivity extends DrawerActivity implements
 		ConnectionCallbacks, OnConnectionFailedListener, OnBackStackChangedListener{
 	LocationClient locationClient;
 	private Boolean updateNeeded = false;
+	private Location lastLocation;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -62,8 +64,9 @@ public class MainActivity extends DrawerActivity implements
 			getFragmentManager().popBackStack(); 
         	return super.onOptionsItemSelected(item);
         case R.id.action_add:
-        	Log.d("add menu","add menu");
-            return true;
+            CreateFragment fragment= new CreateFragment();
+            fragment.show(getFragmentManager(), "fragment_edit_name");
+        	return true;
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -92,12 +95,15 @@ public class MainActivity extends DrawerActivity implements
 
 	@Override
 	public void onConnected(Bundle connectionHint) {
-		Location location = locationClient.getLastLocation();
+		lastLocation = locationClient.getLastLocation();
 
-		if (location != null) {
-			sendLocationEvent(location);
+		if (lastLocation != null) {
+			sendLocationEvent(lastLocation);
 			
 		}
+	}
+	public Location getLastLocation(){
+		return lastLocation;
 	}
 	public Boolean getUpdateNeeded(){
 		return this.updateNeeded;

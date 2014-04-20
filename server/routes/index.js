@@ -231,12 +231,20 @@ exports.upload = function(db) {
             });
         };
         res.send("success");
-            /*alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}},expire: {"$gte": now}, done: {$ne: true}}, function(err, docs) {
+    }
+}
+exports.search = function(db) {
+    return function(req, res) {
+        var lng = req.body.lng;
+        var lat = req.body.lat;
+        var title = req.body.title;
+        var portals = db.get('portals');
+        portals.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}}},title: /.*title.*/i }, function(err, docs) {
                 obj.error = err;
-                obj.alerts = docs;
+                obj.portals = docs;
                 res.send(JSON.stringify(obj));
-            });*/
-        
+            });
+        });
     }
 }
 
