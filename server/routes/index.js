@@ -108,9 +108,11 @@ var client = webdriverjs
 }
 exports.alert = function(db) {
 	return function(req, res) {
-		var portal = JSON.parse(req.body.portal);
-		var registrationIds = [];
+    res.setHeader('Access-Control-Allow-Origin', 'http://www.ingress.com');
+	var portal = JSON.parse(req.body.portal);
+	var registrationIds = [];
     // Get our form values. These rely on the "name" attributes
+    var guid = portal.guid;
     var lat = parseFloat(portal.lat);
     var lng = parseFloat(portal.lng);
     var imagesrc = portal.imagesrc;
@@ -131,6 +133,7 @@ exports.alert = function(db) {
     users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}},function(err, docs){
     	registrationIds = docs;
     	alerts.insert({
+            "_id" : guid,
     		"location" : { "type": "Point", "coordinates" : [ lng,lat ] },
     		"imagesrc" : imagesrc,
     		"title" : title,

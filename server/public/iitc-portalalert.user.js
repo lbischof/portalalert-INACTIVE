@@ -24,9 +24,10 @@ function wrapper() {
     }});
     window.plugin.portalalert.setup_link = function(data){
         var d = data.portalDetails;
+        var guid = data.guid;
         var lat = d.locationE6.latE6 / 1e6
         var lng = d.locationE6.lngE6 / 1e6
-        window.plugin.portalalert.portal = {imagesrc: d.imageByUrl.imageUrl, title: d.descriptiveText.map.TITLE, address: d.descriptiveText.map.ADDRESS, lng: lng, lat: lat};
+        window.plugin.portalalert.portal = {id: guid, imagesrc: d.imageByUrl.imageUrl, title: d.descriptiveText.map.TITLE, address: d.descriptiveText.map.ADDRESS, lng: lng, lat: lat};
         $('#portaldetails').append('<div class="portalalert"> <a onclick="window.plugin.portalalert.open_dialog()" title="submit portal">Portalalert Submit</a><a onclick="window.plugin.portalalert.upload_visible()" title="Upload all visible portals">Alle Hochladen</a></div>');
     }
     window.plugin.portalalert.submit_portal = function(){
