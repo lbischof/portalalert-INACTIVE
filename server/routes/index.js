@@ -135,7 +135,6 @@ exports.alert = function(db) {
     	portals.update({ "_id" : guid},
         {
             $setOnInsert: {
-                "_id" : guid,
                 "location" : { "type": "Point", "coordinates" : [ lng,lat ] },
                 "imagesrc" : imagesrc,
                 "title" : title,
