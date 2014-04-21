@@ -149,18 +149,24 @@ exports.alert = function(db) {
                 }
             }
         },
-        { upsert : true }, function (err, doc) {
-            console.log(err+doc+"test");
+        { upsert : true }, function (err, numAffected) {
     		if (err) {
             // If it failed, return error
             res.send("There was a problem adding the information to the database.");
         } else {
-        	console.log(doc);
         	res.send(doc);
         	var gcm = require('node-gcm');
         	var gcmMessage = new gcm.Message({
 					//collapseKey: 'demo',
-					data: doc
+					data: {
+                        "_id" : guid,
+                        "location" : { "type": "Point", "coordinates" : [ lng,lat ] },
+                        "imagesrc" : imagesrc,
+                        "title" : title,
+                        "message" : message,
+                        "type" : type,
+                        "expire" : expire
+                    }
 				});
         	var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
 				/**
