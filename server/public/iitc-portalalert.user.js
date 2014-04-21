@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             ingress-portalalert
 // @name           PortalAlert
-// @version        8
+// @version        9
 // @namespace      https://github.com/Lorenzbi/portalalert
 // @downloadURL    http://portalalert.lorenzz.ch:3000/iitc-portalalert.user.js
 // @updateURL      http://portalalert.lorenzz.ch:3000/iitc-portalalert.user.js
