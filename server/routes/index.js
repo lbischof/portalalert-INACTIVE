@@ -259,7 +259,7 @@ exports.search = function(db) {
         var title = req.body.title;
         var portals = db.get('portals');
         portals.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}},title: { $regex: '^'+title, $options: 'i' } },{ title: 1, id: 0}, function(err, docs) {
-            console.log(err+docs);
+            console.log(docs);
                 var obj = new Object();
                 obj.error = err;
                 obj.portals = docs;
