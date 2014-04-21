@@ -154,7 +154,7 @@ exports.alert = function(db) {
             // If it failed, return error
             res.send("There was a problem adding the information to the database.");
         } else {
-        	res.send(doc);
+        	res.send(200);
         	var gcm = require('node-gcm');
         	var gcmMessage = new gcm.Message({
 					//collapseKey: 'demo',
