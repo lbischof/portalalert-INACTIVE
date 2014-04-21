@@ -59,7 +59,7 @@ public class CreateFragment extends DialogFragment {
 				params.put("lng", lastLocation.getLongitude()+"");
 				params.put("lat", lastLocation.getLatitude()+"");
 				params.put("title", title);
-				if (title.length() > 3){
+				if (title.length() > 0){
 				HttpManager.post("search", params, new AsyncHttpResponseHandler() {
 					@Override
 					public void onSuccess(String json) {
