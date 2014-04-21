@@ -146,9 +146,9 @@ exports.alert = function(db) {
     		      "type" : type,
     		      "expire" : expire
                 }
-            }
-        },
-        { upsert : true }, function (err, doc) {
+            },
+        { upsert : true }
+        }, function (err, doc) {
             console.log(err+doc);
     		if (err) {
             // If it failed, return error
