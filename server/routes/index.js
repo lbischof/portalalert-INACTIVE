@@ -150,7 +150,7 @@ exports.alert = function(db) {
             }
         },
         { upsert : true }, function (err, doc) {
-            console.log(err+doc);
+            console.log(err+doc+"test");
     		if (err) {
             // If it failed, return error
             res.send("There was a problem adding the information to the database.");
