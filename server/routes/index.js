@@ -134,13 +134,13 @@ exports.alert = function(db) {
     	registrationIds = docs;
     	portals.update({ "_id" : guid},
         {
+            "_id" : guid,
             $setOnInsert: {
                 "location" : { "type": "Point", "coordinates" : [ lng,lat ] },
                 "imagesrc" : imagesrc,
                 "title" : title,
             },
             $set : {
-                "_id" : guid,
                 "alert" : {
     		      //"urgency" : urgency,
     		      "message" : message,
