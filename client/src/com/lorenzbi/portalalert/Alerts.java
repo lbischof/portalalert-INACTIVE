@@ -21,15 +21,7 @@ public class Alerts {
 	public List<Alert> getPortals(){
 		return portals;
 	}
-	public List<String> getPortalsList(){
-		List<String> portaltitles = new ArrayList<String>();
-		for (Alert portal : getPortals()){
-			portaltitles.add(portal.getTitle());
-		}
-		Log.d("portaltitles",portaltitles.toString());
-		return portaltitles;
-		
-	}
+
 	
 	public static class Alert {
 		@SerializedName("_id")

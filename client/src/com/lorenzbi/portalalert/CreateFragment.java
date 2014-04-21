@@ -3,6 +3,9 @@ package com.lorenzbi.portalalert;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import android.app.DialogFragment;
 import android.location.Location;
 import android.os.Bundle;
@@ -15,10 +18,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
-import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.lorenzbi.portalalert.Alerts.Alert;
 
 public class CreateFragment extends DialogFragment {
 	public AutoCompleteTextView autoComplete;
@@ -63,12 +64,21 @@ public class CreateFragment extends DialogFragment {
 				HttpManager.post("search", params, new AsyncHttpResponseHandler() {
 					@Override
 					public void onSuccess(String json) {
-						Gson gson = new Gson();
-						Alerts root = gson.fromJson(json, Alerts.class);
-						suggest = root.getPortalsList();
-						aAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),R.layout.dropdown_row,suggest);
-						autoComplete.setAdapter(aAdapter);
-						aAdapter.notifyDataSetChanged();
+						
+						try {
+							suggest = new ArrayList<String>();
+							JSONArray array = new JSONArray(json);
+							for (int i=0; i<array.length(); i++)
+								suggest.add(array.getString(i));
+							aAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),R.layout.dropdown_row,suggest);
+							autoComplete.setAdapter(aAdapter);
+							aAdapter.notifyDataSetChanged();
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						
 
 						Log.d("onTextChanged onSuccess", json);
 					}
