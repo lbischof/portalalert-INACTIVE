@@ -132,9 +132,9 @@ exports.alert = function(db) {
     users.ensureIndex( { "location" : "2dsphere" } );
     users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}},function(err, docs){
     	registrationIds = docs;
+        console.log(guid);
     	portals.update({ "_id" : guid},
         {
-            "_id" : guid,
             $setOnInsert: {
                 "location" : { "type": "Point", "coordinates" : [ lng,lat ] },
                 "imagesrc" : imagesrc,
