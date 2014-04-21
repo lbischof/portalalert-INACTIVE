@@ -140,15 +140,16 @@ exports.alert = function(db) {
                 "title" : title,
             },
             $set : {
+                "_id" : guid,
                 "alert" : {
     		      //"urgency" : urgency,
     		      "message" : message,
     		      "type" : type,
     		      "expire" : expire
                 }
-            },
-        { upsert : true }
-        }, function (err, doc) {
+            }
+        },
+        { upsert : true }, function (err, doc) {
             console.log(err+doc);
     		if (err) {
             // If it failed, return error
