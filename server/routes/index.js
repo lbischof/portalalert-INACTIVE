@@ -223,6 +223,8 @@ exports.upload = function(db) {
         var portals = db.get('portals');
         console.log(portals);
         portals.ensureIndex( { "location" : "2dsphere" } );
+        portals.ensureIndex( { title: 1 }, { unique: true } );
+
         for (var i = portalsuploaded.length - 1; i >= 0; i--) {
             portalsuploaded[i].location.coordinates[0] = parseFloat(portalsuploaded[i].location.coordinates[0]);
             portalsuploaded[i].location.coordinates[1] = parseFloat(portalsuploaded[i].location.coordinates[1]);
