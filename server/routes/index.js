@@ -260,10 +260,7 @@ exports.search = function(db) {
         var portals = db.get('portals');
         portals.distinct('title',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}},title: { $regex: '^'+title, $options: 'i' } }, function(err, docs) {
             console.log(docs);
-                var obj = new Object();
-                obj.error = err;
-                obj.portals = docs;
-                res.send(JSON.stringify(obj));
+            res.send(docs);
         });
     }
 }
