@@ -31,7 +31,7 @@ function wrapper() {
         $('#portaldetails').append('<div class="portalalert"> <a onclick="window.plugin.portalalert.open_dialog()" title="submit portal">Portalalert Submit</a><a onclick="window.plugin.portalalert.upload_visible()" title="Upload all visible portals">Alle Hochladen</a></div>');
     }
     window.plugin.portalalert.submit_portal = function(){
-                $.ajax({url: 'http://portalalert.lorenzz.ch:3000/alert',type: 'POST', data:{'portal': JSON.stringify(window.plugin.portalalert.portal)},dataType: 'jsop',success: function(r){return;}});
+                $.ajax({url: 'http://portalalert.lorenzz.ch:3000/alert',type: 'POST', data:{'portal': JSON.stringify(window.plugin.portalalert.portal)},dataType: 'jsop',success: function(res){console.log(res);}});
     }
     window.plugin.portalalert.sync = function() {
         L.Icon.Default.imagePath = 'http://portalalert.lorenzz.ch:3000/images';

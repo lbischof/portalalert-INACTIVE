@@ -126,22 +126,30 @@ exports.alert = function(db) {
     console.log(expire);
     var message = portal.message;
     // Set our collection
-    var alerts = db.get('alerts');
+    var portals = db.get('portals');
     var users = db.get('users');
-    alerts.ensureIndex( { "location" : "2dsphere" } );
+    portals.ensureIndex( { "location" : "2dsphere" } );
     users.ensureIndex( { "location" : "2dsphere" } );
     users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}},function(err, docs){
     	registrationIds = docs;
-    	alerts.insert({
-            "_id" : guid,
-    		"location" : { "type": "Point", "coordinates" : [ lng,lat ] },
-    		"imagesrc" : imagesrc,
-    		"title" : title,
-    		//"urgency" : urgency,
-    		"message" : message,
-    		"type" : type,
-    		"expire" : expire
-        	}, function (err, doc) {
+    	portals.update({ "_id" : guid},
+        {
+            $setOnInsert: {
+                "_id" : guid,
+                "location" : { "type": "Point", "coordinates" : [ lng,lat ] },
+                "imagesrc" : imagesrc,
+                "title" : title,
+            },
+            $set : {
+                "alert" : {
+    		      //"urgency" : urgency,
+    		      "message" : message,
+    		      "type" : type,
+    		      "expire" : expire
+                }
+            }
+        },
+        { upsert : true }, function (err, doc) {
     		if (err) {
             // If it failed, return error
             res.send("There was a problem adding the information to the database.");
