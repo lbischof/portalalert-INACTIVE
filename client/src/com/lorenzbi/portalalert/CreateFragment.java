@@ -6,7 +6,11 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnShowListener;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,7 +18,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
@@ -26,20 +30,62 @@ public class CreateFragment extends DialogFragment {
 	public String data;
 	public List<String> suggest;
 	ArrayAdapter<String> aAdapter;
+	AlertDialog dialog;
 	public CreateFragment() {
 	}
+	
+	
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_create, container, false);
+	public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+		AlertDialog.Builder b=  new  AlertDialog.Builder(getActivity())
+	    .setTitle("Neuer Alert")
+	    .setPositiveButton("OK",
+	        new DialogInterface.OnClickListener() {
+	            public void onClick(DialogInterface dialog, int whichButton) {
+	                // do something...
+	            }
+	        }
+	    )
+	    .setNegativeButton("Cancel",
+	        new DialogInterface.OnClickListener() {
+	            public void onClick(DialogInterface dialog, int whichButton) {
+	                dialog.dismiss();
+	            }
+	        }
+	    );
+
+	    LayoutInflater i = getActivity().getLayoutInflater();
+
+	    View view = i.inflate(R.layout.fragment_create,null);
 		autoComplete = (AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
-        getDialog().setTitle("Neuer Alert");
-        return view;
-    }
+        b.setView(view);
+        dialog = b.create();
+        dialog.setOnShowListener(new OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+            }
+        });
+        return dialog;
+	}
+	
+	
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+
 		suggest = new ArrayList<String>();
-		 
+		getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+		autoComplete.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+					autoComplete.setError(null);
+                } else if (!suggest.contains(autoComplete.getText().toString())){
+					autoComplete.setError("Not a Portal");
+                }
+            }
+		});
 		autoComplete.addTextChangedListener(new TextWatcher(){
  
 			public void afterTextChanged(Editable editable) {
@@ -53,7 +99,12 @@ public class CreateFragment extends DialogFragment {
 			}
  
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				String title = s.toString();
+				final String title = s.toString();
+				if (!suggest.contains(title)){
+            		dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+            	} else {
+            		dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+            	}
 				
 				RequestParams params = new RequestParams();
 				Location lastLocation = ((MainActivity)getActivity()).getLastLocation();
@@ -72,7 +123,10 @@ public class CreateFragment extends DialogFragment {
 								suggest.add(array.getString(i));
 							aAdapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),R.layout.dropdown_row,suggest);
 							autoComplete.setAdapter(aAdapter);
+							
+							
 							aAdapter.notifyDataSetChanged();
+							
 						} catch (JSONException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();

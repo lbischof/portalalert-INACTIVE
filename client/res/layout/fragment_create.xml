@@ -3,21 +3,20 @@
     android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:minWidth="1000dp"
-	android:minHeight="1000dp"
-    android:layout_gravity="start" android:orientation="vertical"  >
+    android:orientation="vertical" 
+     >
 
-    <TextView
-        android:id="@+id/lbl_your_name" android:text="Portal Name" 
-        android:layout_width="wrap_content" android:layout_height="wrap_content" />
+   
       
    <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="text"
+        android:inputType="textAutoComplete|textAutoCorrect"
         android:imeOptions="actionNext"
+        android:hint="Portal Name"
+        android:layout_margin="5dp"
          >
-        <requestFocus />
     </AutoCompleteTextView>
      <EditText
         android:id="@+id/message"
@@ -26,8 +25,10 @@
         android:gravity="top|left"
         android:inputType="textEmailAddress|textMultiLine"
         android:lines="20"
-        android:minLines="5"
+        android:minLines="3"
         android:scrollHorizontally="false"
         android:scrollbars="vertical"
-        android:singleLine="false" />
+        android:hint="Nachricht"
+        android:singleLine="false"
+        android:layout_margin="5dp" />
 </LinearLayout>
