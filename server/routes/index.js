@@ -107,10 +107,10 @@ var client = webdriverjs
 }).end();
 }
 exports.alert = function(db) {
-	return function(req, res) {
+    return function(req, res) {
     res.setHeader('Access-Control-Allow-Origin', 'http://www.ingress.com');
-	var portal = JSON.parse(req.body.portal);
-	var registrationIds = [];
+    var portal = JSON.parse(req.body.portal);
+    var registrationIds = [];
     // Get our form values. These rely on the "name" attributes
     var guid = portal.guid;
     var lat = parseFloat(portal.lat);
@@ -126,57 +126,42 @@ exports.alert = function(db) {
     console.log(expire);
     var message = portal.message;
     // Set our collection
-    var portals = db.get('portals');
+    var alerts = db.get('alerts');
     var users = db.get('users');
-    portals.ensureIndex( { "location" : "2dsphere" } );
+    alerts.ensureIndex( { "location" : "2dsphere" } );
     users.ensureIndex( { "location" : "2dsphere" } );
     users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}},function(err, docs){
-    	registrationIds = docs;
-        console.log(guid);
-    	portals.update({ "_id" : guid},
-        {
-            $setOnInsert: {
-                "location" : { "type": "Point", "coordinates" : [ lng,lat ] },
-                "imagesrc" : imagesrc,
-                "title" : title,
-            },
-            $set : {
-                "alert" : {
-    		      //"urgency" : urgency,
-    		      "message" : message,
-    		      "type" : type,
-    		      "expire" : expire
-                }
-            }
-        },
-        { upsert : true }, function (err, numAffected) {
-    		if (err) {
+        registrationIds = docs;
+        alerts.insert({
+            "_id" : guid,
+            "location" : { "type": "Point", "coordinates" : [ lng,lat ] },
+            "imagesrc" : imagesrc,
+            "title" : title,
+            //"urgency" : urgency,
+            "message" : message,
+            "type" : type,
+            "expire" : expire
+            }, function (err, doc) {
+            if (err) {
             // If it failed, return error
             res.send("There was a problem adding the information to the database.");
         } else {
-        	res.send(200);
-        	var gcm = require('node-gcm');
-        	var gcmMessage = new gcm.Message({
-					//collapseKey: 'demo',
-					data: {
-                        "_id" : guid,
-                        "location" : { "type": "Point", "coordinates" : [ lng,lat ] },
-                        "imagesrc" : imagesrc,
-                        "title" : title,
-                        "message" : message,
-                        "type" : type,
-                        "expire" : expire
-                    }
-				});
-        	var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
-				/**
-				* Params: message-literal, registrationIds-array, No. of retries, callback-function
-				**/
-				sender.send(gcmMessage, registrationIds, 4, function (err, result) {
-					console.log(result);
-				});
-			}
-		});
+            console.log(doc);
+            res.send(doc);
+            var gcm = require('node-gcm');
+            var gcmMessage = new gcm.Message({
+                    //collapseKey: 'demo',
+                    data: doc
+                });
+            var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
+                /**
+                * Params: message-literal, registrationIds-array, No. of retries, callback-function
+                **/
+                sender.send(gcmMessage, registrationIds, 4, function (err, result) {
+                    console.log(result);
+                });
+            }
+        });
     });  
 }
 }
@@ -217,18 +202,18 @@ exports.sync = function(db) {
 		var userid = req.body.userid;
 		var lng = parseFloat(req.body.lng);
 		var lat = parseFloat(req.body.lat);
-		var portals = db.get('portals');
+		var alerts = db.get('alerts');
 		var users = db.get('users');
 		var now = (new Date).getTime();
-		portals.ensureIndex( { "location" : "2dsphere" } );
+		alerts.ensureIndex( { "location" : "2dsphere" } );
 		users.update({ "userid" : userid },{ $set: {
 			"location" : { "type": "Point", "coordinates" : [ lng,lat ] } }
 
 		}, function (err, numAffected) {
 			var obj = new Object();
-			portals.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}}}, function(err, docs) {
+			alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}},expire: {"$gte": now}, done: {$ne: true}}, function(err, docs) {
 				obj.error = err;
-				obj.portals = docs;
+				obj.alerts = docs;
 				res.send(JSON.stringify(obj));
 			});
 		});
