@@ -217,18 +217,18 @@ exports.sync = function(db) {
 		var userid = req.body.userid;
 		var lng = parseFloat(req.body.lng);
 		var lat = parseFloat(req.body.lat);
-		var alerts = db.get('alerts');
+		var portals = db.get('portals');
 		var users = db.get('users');
 		var now = (new Date).getTime();
-		alerts.ensureIndex( { "location" : "2dsphere" } );
+		portals.ensureIndex( { "location" : "2dsphere" } );
 		users.update({ "userid" : userid },{ $set: {
 			"location" : { "type": "Point", "coordinates" : [ lng,lat ] } }
 
 		}, function (err, numAffected) {
 			var obj = new Object();
-			alerts.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}},expire: {"$gte": now}, done: {$ne: true}}, function(err, docs) {
+			portals.find({location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, $maxDistance : 3000}}}, function(err, docs) {
 				obj.error = err;
-				obj.alerts = docs;
+				obj.portals = docs;
 				res.send(JSON.stringify(obj));
 			});
 		});
