@@ -133,7 +133,7 @@ function getPortalInfo(body, db, callback){
     } else {
         var portals = db.get('portals');
         title = body.title;
-        portals.find({title: title},function(err, docs){
+        portals.findOne({title: title},function(err, docs){
             console.log(docs);
             callback();
         });
