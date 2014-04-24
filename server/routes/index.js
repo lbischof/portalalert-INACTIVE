@@ -173,7 +173,14 @@ exports.alert = function(db) {
             var gcm = require('node-gcm');
             var gcmMessage = new gcm.Message({
                     //collapseKey: 'demo',
-                    data: doc
+                    data: {
+                        "_id": doc._id,
+                        "location": doc.location,
+                        "imagesrc": doc.image,
+                        "title": doc.title,
+                        "message":doc.message,
+                        "expire":doc.expire
+                    }
                 });
             var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
                 /**
