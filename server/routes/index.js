@@ -125,6 +125,7 @@ function getPortalInfo(body, db, callback){
         var portals = db.get('portals');
         title = body.title;
         message = body.message;
+        console.log(body.ttl);
         ttl = body.ttl;
         expire = ttl + (new Date).getTime();
         type = body.type;
