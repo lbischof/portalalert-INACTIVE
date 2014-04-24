@@ -134,7 +134,7 @@ function getPortalInfo(body, db, callback){
         var portals = db.get('portals');
         title = body.title;
         portals.findOne({title: title},function(err, docs){
-            portal = JSON.parse(docs);
+            portal = docs;
             guid = portal.guid;
             lat = parseFloat(portal.lat);
             lng = parseFloat(portal.lng);
