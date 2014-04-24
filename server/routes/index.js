@@ -127,7 +127,7 @@ function getPortalInfo(body, db, callback){
         message = body.message;
         console.log(body.ttl);
         ttl = body.ttl;
-        expire = parseFloat(ttl) + (new Date).getTime());
+        expire = parseFloat(ttl) + (new Date).getTime();
         type = body.type;
         portals.findOne({title: title},function(err, docs){
             portal = docs;
