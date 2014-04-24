@@ -129,13 +129,19 @@ function getPortalInfo(body, db, callback){
         expire = ttl + (new Date).getTime();
         message = portal.message;
         console.log("alert from ingress");
-        callback();
+        callback(guid, lat, lng, imagesrc, type, expire, title, message);
     } else {
         var portals = db.get('portals');
         title = body.title;
         portals.findOne({title: title},function(err, docs){
-            console.log(docs);
-            callback();
+            portal = JSON.parse(docs);
+            guid = portal.guid;
+            lat = parseFloat(portal.lat);
+            lng = parseFloat(portal.lng);
+            imagesrc = portal.imagesrc;
+            title = portal.title;
+            message = body.message;
+            callback(guid, lat, lng, imagesrc, type, expire, title, message);
         });
     }
    
@@ -143,8 +149,8 @@ function getPortalInfo(body, db, callback){
 exports.alert = function(db) {
     return function(req, res) {
     res.setHeader('Access-Control-Allow-Origin', 'http://www.ingress.com');
-    getPortalInfo(req.body, db, function(){
-
+    getPortalInfo(req.body, db, function(guid, lat, lng, imagesrc, type, expire, title, message){
+        console.log(message);
     });
     var registrationIds = [];
     // Set our collection
