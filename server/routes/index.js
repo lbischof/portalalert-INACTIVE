@@ -107,16 +107,7 @@ var client = webdriverjs
 }).end();
 }
 function getPortalInfo(body, db, callback){
-    var portal;
-    var guid;
-    var lat;
-    var lng;
-    var imagesrc;
-    var title;
-    var type;
-    var ttl;
-    var expire;
-    var message;
+    var portal, guid, lat, lng, imagesrc, title, type, ttl, expire, message;
     if (body.portal != null){
         portal = JSON.parse(body.portal);
         guid = portal.guid;
@@ -134,6 +125,9 @@ function getPortalInfo(body, db, callback){
         var portals = db.get('portals');
         title = body.title;
         message = body.message;
+        ttl = body.ttl;
+        expire = ttl + (new Date).getTime();
+        type = body.type;
         portals.findOne({title: title},function(err, docs){
             portal = docs;
             guid = portal.guid;
