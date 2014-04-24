@@ -134,7 +134,7 @@ function getPortalInfo(body, db, callback){
             guid = portal.guid;
             lat = parseFloat(portal.location.coordinates[1]);
             lng = parseFloat(portal.location.coordinates[0]);
-            imagesrc = portal.imagesrc;
+            imagesrc = portal.image;
             title = portal.title;
             callback(guid, lat, lng, imagesrc, type, expire, title, message);
         });
