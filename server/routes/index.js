@@ -179,7 +179,7 @@ exports.alert = function(db) {
                         "imagesrc": doc.image,
                         "title": doc.title,
                         "message":doc.message,
-                        "expire":doc.expire
+                        "expire":doc.expire+""
                     }
                 });
             var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
