@@ -106,25 +106,47 @@ var client = webdriverjs
     }
 }).end();
 }
+function getPortalInfo(body, db, callback){
+    var portal;
+    var guid;
+    var lat;
+    var lng;
+    var imagesrc;
+    var title;
+    var type;
+    var ttl;
+    var expire;
+    var message;
+    if (body.portal != null){
+        portal = JSON.parse(body.portal);
+        guid = portal.guid;
+        lat = parseFloat(portal.lat);
+        lng = parseFloat(portal.lng);
+        imagesrc = portal.imagesrc;
+        title = portal.title;
+        type = portal.type;
+        ttl = portal.ttl;
+        expire = ttl + (new Date).getTime();
+        message = portal.message;
+        console.log("alert from ingress");
+        callback();
+    } else {
+        var portals = db.get('portals');
+        title = body.title;
+        portals.find({title: title},function(result){
+            console.log(result);
+            callback();
+        });
+    }
+   
+}
 exports.alert = function(db) {
     return function(req, res) {
     res.setHeader('Access-Control-Allow-Origin', 'http://www.ingress.com');
-    var portal = JSON.parse(req.body.portal);
-    var registrationIds = [];
-    // Get our form values. These rely on the "name" attributes
-    var guid = portal.guid;
-    var lat = parseFloat(portal.lat);
-    var lng = parseFloat(portal.lng);
-    var imagesrc = portal.imagesrc;
-    var title = portal.title;
-    //var urgency = req.body.urgency;
-    var type = portal.type;
+    getPortalInfo(req.body, db, function(){
 
-    var ttl = portal.ttl;
-    var expire = ttl + (new Date).getTime();
-    console.log(ttl);
-    console.log(expire);
-    var message = portal.message;
+    });
+    var registrationIds = [];
     // Set our collection
     var alerts = db.get('alerts');
     var users = db.get('users');

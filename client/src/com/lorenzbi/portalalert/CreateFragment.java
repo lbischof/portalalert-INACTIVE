@@ -63,6 +63,17 @@ public class CreateFragment extends DialogFragment {
 		            		autoComplete.setError("Bitte wählen Sie ein Portal.");
 		            	} else if (txtMessage.getText().toString().trim().length() == 0){
 		            		txtMessage.setError("Bitte lassen sie die Nachricht nicht leer");
+		            	} else {
+		            		RequestParams params = new RequestParams();
+		        			params.put("title", autoComplete.getText().toString());
+		        			params.put("message", txtMessage.getText().toString());
+		            		HttpManager.post("http://portalalert.lorenzz.ch:3000/alert", params, new AsyncHttpResponseHandler() {
+		        				@Override
+		        				public void onSuccess(String response) {
+		        					Log.d("resonse", response);
+		        					
+		        				}
+		        			});
 		            	}
 		                //Dismiss once everything is OK.
 		                //dialog.dismiss();
