@@ -1,16 +1,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/edit_name"
     android:layout_width="match_parent"
-	android:layout_height="match_parent"
-	android:minWidth="1000dp"
-    android:orientation="vertical" 
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
      >
 
    
       
    <AutoCompleteTextView
         android:id="@+id/autoCompleteTextView"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="textAutoComplete|textAutoCorrect"
         android:imeOptions="actionNext"
@@ -31,4 +30,27 @@
         android:hint="Nachricht"
         android:singleLine="false"
         android:layout_margin="5dp" />
+     <LinearLayout 
+        android:orientation="horizontal"
+    	android:layout_width="match_parent"
+    	android:layout_height="match_parent"
+    	android:layout_marginBottom="10dp">
+         <Spinner
+        	android:id="@+id/ttl"
+        	android:layout_width="0dp"
+        	android:layout_height="wrap_content"
+        	android:layout_margin="5dp"
+        	android:entries="@array/ttl"
+        	android:entryValues="@array/ttl_values"
+        	android:layout_weight="1" />
+     	<Spinner
+        	android:id="@+id/type"
+        	android:layout_width="0dp"
+        	android:layout_height="wrap_content"
+        	android:layout_margin="5dp"
+        	android:entries="@array/type"
+        	android:entryValues="@array/type_values"
+        	android:layout_weight="1" />
+     </LinearLayout>
+     
 </LinearLayout>

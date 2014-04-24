@@ -10,6 +10,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.Editable;
@@ -18,10 +20,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -29,6 +34,8 @@ import com.loopj.android.http.RequestParams;
 public class CreateFragment extends DialogFragment {
 	public AutoCompleteTextView autoComplete;
 	public EditText txtMessage; 
+	public Spinner ttlSpinner;
+	public Spinner typeSpinner;
 	public String data;
 	public List<String> suggest;
 	ArrayAdapter<String> aAdapter;
@@ -42,6 +49,8 @@ public class CreateFragment extends DialogFragment {
 	    View view = i.inflate(R.layout.fragment_create,null);
 		autoComplete = (AutoCompleteTextView) view.findViewById(R.id.autoCompleteTextView);
 		txtMessage = (EditText) view.findViewById(R.id.message);
+		ttlSpinner = (Spinner) view.findViewById(R.id.ttl);
+		typeSpinner = (Spinner) view.findViewById(R.id.type);
 		final AlertDialog dialog =  new  AlertDialog.Builder(getActivity())
 		.setView(view)
 	    .setTitle("Neuer Alert")
@@ -58,16 +67,22 @@ public class CreateFragment extends DialogFragment {
 
 		            @Override
 		            public void onClick(View view) {
-		                // TODO Do something
+		            	Resources res = getResources();
+		        		final TypedArray ttlValues = res
+		        		        .obtainTypedArray(R.array.ttl_values);
+		        		final TypedArray typeValues = res
+		        		        .obtainTypedArray(R.array.type_values);
 		            	if (!suggest.contains(autoComplete.getText().toString())){
 		            		autoComplete.setError("Bitte wählen Sie ein Portal.");
 		            	} else if (txtMessage.getText().toString().trim().length() == 0){
 		            		txtMessage.setError("Bitte lassen sie die Nachricht nicht leer");
 		            	} else {
 		            		RequestParams params = new RequestParams();
+		            		params.put("type", typeValues.getInt(typeSpinner.getSelectedItemPosition(), -1)+"");
+		            		params.put("ttl", ttlValues.getInt(ttlSpinner.getSelectedItemPosition(), -1)+"");
 		        			params.put("title", autoComplete.getText().toString());
 		        			params.put("message", txtMessage.getText().toString());
-		            		HttpManager.post("http://portalalert.lorenzz.ch:3000/alert", params, new AsyncHttpResponseHandler() {
+		            		HttpManager.post("alert", params, new AsyncHttpResponseHandler() {
 		        				@Override
 		        				public void onSuccess(String response) {
 		        					Log.d("resonse", response);
@@ -174,5 +189,6 @@ public class CreateFragment extends DialogFragment {
 				txtMessage.setError(null);
 			}
 	});
+		
 }
 }
