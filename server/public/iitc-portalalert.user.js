@@ -1,7 +1,7 @@
 // ==UserScript==
 // @id             ingress-portalalert
 // @name           PortalAlert
-// @version        10
+// @version        11
 // @namespace      https://github.com/Lorenzbi/portalalert
 // @downloadURL    http://portalalert.lorenzz.ch:3000/iitc-portalalert.user.js
 // @updateURL      http://portalalert.lorenzz.ch:3000/iitc-portalalert.user.js
@@ -86,8 +86,9 @@ function wrapper() {
         $.each(window.portals, function(i, portal)
         {
             var d = portal.options.data;
+
             var thisPortal = {
-                '_id': i, // the primary key for couchdb is _id and for that we use the guid
+                '_id': portal.options.guid, // the primary key for couchdb is _id and for that we use the guid
                 'title': d.title,
                 'imagesrc': d.image,
                 'location':{'type':'Point','coordinates': [ d.lngE6 / 1e6, d.latE6 / 1e6 ]}

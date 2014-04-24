@@ -139,14 +139,12 @@ function getPortalInfo(body, db, callback){
             callback(guid, lat, lng, imagesrc, type, expire, title, message);
         });
     }
-   
 }
 exports.alert = function(db) {
     return function(req, res) {
     res.setHeader('Access-Control-Allow-Origin', 'http://www.ingress.com');
     getPortalInfo(req.body, db, function(guid, lat, lng, imagesrc, type, expire, title, message){
-        console.log(lng);
-        var registrationIds = [];
+    var registrationIds = [];
     // Set our collection
     var alerts = db.get('alerts');
     var users = db.get('users');
