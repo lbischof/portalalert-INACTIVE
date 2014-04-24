@@ -161,7 +161,7 @@ exports.alert = function(db) {
             "message" : message,
             "type" : type,
             "expire" : expire
-            }, function (err, doc) {
+            }, {upsert: true}, function (err, doc) {
             if (err) {
             // If it failed, return error
             res.send("There was a problem adding the information to the database.");
