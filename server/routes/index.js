@@ -133,6 +133,7 @@ function getPortalInfo(body, db, callback){
     } else {
         var portals = db.get('portals');
         title = body.title;
+        message = body.message;
         portals.findOne({title: title},function(err, docs){
             portal = docs;
             guid = portal.guid;
@@ -140,7 +141,6 @@ function getPortalInfo(body, db, callback){
             lng = parseFloat(portal.lng);
             imagesrc = portal.imagesrc;
             title = portal.title;
-            message = body.message;
             callback(guid, lat, lng, imagesrc, type, expire, title, message);
         });
     }
@@ -150,9 +150,7 @@ exports.alert = function(db) {
     return function(req, res) {
     res.setHeader('Access-Control-Allow-Origin', 'http://www.ingress.com');
     getPortalInfo(req.body, db, function(guid, lat, lng, imagesrc, type, expire, title, message){
-        console.log(message);
-    });
-    var registrationIds = [];
+        var registrationIds = [];
     // Set our collection
     var alerts = db.get('alerts');
     var users = db.get('users');
@@ -191,6 +189,8 @@ exports.alert = function(db) {
             }
         });
     });  
+    });
+    
 }
 }
 exports.done = function(db) {
