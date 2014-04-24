@@ -5,7 +5,14 @@
   android:layout_height="fill_parent"
   android:background="#e5e5e5"
   >
-
+<TextView android:id="@+id/empty"
+    android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:paddingTop="100dp"
+	android:textColor="#999"
+	android:gravity="center_horizontal"
+	android:textSize="35dp"
+    android:text="Keine Alerts vorhanden" />
 <ListView
 android:id="@+id/contentlist"
 android:layout_marginLeft="15dp"

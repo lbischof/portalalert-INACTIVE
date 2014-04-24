@@ -77,7 +77,7 @@ public class CreateFragment extends DialogFragment {
 		            	} else if (txtMessage.getText().toString().trim().length() == 0){
 		            		txtMessage.setError("Bitte lassen sie die Nachricht nicht leer");
 		            	} else {
-		            		b.setText("Adding...");
+    		                dialog.dismiss();
 		            		RequestParams params = new RequestParams();
 		            		params.put("type", typeValues.getInt(typeSpinner.getSelectedItemPosition(), -1)+"");
 		            		params.put("ttl", ttlValues.getInt(ttlSpinner.getSelectedItemPosition(), -1)+"");
@@ -87,7 +87,6 @@ public class CreateFragment extends DialogFragment {
 		        				@Override
 		        				public void onSuccess(String response) {
 		        					Log.d("resonse", response);
-		    		                dialog.dismiss();
 
 		        					
 		        				}

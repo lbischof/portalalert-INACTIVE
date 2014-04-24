@@ -96,6 +96,7 @@ public class ListFragment extends Fragment implements
 		lv.setClickable(true);
 		lv.setOnItemClickListener(this);
 		lv.setAdapter(adapter);
+		lv.setEmptyView(getActivity().findViewById(R.id.empty));
 		registerForContextMenu(lv);
 		Log.d("onloadfinished register", "onloadfinished register");
 	}
