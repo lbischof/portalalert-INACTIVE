@@ -150,6 +150,7 @@ exports.alert = function(db) {
     return function(req, res) {
     res.setHeader('Access-Control-Allow-Origin', 'http://www.ingress.com');
     getPortalInfo(req.body, db, function(guid, lat, lng, imagesrc, type, expire, title, message){
+        console.log(lng);
         var registrationIds = [];
     // Set our collection
     var alerts = db.get('alerts');
