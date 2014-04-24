@@ -127,7 +127,7 @@ function getPortalInfo(body, db, callback){
         message = body.message;
         console.log(body.ttl);
         ttl = body.ttl;
-        expire = parseFloat(ttl + (new Date).getTime());
+        expire = parseFloat(ttl) + (new Date).getTime());
         type = body.type;
         portals.findOne({title: title},function(err, docs){
             portal = docs;
@@ -173,14 +173,7 @@ exports.alert = function(db) {
             var gcm = require('node-gcm');
             var gcmMessage = new gcm.Message({
                     //collapseKey: 'demo',
-                    data: {
-                        "_id": doc._id,
-                        "location": doc.location,
-                        "imagesrc": doc.image,
-                        "title": doc.title,
-                        "message":doc.message,
-                        "expire":doc.expire+""
-                    }
+                    data: doc
                 });
             var sender = new gcm.Sender('AIzaSyC7FUC_9nkgZoqsSVJg-FY0T9g-oxZPvro');
                 /**
