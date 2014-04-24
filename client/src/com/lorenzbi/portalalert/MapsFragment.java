@@ -1,15 +1,26 @@
 package com.lorenzbi.portalalert;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.database.Cursor;
+import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsFragment extends Fragment {
@@ -32,7 +43,34 @@ public class MapsFragment extends Fragment {
 		setUpMapIfNeeded();
 		return view;
 	}
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		setHasOptionsMenu(true);
+		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+	        @Override
+	        public void onInfoWindowClick(Marker marker) {
+	        	DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
+	        	String id = dbHelper.getId(marker.getTitle());
 
+	    		FragmentManager fragmentManager = getFragmentManager();
+	    		Fragment fragment = new DetailFragment();
+	    		Bundle bundle = new Bundle();
+	    		bundle.putString("id", id);
+	    		fragment.setArguments(bundle);
+	    		fragmentManager.beginTransaction().setCustomAnimations(R.animator.fragment_slide_left_enter,
+	                    R.animator.fragment_slide_left_exit,
+	                    R.animator.fragment_slide_right_enter,
+	                    R.animator.fragment_slide_right_exit).addToBackStack(null)
+	    				.replace(R.id.content_frame, fragment).commit();
+	        }
+	    });
+	}
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+	{
+	    super.onCreateOptionsMenu(menu, inflater);
+	    inflater.inflate(R.menu.menu_map, menu);
+	}
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -52,11 +90,27 @@ public class MapsFragment extends Fragment {
 			}
 		}
 	}
-
+	
 	private void setUpMap() {
+		Location lastLocation = ((MainActivity)getActivity()).getLastLocation();
+		CameraUpdate myLoc = CameraUpdateFactory.newCameraPosition(
+	            new CameraPosition.Builder().target(new LatLng(lastLocation.getLatitude(),
+	                    lastLocation.getLongitude())).zoom(13).build());
+	    mMap.moveCamera(myLoc);
 		mMap.setMyLocationEnabled(true);
-		mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title(
-				"Marker"));
-	}
+		DatabaseHelper dbHelper = new DatabaseHelper(getActivity());
+		//mMap.setOnMyLocationChangeListener(this);
+		Cursor cursor = dbHelper.getNear(lastLocation.getLongitude(), lastLocation.getLatitude());
+		while (cursor.moveToNext()) {
+			String title = cursor.getString(cursor.getColumnIndex("title"));
+			String message = cursor.getString(cursor.getColumnIndex("message"));
+			Double lng = cursor.getDouble(cursor.getColumnIndex("lng"));
+			Double lat = cursor.getDouble(cursor.getColumnIndex("lat"));
 
+			mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).title(
+					title).snippet(message));
+		}
+		
+	}
+	
 }

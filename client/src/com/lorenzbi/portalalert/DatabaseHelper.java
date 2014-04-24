@@ -99,9 +99,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			id = cursor.getString(cursor.getColumnIndex("id"));
 		}
 		return id;
+	}
+	public String getId(String title) {
+		Cursor cursor = getReadableDatabase().rawQuery(
+				"select id from alerts where title = ?",
+				new String[] { title });
+		String id = null;
+		if (cursor.moveToFirst()) {
+			id = cursor.getString(cursor.getColumnIndex("id"));
+		}
+		return id;
 
 	}
-
 	public Alert getAlert(String id) {
 		Alert alert = null;
 		Cursor cursor = getReadableDatabase().rawQuery(
