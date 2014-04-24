@@ -137,8 +137,8 @@ function getPortalInfo(body, db, callback){
         portals.findOne({title: title},function(err, docs){
             portal = docs;
             guid = portal.guid;
-            lat = parseFloat(portal.lat);
-            lng = parseFloat(portal.lng);
+            lat = parseFloat(portal.location.coordinates[1]);
+            lng = parseFloat(portal.location.coordinates[0]);
             imagesrc = portal.imagesrc;
             title = portal.title;
             callback(guid, lat, lng, imagesrc, type, expire, title, message);
