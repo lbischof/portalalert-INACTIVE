@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
     <PreferenceCategory
-            android:title="test">
+            android:title="Einstellungen">
             
-        <CheckBoxPreference
-                android:key="checkbox_preference"
-                android:title="title_checkbox_preference"
-                android:summary="summary_checkbox_preference" />
- 
+       
+ 	<RingtonePreference android:showDefault="true"
+     android:key="ringtone" android:title="Alert Sound"
+     android:ringtoneType="notification">
+  </RingtonePreference>
+   <SwitchPreference
+                android:key="vibrate"
+                android:title="Vibration"
+                android:defaultValue="true"
+                 />
     </PreferenceCategory>  
 </PreferenceScreen>    

@@ -1,6 +1,5 @@
 package com.lorenzbi.portalalert;
 
-import android.app.FragmentManager;
 import android.app.FragmentManager.OnBackStackChangedListener;
 import android.graphics.Color;
 import android.location.Location;

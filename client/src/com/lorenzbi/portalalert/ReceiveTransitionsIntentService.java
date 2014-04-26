@@ -8,8 +8,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -46,7 +49,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
 		// Create a local broadcast Intent
 		Intent broadcastIntent = new Intent();
 		DatabaseHelper dbHelper = new DatabaseHelper(this);
-
+		
 		// Give it the category for all intents sent by the Intent Service
 		broadcastIntent.addCategory(GeofenceUtils.CATEGORY_LOCATION_SERVICES);
 		List<Geofence> geofences = LocationClient
@@ -143,6 +146,8 @@ public class ReceiveTransitionsIntentService extends IntentService {
 	 * 
 	 */
 	private void sendNotification(Alert alert) {
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences (this);
+		Uri sound = Uri.parse(prefs.getString("ringtone", Settings.System.DEFAULT_NOTIFICATION_URI.toString()));
 		// Create an explicit content Intent that starts the main Activity
 				// Get an instance of the Notification manager
 				NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -150,13 +155,15 @@ public class ReceiveTransitionsIntentService extends IntentService {
 				intent.setAction("detail"+alert.getId());
 				PendingIntent notificationPendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                this);
-        Notification notification = builder.setContentIntent(notificationPendingIntent)
+                this).setContentIntent(notificationPendingIntent)
                 .setSmallIcon(R.drawable.ic_drawer).setTicker("Portal Alert").setWhen(0)
-                .setAutoCancel(true).setContentTitle(alert.getTitle())
+                .setAutoCancel(true).setContentTitle(alert.getTitle()).setSound(sound)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(alert.getMessage()))
-                .setContentText(alert.getMessage()).build();
-
+                .setContentText(alert.getMessage());
+		if (prefs.getBoolean("vibrate", false)){
+			builder.setVibrate(new long[] {300, 300, 300 ,300});
+		}
+        Notification notification = builder.build();
 		// Issue the notification
 		String lng = alert.getLocation().getLng().toString();
 		String lat = alert.getLocation().getLat().toString();

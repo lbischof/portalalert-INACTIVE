@@ -5,7 +5,6 @@ import android.app.FragmentManager;
 import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.Menu;
