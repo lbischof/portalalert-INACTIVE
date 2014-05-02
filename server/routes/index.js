@@ -264,7 +264,7 @@ exports.everything = function(db){
 		var alerts = db.get('alerts');
 		var now = (new Date).getTime();
 
-		alerts.find({expire: {"$gte": now}, done: {$ne: true}}, 'location.coordinates title message', function(err, docs){
+		alerts.find({expire: {"$gte": now}, done: {$ne: true}}, '-_id location.coordinates title message', function(err, docs){
 				console.log(docs);
 				res.send(docs);
 			});
