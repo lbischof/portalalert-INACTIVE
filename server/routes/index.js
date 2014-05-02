@@ -262,6 +262,8 @@ exports.bounds = function(db){
 exports.everything = function(db){
 	return function(req, res){
 		var alerts = db.get('alerts');
+		var now = (new Date).getTime();
+
 		alerts.find({expire: {"$gte": now}, done: {$ne: true}}, function(err, docs){
 				console.log(docs);
 				res.send(docs);
