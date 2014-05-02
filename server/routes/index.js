@@ -252,7 +252,7 @@ exports.bounds = function(db){
 		alerts.find({location: {$geoWithin: { $box: [
 			[southwestlng,southwestlat],
 			[northeastlng,northeastlat]
-			]}}}, function(err, docs){
+			]}},expire: {"$gte": now}, done: {$ne: true}}, function(err, docs){
 				console.log(docs);
 			});
 	}
