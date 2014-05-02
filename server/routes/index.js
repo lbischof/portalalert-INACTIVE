@@ -255,7 +255,16 @@ exports.bounds = function(db){
 			[northeastlng,northeastlat]
 			]}},expire: {"$gte": now}, done: {$ne: true}}, function(err, docs){
 				console.log(docs);
-				res.send(200);
+				res.send(docs);
+			});
+	}
+}
+exports.everything = function(db){
+	return function(req, res){
+		var alerts = db.get('alerts');
+		alerts.find({expire: {"$gte": now}, done: {$ne: true}}, function(err, docs){
+				console.log(docs);
+				res.send(docs);
 			});
 	}
 }
