@@ -248,6 +248,13 @@ exports.bounds = function(db){
 		var southwestlng = parseFloat(req.body.southwestlng);
 		console.log(northeastlat);
 		console.log(southwestlat);
+		var alerts = db.get('alerts');
+		alerts.find({location: {$geoWithin: { $box: [
+			[southwestlat,southwestlng],
+			[northeastlat,northeastlng]
+			]}}}, function(err, docs){
+				console.log(docs);
+			});
 	}
 }
 exports.upload = function(db) {
