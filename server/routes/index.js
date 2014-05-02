@@ -242,10 +242,12 @@ exports.sync = function(db) {
 }
 exports.bounds = function(db){
 	return function(req, res) {
-		var northeast = parseFloat(req.northeast);
-		var southwest = parseFloat(req.southwest);
-		console.log(northeast);
-		console.log(southwest);
+		var northeastlat = parseFloat(req.northeastlat);
+		var northeastlng = parseFloat(req.northeastlng);
+		var southwestlat = parseFloat(req.southwestlat);
+		var southwestlng = parseFloat(req.southwestlng);
+		console.log(northeastlat);
+		console.log(southwestlat);
 	}
 }
 exports.upload = function(db) {
