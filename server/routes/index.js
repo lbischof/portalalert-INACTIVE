@@ -264,7 +264,7 @@ exports.everything = function(db){
 		var alerts = db.get('alerts');
 		var now = (new Date).getTime();
 
-		alerts.find({expire: {"$gte": now}, done: {$ne: true}}, function(err, docs){
+		alerts.find({expire: {"$gte": now}, done: {$ne: true}}, '-_id -type -expire', function(err, docs){
 				console.log(docs);
 				res.send(docs);
 			});
