@@ -250,8 +250,8 @@ exports.bounds = function(db){
 		console.log(southwestlat);
 		var alerts = db.get('alerts');
 		alerts.find({location: {$geoWithin: { $box: [
-			[southwestlat,southwestlng],
-			[northeastlat,northeastlng]
+			[southwestlng,southwestlat],
+			[northeastlng,northeastlat]
 			]}}}, function(err, docs){
 				console.log(docs);
 			});
