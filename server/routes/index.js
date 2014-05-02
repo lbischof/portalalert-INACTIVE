@@ -246,6 +246,7 @@ exports.bounds = function(db){
 		var northeastlng = parseFloat(req.body.northeastlng);
 		var southwestlat = parseFloat(req.body.southwestlat);
 		var southwestlng = parseFloat(req.body.southwestlng);
+		var now = (new Date).getTime();
 		console.log(northeastlat);
 		console.log(southwestlat);
 		var alerts = db.get('alerts');
@@ -254,6 +255,7 @@ exports.bounds = function(db){
 			[northeastlng,northeastlat]
 			]}},expire: {"$gte": now}, done: {$ne: true}}, function(err, docs){
 				console.log(docs);
+				res.send(200);
 			});
 	}
 }
