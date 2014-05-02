@@ -41,6 +41,7 @@ app.post('/sync', routes.sync(db));
 app.post('/done', routes.done(db));
 app.post('/upload', routes.upload(db));
 app.post('/search', routes.search(db));
+app.post('/bounds', routes.bounds(db));
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');

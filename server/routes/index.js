@@ -240,6 +240,14 @@ exports.sync = function(db) {
 		});
 	}
 }
+exports.bounds = function(db){
+	return function(req, res) {
+		var northeast = parseFloat(req.northeast);
+		var southwest = parseFloat(req.southwest);
+		console.log(northeast);
+		console.log(southwest);
+	}
+}
 exports.upload = function(db) {
     return function(req, res) {
         res.setHeader('Access-Control-Allow-Origin', 'http://www.ingress.com');

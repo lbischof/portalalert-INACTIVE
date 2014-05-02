@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.database.Cursor;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,12 +16,15 @@ import android.view.ViewGroup;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 
 public class MapsFragment extends Fragment {
 
@@ -45,6 +49,14 @@ public class MapsFragment extends Fragment {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		setHasOptionsMenu(true);
+		mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
+		    @Override
+		    public void onCameraChange(CameraPosition cameraPosition) {
+		        // Make a web call for the locations
+		    	LatLngBounds bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
+		        Log.d("camerachange", bounds.northeast.toString());
+		}
+		});
 		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 	        @Override
 	        public void onInfoWindowClick(Marker marker) {
