@@ -308,7 +308,7 @@ exports.getAlertById = function(db){
 		alerts.findById(id, function(err, doc){
 			console.log(doc);
 			console.log(err);
-			req.send(doc);
+			res.send(doc);
 		});
 	}
 }
