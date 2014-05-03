@@ -1,5 +1,7 @@
 package com.lorenzbi.portalalert;
 
+import java.util.List;
+
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Typeface;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
 import com.jensdriller.libs.undobar.UndoBar;
 import com.jensdriller.libs.undobar.UndoBar.Listener;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -28,6 +31,7 @@ public class DetailFragment extends Fragment implements Listener {
 	Context context;
 	DatabaseHelper dbHelper;
 	String userid;
+	Boolean alertNear = false;
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
@@ -40,19 +44,40 @@ public class DetailFragment extends Fragment implements Listener {
 		context = getActivity();
 		DatabaseHelper dbHelper = new DatabaseHelper(context);
 
+		
+		String id = getArguments().getString("id");
+		if (dbHelper.getAlert(id) != null){
+			alert = dbHelper.getAlert(id);
+			alertNear = true;
+			showDetails(alert);
+		} else {
+			RequestParams params = new RequestParams();
+			params.put("id", id);
+			HttpManager.post("getAlertById", params, new AsyncHttpResponseHandler(){
+				@Override
+				public void onSuccess(String json) {
+					Log.d("response", json);
+					Gson gson = new Gson();
+					alert = gson.fromJson(json, Alert.class);
+					//alert.getId();
+					showDetails(alert);
+				}
+			});
+		}
+		
+	}
+	public void showDetails(Alert alert){
 		TextView txtTitle = (TextView) getActivity().findViewById(R.id.title);
 		TextView txtMessage = (TextView) getActivity().findViewById(
 				R.id.message);
 		ImageView imgView = (ImageView) getActivity().findViewById(R.id.image);
-		String id = getArguments().getString("id");
-		alert = dbHelper.getAlert(id);
 		Picasso.with(getActivity()).load(alert.getImageSource()).fit()
-				.centerCrop().into(imgView);
-		Typeface typeFace = FontCache.get("Roboto-Light.ttf", getActivity());
-		txtTitle.setTypeface(typeFace);
-		txtMessage.setTypeface(typeFace);
-		txtTitle.setText(alert.getTitle());
-		txtMessage.setText(alert.getMessage());
+		.centerCrop().into(imgView);
+Typeface typeFace = FontCache.get("Roboto-Light.ttf", getActivity());
+txtTitle.setTypeface(typeFace);
+txtMessage.setTypeface(typeFace);
+txtTitle.setText(alert.getTitle());
+txtMessage.setText(alert.getMessage());
 	}
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
@@ -77,9 +102,10 @@ public class DetailFragment extends Fragment implements Listener {
 		String id = alert.getId();
 		String title = alert.getTitle();
 		((MainActivity)getActivity()).setUpdateNeeded(true);
-		
+		if (alertNear){
 		dbHelper = new DatabaseHelper(context);
 		dbHelper.removeAlert(id);
+		}
 		final Bundle bundle = new Bundle();
 		bundle.putString("id", id);
 		getFragmentManager().popBackStack(); 
@@ -95,7 +121,8 @@ public class DetailFragment extends Fragment implements Listener {
 	public void onUndo(Parcelable token) {
 		if (token != null) {
 			String id = ((Bundle) token).getString("id");
-			dbHelper.undoRemove(id);
+			if (alertNear)
+				dbHelper.undoRemove(id);
 			BusProvider.getInstance().post(new String("update"));
 		}
 	}
