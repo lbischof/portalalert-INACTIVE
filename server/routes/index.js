@@ -295,7 +295,7 @@ exports.search = function(db) {
         var lat = parseFloat(req.body.lat);
         var title = req.body.title;
         var portals = db.get('portals');
-        portals.distinct('title',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}}},title: { $regex: '^'+title, $options: 'i' } }, function(err, docs) {
+        portals.distinct('title',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng ,lat ]}, limit: 2}},title: { $regex: '^'+title, $options: 'i' } }, function(err, docs) {
             console.log(docs);
             res.send(docs);
         });
