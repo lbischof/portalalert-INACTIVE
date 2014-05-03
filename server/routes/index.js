@@ -263,10 +263,11 @@ exports.everything = function(db){
 	return function(req, res){
 		var alerts = db.get('alerts');
 		var now = (new Date).getTime();
-
-		alerts.find({expire: {"$gte": now}, done: {$ne: true}}, '-_id location.coordinates title message', function(err, docs){
-				console.log(docs);
-				res.send(docs);
+		var obj = new Object();
+		alerts.find({expire: {"$gte": now}, done: {$ne: true}}, 'location.coordinates title message', function(err, docs){
+				obj.error = err;
+				obj.alerts = docs;
+				res.send(JSON.stringify(obj));
 			});
 	}
 }
