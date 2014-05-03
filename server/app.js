@@ -43,6 +43,7 @@ app.post('/upload', routes.upload(db));
 app.post('/search', routes.search(db));
 app.post('/bounds', routes.bounds(db));
 app.post('/everything', routes.everything(db));
+app.post('getAlertById', routes.getAlertById(db));
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
