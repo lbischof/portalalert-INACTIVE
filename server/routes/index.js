@@ -301,4 +301,14 @@ exports.search = function(db) {
         });
     }
 }
+exports.getAlertById = function(db){
+	return function(req, res){
+		var id = req.body.id;
+		var alerts = db.get('alerts');
+		alerts.findById(id, function(err, doc){
+			console.log(doc);
+			req.send(doc);
+		});
+	}
+}
 
