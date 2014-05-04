@@ -155,6 +155,7 @@ exports.alert = function(db) {
     users.distinct('regid',{location: {$near : { $geometry : { type: "Point", coordinates : [ lng, lat ]}, $maxDistance : 3000}}},function(err, docs){
         registrationIds = docs;
         alerts.findAndModify({"_id" : guid},{
+        	"_id":guid,
             "location" : { "type": "Point", "coordinates" : [ lng,lat ] },
             "imagesrc" : imagesrc,
             "title" : title,
