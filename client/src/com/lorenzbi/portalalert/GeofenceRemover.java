@@ -222,6 +222,7 @@ public class GeofenceRemover implements ConnectionCallbacks,
 					.getString(R.string.remove_geofences_intent_success));
 
 			// Set the action and add the result message
+			
 			BusProvider.getInstance().post(new String("update"));
 
 			// If removing the geocodes failed
@@ -271,9 +272,8 @@ public class GeofenceRemover implements ConnectionCallbacks,
 			Log.d(GeofenceUtils.APPTAG, msg);
 
 			// Create an Intent to broadcast to the app
-			broadcastIntent.setAction(GeofenceUtils.ACTION_GEOFENCES_REMOVED)
-					.addCategory(GeofenceUtils.CATEGORY_LOCATION_SERVICES)
-					.putExtra(GeofenceUtils.EXTRA_GEOFENCE_STATUS, msg);
+			BusProvider.getInstance().post(new String(Arrays.toString(geofenceRequestIds)));
+
 
 		} else {
 			// If removing the geocodes failed

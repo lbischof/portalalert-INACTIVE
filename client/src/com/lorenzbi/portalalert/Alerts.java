@@ -3,6 +3,8 @@ package com.lorenzbi.portalalert;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
+
 import com.google.gson.annotations.SerializedName;
 
 public class Alerts {

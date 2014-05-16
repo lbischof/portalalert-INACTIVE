@@ -45,6 +45,7 @@ public class ListAdapter extends CursorAdapter {
 					.getColumnIndex("imagesrc"));
 			String title = cursor.getString(cursor.getColumnIndex("title"));
 			String message = cursor.getString(cursor.getColumnIndex("message"));
+			
 
 			// Double lng = cursor.getDouble(cursor.getColumnIndex("lng"));
 			// Double lat = cursor.getDouble(cursor.getColumnIndex("lat"));

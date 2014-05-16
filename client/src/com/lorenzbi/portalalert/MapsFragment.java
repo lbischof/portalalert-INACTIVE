@@ -1,6 +1,7 @@
 package com.lorenzbi.portalalert;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import android.animation.Animator;
@@ -32,6 +33,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.lorenzbi.portalalert.Alerts.Alert;
+import com.squareup.otto.Subscribe;
 
 
 public class MapsFragment extends Fragment {
@@ -39,24 +41,33 @@ public class MapsFragment extends Fragment {
 	private GoogleMap mMap;
 	MapView mapView;
     private Bundle mBundle;
-
+    private CameraPosition cp;
+    private View v;
 	private HashMap<String, Marker> courseMarkers = new HashMap<String, Marker>();
 	private HashMap<Marker, String> markerIds = new HashMap<Marker, String>();
 
 	List<Alert> alerts;
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.fragment_map, container, false);
+		v = inflater.inflate(R.layout.fragment_map, container, false);
 		// Gets the MapView from the XML layout and creates it
 
 		MapsInitializer.initialize(getActivity());
 		mapView = (MapView) v.findViewById(R.id.map);
         mapView.onCreate(mBundle);
-		setupMapIfNeeded(v);
+		setupMapIfNeeded();
 
 		// Updates the location and zoom of the MapView
 
 		return v;
+	}
+	@Subscribe
+	public void onUpdateEvent(String msg) {
+		Log.d("onupdateevent", "onupdateevent");
+		if (msg == "update"){
+        cp = mMap.getCameraPosition();
+        setUpMap();
+		} 
 	}
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -74,26 +85,31 @@ public class MapsFragment extends Fragment {
 	    super.onCreateOptionsMenu(menu, inflater);
 	    inflater.inflate(R.menu.menu_map, menu);
 	}
-	@Override
+	
     public void onResume() {
         super.onResume();
         mapView.onResume();
+		BusProvider.getInstance().register(this);
+        setupMapIfNeeded();
     }
 
-    @Override
+    
     public void onPause() {
         super.onPause();
         mapView.onPause();
+        cp = mMap.getCameraPosition();
+        mMap = null;
+		BusProvider.getInstance().unregister(this);
     }
 
-    @Override
+    
     public void onDestroy() {
         mapView.onDestroy();
         super.onDestroy();
     }
-    private void setupMapIfNeeded(View inflatedView) {
+    private void setupMapIfNeeded() {
         if (mMap == null) {
-            mMap = ((MapView) inflatedView.findViewById(R.id.map)).getMap();
+            mMap = ((MapView) v.findViewById(R.id.map)).getMap();
             if (mMap != null) {
                 setUpMap();
             }
@@ -101,12 +117,19 @@ public class MapsFragment extends Fragment {
     }
 	
 	private void setUpMap() {
+		if (cp != null){
+			mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cp));
+	        cp = null;
+	        courseMarkers.clear();
+		} else {
 		Location lastLocation = ((MainActivity)getActivity()).getLastLocation();
 		CameraUpdate myLoc = CameraUpdateFactory.newCameraPosition(
 	            new CameraPosition.Builder().target(new LatLng(lastLocation.getLatitude(),
 	                    lastLocation.getLongitude())).zoom(13).build());
 	    mMap.moveCamera(myLoc);
+		}
 		mMap.setMyLocationEnabled(true);
+		if (alerts == null){
 		HttpManager.post("everything", null, new AsyncHttpResponseHandler() {
 			@Override
 			public void onSuccess(String json) {
@@ -116,6 +139,9 @@ public class MapsFragment extends Fragment {
 	            addItemsToMap(alerts);
 			}
 		});
+		} else {
+            addItemsToMap(alerts);
+		}
 		mMap.setOnCameraChangeListener(getCameraChangeListener());
 		
 		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
@@ -153,6 +179,7 @@ public class MapsFragment extends Fragment {
 	        }
 	    };
 	}
+	
 	private void addItemsToMap(List<Alert> items)
 	{
 	    if(this.mMap != null)

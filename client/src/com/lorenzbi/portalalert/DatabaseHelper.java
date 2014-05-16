@@ -68,6 +68,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		row.put(MESSAGE, alert.getMessage());
 		row.put(LONGITUDE, alert.getLocation().getLng());
 		row.put(LATITUDE, alert.getLocation().getLat());
+		row.put(TYPE, alert.getType());
 		row.put(EXPIRE, alert.getExpire());
 		row.put(DONE, 0);
 		SQLiteDatabase database = getWritableDatabase();
@@ -81,7 +82,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		cv.put("done", 1);
 		database.update("alerts",cv, "id = ?", new String[] {id});
 		removeFence(id);
-		
 	}
 	public void undoRemove(String id){
 		SQLiteDatabase database = getWritableDatabase();
@@ -120,6 +120,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 					.getColumnIndex("imagesrc"));
 			String title = cursor.getString(cursor.getColumnIndex("title"));
 			String message = cursor.getString(cursor.getColumnIndex("message"));
+			Integer type = cursor.getInt(cursor.getColumnIndex("type"));
 			AlertLocation alertLocation = new AlertLocation();
 			Log.i("getlng portalalert",
 					cursor.getDouble(cursor.getColumnIndex("lng")) + "");
@@ -131,7 +132,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			Float radius = (float) 200;//cursor.getFloat(cursor.getColumnIndex("radius"));
 			Long expire = cursor.getLong(cursor.getColumnIndex("expire"))
 					- System.currentTimeMillis();
-			alert = new Alert(id, imagesrc, title, message, 0, 0,
+			alert = new Alert(id, imagesrc, title, message, type, 0,
 					alertLocation, radius, "", expire);
 		}
 		return alert;

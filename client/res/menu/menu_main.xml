@@ -14,7 +14,7 @@
     
     <!-- Check updates -->
     <item android:id="@+id/action_about"
-         
+          android:orderInCategory="9999"
           android:title="About"
           android:showAsAction="never" />
 </menu>

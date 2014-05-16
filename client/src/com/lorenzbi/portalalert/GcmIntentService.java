@@ -72,9 +72,12 @@ public class GcmIntentService extends IntentService {
 					String imagesrc = extras.getString("imagesrc");
 					String title = extras.getString("title");
 					String message = extras.getString("message");
+					Integer type = Integer.parseInt(extras.getString("type"));
+					Log.d("type",type.toString());
+				
 					Long expire = Long.parseLong(extras.getString("expire"));// -
 																				// System.currentTimeMillis();
-					Alert alert = new Alert(id, imagesrc, title, message, 0, 0,
+					Alert alert = new Alert(id, imagesrc, title, message, type, 0,
 							alertLocation, radius, "", expire);
 
 					if (dbHelper.addAlert(alert) && counter < 99) {

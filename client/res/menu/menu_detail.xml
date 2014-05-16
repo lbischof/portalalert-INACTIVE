@@ -4,5 +4,7 @@
           android:icon="@drawable/ic_action_accept"
           android:title="Fertig"
           android:showAsAction="ifRoom"/>
-
+ 	<item android:id="@+id/action_delete"
+          android:title="Löschen"
+          android:showAsAction="never" />
 </menu>

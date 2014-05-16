@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.jensdriller.libs.undobar.UndoBar;
@@ -64,7 +65,6 @@ public class DetailFragment extends Fragment implements Listener {
 				}
 			});
 		}
-		
 	}
 	public void showDetails(Alert alert){
 		TextView txtTitle = (TextView) getActivity().findViewById(R.id.title);
@@ -93,12 +93,29 @@ txtMessage.setText(alert.getMessage());
         case R.id.action_done:
         	alertDone();
             return true;
+        case R.id.action_delete:
+        	removeAlert();
+        	return true;
         default:
             return super.onOptionsItemSelected(item);
         }
     }
 	
 	public void alertDone(){
+		Integer type = alert.getType();
+		switch(type){
+		case 1: //upgraded
+			upgradedAlert();
+			break;
+		case 2: //destroyed
+			removeAlert();
+			break;
+		}
+	}
+	public void upgradedAlert(){
+		Toast.makeText(getActivity(), "Danke fürs upgraden", Toast.LENGTH_SHORT).show();
+	}
+	public void removeAlert(){
 		String id = alert.getId();
 		String title = alert.getTitle();
 		((MainActivity)getActivity()).setUpdateNeeded(true);
@@ -106,17 +123,15 @@ txtMessage.setText(alert.getMessage());
 		dbHelper = new DatabaseHelper(context);
 		dbHelper.removeAlert(id);
 		}
+		getFragmentManager().popBackStack(); 
 		final Bundle bundle = new Bundle();
 		bundle.putString("id", id);
-		getFragmentManager().popBackStack(); 
 		new UndoBar.Builder(getActivity())//
 		  .setMessage(title)
 		  .setUndoToken(bundle)
 		  .setListener(DetailFragment.this)//
 		  .show();
-		
 	}
-
 	@Override
 	public void onUndo(Parcelable token) {
 		if (token != null) {
