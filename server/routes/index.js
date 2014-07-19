@@ -251,8 +251,8 @@ exports.bounds = function(db){
 		var southwestlng = parseFloat(req.body.swlng);
 		var now = (new Date).getTime();
 		var obj = new Object();
-		console.log(northeastlat);
-		console.log(southwestlat);
+		console.log(req);
+		
 		var alerts = db.get('alerts');
 		alerts.find({location: {$geoWithin: { $box: [
 			[southwestlng,southwestlat],
