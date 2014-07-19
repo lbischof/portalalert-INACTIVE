@@ -63,7 +63,7 @@ shell: {                                // Task
   grunt.loadNpmTasks('grunt-php');
 
   // Default task(s).
-  grunt.registerTask('default', ['uglify:concat','sass:compile','shell:push','sshexec:deploy']);
+  grunt.registerTask('default', ['uglify:concat','shell:push','sshexec:deploy']);
   grunt.registerTask('local', ['php']);
 
 
