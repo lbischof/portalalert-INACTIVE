@@ -37,6 +37,7 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.plus.Plus;
+import com.google.android.gms.plus.Plus.PlusOptions;
 import com.google.android.gms.plus.model.people.Person;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -109,7 +110,7 @@ public class RegisterActivity extends Activity implements ConnectionCallbacks,
 		usernameInput.setSelection(ingressUsername.length());
 		mGoogleApiClient = new GoogleApiClient.Builder(this)
 				.addConnectionCallbacks(this)
-				.addOnConnectionFailedListener(this).addApi(Plus.API, null)
+				.addOnConnectionFailedListener(this).addApi(Plus.API)
 				.addScope(Plus.SCOPE_PLUS_LOGIN).build();
 		findViewById(R.id.sign_in_button).setOnClickListener(this);
 
@@ -222,7 +223,7 @@ public class RegisterActivity extends Activity implements ConnectionCallbacks,
 			// Store the ConnectionResult so that we can use it later when the
 			// user clicks
 			// 'sign-in'.
-			Log.d("failed","failed");
+			Log.d("failed",result.toString());
 			mConnectionResult = result;
 
 			if (mSignInClicked) {

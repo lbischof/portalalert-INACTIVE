@@ -245,11 +245,12 @@ exports.sync = function(db) {
 }
 exports.bounds = function(db){
 	return function(req, res) {
-		var northeastlat = parseFloat(req.body.northeastlat);
-		var northeastlng = parseFloat(req.body.northeastlng);
-		var southwestlat = parseFloat(req.body.southwestlat);
-		var southwestlng = parseFloat(req.body.southwestlng);
+		var northeastlat = parseFloat(req.body.nelat);
+		var northeastlng = parseFloat(req.body.nelng);
+		var southwestlat = parseFloat(req.body.swlat);
+		var southwestlng = parseFloat(req.body.swlng);
 		var now = (new Date).getTime();
+		var obj = new Object();
 		console.log(northeastlat);
 		console.log(southwestlat);
 		var alerts = db.get('alerts');
@@ -257,8 +258,9 @@ exports.bounds = function(db){
 			[southwestlng,southwestlat],
 			[northeastlng,northeastlat]
 			]}},expire: {"$gte": now}, done: {$ne: true}}, function(err, docs){
-				console.log(docs);
-				res.send(docs);
+				obj.error = err;
+				obj.alerts = docs;
+				res.send(JSON.stringify(obj));
 			});
 	}
 }

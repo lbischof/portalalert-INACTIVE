@@ -1,6 +1,7 @@
 package com.lorenzbi.portalalert;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import android.animation.Animator;
@@ -31,12 +32,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 import com.lorenzbi.portalalert.Alerts.Alert;
 import com.squareup.otto.Subscribe;
 
 
-public class MapsFragment extends Fragment {
+public class CopyOfMapsFragment extends Fragment {
 
 	private GoogleMap mMap;
 	MapView mapView;
@@ -72,7 +72,6 @@ public class MapsFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-
 	    mBundle = savedInstanceState;
 	}
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -130,7 +129,19 @@ public class MapsFragment extends Fragment {
 	    mMap.moveCamera(myLoc);
 		}
 		mMap.setMyLocationEnabled(true);
-		
+		if (alerts == null){
+		HttpManager.post("everything", null, new AsyncHttpResponseHandler() {
+			@Override
+			public void onSuccess(String json) {
+				Gson gson = new Gson();
+				Alerts root = gson.fromJson(json, Alerts.class);
+				alerts = root.getAlerts();
+	            addItemsToMap(alerts);
+			}
+		});
+		} else {
+            addItemsToMap(alerts);
+		}
 		mMap.setOnCameraChangeListener(getCameraChangeListener());
 		
 		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
@@ -163,23 +174,6 @@ public class MapsFragment extends Fragment {
 	        @Override
 	        public void onCameraChange(CameraPosition position) 
 	        {
-	        	LatLngBounds bounds = mMap.getProjection().getVisibleRegion().latLngBounds;
-	        	Log.d("portal alert", bounds.northeast + " " + bounds.southwest);
-	        	RequestParams params = new RequestParams();
-	    		params.put("nelat", bounds.northeast.latitude);
-	    		params.put("nelng", bounds.northeast.longitude);
-	    		params.put("swlat", bounds.southwest.latitude);
-	    		params.put("swlng", bounds.southwest.longitude);
-	        	HttpManager.post("bounds", params, new AsyncHttpResponseHandler() {
-	    			@Override
-	    			public void onSuccess(String json) {
-	    				Log.d("portalalert",json);
-	    				Gson gson = new Gson();
-	    				Alerts root = gson.fromJson(json, Alerts.class);
-	    				alerts = root.getAlerts();
-	    	            addItemsToMap(alerts);
-	    			}
-	    		});
 	        	if (alerts != null)
 	            addItemsToMap(alerts);
 	        }
